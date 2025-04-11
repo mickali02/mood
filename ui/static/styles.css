@@ -1,219 +1,440 @@
 /* mood/ui/static/styles.css */
 
-/* Reset and Base Styles */
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond&family=Dancing+Script&family=Lora&family=Montserrat&family=Nunito&family=Parisienne&family=Playfair+Display&family=Poppins:wght@400;500;600&display=swap');
+
 *, *::before, *::after {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
 }
 
+/* --- Body Font (Using Lora as suggested for Description/Body) --- */
 body {
-    font-family: 'Short Stack', cursive;
-    /* --- CHANGE THIS FILENAME if your background image is different --- */
-    background: #e0f0ff url("/static/resources/nature.png") no-repeat center center; /* Light blue fallback */
-    /* --- END CHANGE --- */
-    background-size: contain;
-    background-attachment: fixed;
-    color: #333; /* Default text color */
-    line-height: 1.6;
+    /* font-family: 'Short Stack', cursive; */ /* Remove old font */
+    font-family: 'Lora', serif; /* Apply Lora */
+    background-color: #e0f0ff; /* Fallback color */
+    color: #4A4A4A; /* Soft Charcoal for default text */
+    line-height: 1.7; /* Slightly increased line height for Lora */
     display: flex;
     flex-direction: column;
     min-height: 100vh;
     width: 100%;
-    overflow-x: hidden; /* Prevent horizontal scroll */
+    overflow-x: hidden;
+    position: relative;
 }
 
-/* Typography */
-h1, .page-header {
-    color: #4e83c0; /* Primary blue color */
-    font-size: 2.8rem;
+/* Blurred background image */
+body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url("/static/resources/nature.jpg") no-repeat center center;
+    background-size: cover;
+    filter: blur(1px);
+    opacity: 0.95;
+    z-index: -1;
+}
+
+/* Cherry blossom animations */
+/* --- KEEP ALL #leaves and @keyframes blossom-falling rules --- */
+#leaves {
+    position: absolute;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: -1; /* Keep behind container but above body::before if needed*/
+    pointer-events: none;
+  }
+  /* ... all #leaves i styles ... */
+  /* ... all @keyframes ... */
+#leaves i {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    background: linear-gradient(to bottom right, #ffcce6, #ff99cc);
+    transform: rotate(10deg);
+    border-radius: 60% 70% 40% 50%;
+    box-shadow: inset 0px 0px 1px #fff;
+    border: 1px solid #ffc6e5;
+    z-index: 1;
+    position: absolute;
+    top: -10%;
+    animation: blossom-falling 10s linear infinite;
+  }
+
+  #leaves i:nth-of-type(2n) { animation: blossom-falling2 12s linear infinite; }
+  #leaves i:nth-of-type(3n) { animation: blossom-falling3 14s linear infinite; }
+
+  /* Create the petal shape with pseudo-elements */
+  #leaves i:before {
+    position: absolute;
+    content: '';
+    height: 10px;
+    width: 10px;
+    transform: rotate(45deg);
+    border-radius: 60% 70% 40% 50%;
+    background: linear-gradient(to right, rgba(255,204,230,1), rgba(255,153,204,0.8));
+    z-index: 1;
+    top: 4px;
+    left: 4px;
+  }
+
+  /* Subtle highlight/shadow */
+  #leaves i:after {
+    content: '';
+    height: 5px;
+    width: 5px;
+    background: rgba(255, 255, 255, 0.3);
+    display: block;
+    transform: rotate(125deg);
+    position: absolute;
+    border-radius: 50%;
+    top: 7px;
+    left: 7px;
+  }
+
+  /* Varying sizes for petals */
+  #leaves i:nth-of-type(n)    { height: 15px; width: 15px; opacity: 0.8; }
+  #leaves i:nth-of-type(2n+1) { height: 11px; width: 11px; opacity: 0.6; }
+  #leaves i:nth-of-type(3n+2) { height: 9px; width: 9px; opacity: 0.9; }
+
+  /* Varying starting positions */
+  #leaves i:nth-of-type(n)   { left: 10%; animation-delay: 1s; }
+  #leaves i:nth-of-type(2n)  { left: 20%; animation-delay: 3s; }
+  #leaves i:nth-of-type(3n)  { left: 30%; animation-delay: 6s; }
+  #leaves i:nth-of-type(4n)  { left: 40%; animation-delay: 8s; }
+  #leaves i:nth-of-type(5n)  { left: 50%; animation-delay: 2.5s; }
+  #leaves i:nth-of-type(6n)  { left: 60%; animation-delay: 5s; }
+  #leaves i:nth-of-type(7n)  { left: 70%; animation-delay: 7s; }
+  #leaves i:nth-of-type(8n)  { left: 80%; animation-delay: 1.5s; }
+  #leaves i:nth-of-type(9n)  { left: 90%; animation-delay: 4s; }
+  #leaves i:nth-of-type(10n) { left: 25%; animation-delay: 9s; }
+  #leaves i:nth-of-type(11n) { left: 35%; animation-delay: 5.5s; }
+  #leaves i:nth-of-type(12n) { left: 45%; animation-delay: 2s; }
+  #leaves i:nth-of-type(13n) { left: 55%; animation-delay: 7.5s; }
+  #leaves i:nth-of-type(14n) { left: 65%; animation-delay: 3.5s; }
+  #leaves i:nth-of-type(15n) { left: 75%; animation-delay: 8.5s; }
+
+  /* Different shades of pink */
+  #leaves i:nth-of-type(n)    { background: linear-gradient(to bottom right, #ffcce6, #ff99cc); }
+  #leaves i:nth-of-type(2n+2) { background: linear-gradient(to bottom right, #ffb3d9, #ff80bf); }
+  #leaves i:nth-of-type(4n+1) { background: linear-gradient(to bottom right, #ffd9ec, #ffb3d9); }
+
+  /* Slow animation for gentle falling from above */
+  @keyframes blossom-falling {
+    0% {
+      transform: translate(0, 0) rotate(0deg) scale(1);
+    }
+
+    100% {
+      transform: translate(100px, 1000px) rotate(360deg) scale(0.5);
+      opacity: 0;
+    }
+  }
+
+  @keyframes blossom-falling2 {
+    0% {
+      transform: translate(0, 0) rotate(90deg) scale(0.9);
+    }
+
+    100% {
+      transform: translate(-50px, 1000px) rotate(180deg) scale(0.3);
+      opacity: 0;
+    }
+  }
+
+  @keyframes blossom-falling3 {
+    0% {
+      transform: translate(0, 0) rotate(-20deg) scale(0.8);
+    }
+
+    100% {
+      transform: translate(75px, 1000px) rotate(180deg) scale(0.2);
+      opacity: 0;
+    }
+  }
+/* --- H1 Font & Color (for Home Page Header primarily) --- */
+h1 {
+    /* font-family: 'Sacramento', cursive; */ /* Remove old */
+    font-family: 'Parisienne', cursive; /* Apply Parisienne */
+    /* color: #9a6b99; */ /* Remove old */
+    color: #5E3A76; /* Apply Deep Lavender */
+    font-size: 4.5rem; /* Adjust size as needed */
     text-align: center;
-    margin-bottom: 20px;
+    margin-bottom: 15px; /* Adjusted margin */
+    font-weight: normal; /* Script fonts usually don't need bold */
+    line-height: 1.2; /* Adjust line height for script font */
 }
 
+/* --- Tagline Font & Color --- */
+.tagline {
+    /* font-family: 'Open Sans', sans-serif; */ /* Remove old */
+    font-family: 'Playfair Display', serif; /* Apply Playfair Display */
+    font-weight: 400; /* Regular weight */
+    font-size: 1.5rem; /* Adjust size */
+    /* color: #7d8cc4; */ /* Remove old */
+    color: #6A5ACD; /* Apply Medium Blue-Purple */
+    margin-bottom: 1.5rem;
+    letter-spacing: 0.5px; /* Optional: Add subtle letter spacing */
+}
+
+/* --- Description Font & Color --- */
+.description {
+    /* font-family: 'Open Sans', sans-serif; */ /* Remove old */
+    font-family: 'Lora', serif; /* Apply Lora (consistent with body) */
+    font-weight: 400;
+    font-size: 1.1rem;
+    /* color: #666; */ /* Remove old */
+    color: #555273; /* Apply Cool Gray */
+    max-width: 80%;
+    margin: 0 auto 2.5rem; /* Increased bottom margin */
+    line-height: 1.7; /* Consistent with body */
+}
+
+/* --- General Paragraphs (if not .tagline or .description) --- */
 p {
     margin-bottom: 1em;
-    color: #444; /* Slightly darker text for paragraphs */
-    font-size: 1.1rem; /* Slightly larger paragraph text */
+    color: #4A4A4A; /* Soft Charcoal for general paragraphs */
+    font-size: 1.1rem;
 }
 
 /* Layout Containers */
-.home-page { /* Specific styles for the home page body */
+.home-page {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh; /* Center content vertically */
+    height: 100vh;
     text-align: center;
 }
 
-.container { /* Main content container for list pages */
-    width: 90%; /* Wider container */
-    max-width: 900px; /* Increased max width */
-    margin: 30px auto; /* More margin */
-    padding: 30px; /* More padding */
-    background-color: rgba(255, 255, 255, 0.85); /* Slightly more opaque background */
-    border-radius: 12px; /* More rounded corners */
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15); /* Slightly stronger shadow */
-    position: relative; /* For absolute positioning of back arrow */
-    text-align: center; /* Center buttons like "Add New" */
+.container {
+    width: 90%;
+    max-width: 750px; /* Adjusted max-width for potentially longer text */
+    margin: 30px auto;
+    padding: 50px 40px; /* Increased padding */
+    min-height: auto; /* Remove min-height or adjust */
+    background-color: rgba(255, 245, 250, 0.85); /* Slightly more opaque pink-white */
+    border-radius: 15px; /* More rounded */
+    box-shadow:
+        0 6px 15px rgba(0, 0, 0, 0.1), /* Adjusted shadow */
+        0 0 40px rgba(255, 182, 203, 0.25); /* Enhanced pink glow */
+    position: relative;
+    text-align: center;
+    backdrop-filter: blur(2px); /* Slightly more blur */
+    border: 1px solid rgba(255, 192, 203, 0.4); /* Slightly stronger border */
+    z-index: 2; /* Ensure container is above blurred background but below petals */
 }
 
-.form-container { /* Container for forms */
-    background-color: rgba(255, 255, 255, 0.95); /* More opaque for forms */
+.container::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, rgba(255, 230, 240, 0.25) 0%, rgba(255, 182, 193, 0.15) 100%);
+    border-radius: 15px; /* Match container */
+    z-index: -1;
+}
+
+.form-container {
+    background-color: rgba(255, 255, 255, 0.95);
     padding: 40px;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
     width: 100%;
     max-width: 600px;
-    margin: 40px auto; /* More vertical margin for forms */
+    margin: 40px auto;
 }
 
-/* Header and Navigation */
-.page-header { /* Header specifically on list/form pages */
+/* --- Page Header for non-home pages --- */
+.page-header {
+    /* font-family: 'Short Stack', cursive; */ /* Remove old */
+    font-family: 'Poppins', sans-serif; /* Use Poppins for non-home headers */
     font-size: 2.5rem;
-    font-weight: bold;
-    color: #4e83c0;
-    font-family: 'Short Stack', cursive;
+    font-weight: 600; /* Semi-bold Poppins */
+    /* color: #4e83c0; */ /* Remove old */
+    color: #5E3A76; /* Match H1 color */
     text-align: center;
-    margin: 20px 0 30px 0; /* Adjusted margins */
+    margin: 20px 0 30px 0;
 }
 
-.back-arrow { /* Back arrow link positioning */
+/* Back Arrow */
+.back-arrow {
     position: absolute;
-    left: 30px; /* Adjusted position */
-    top: 30px;  /* Adjusted position */
+    left: 30px;
+    top: 30px;
     z-index: 10;
 }
-
-.back-arrow-img { /* Back arrow image styling */
-    width: 70px; /* Slightly smaller arrow */
+.back-arrow-img {
+    width: 70px;
     height: auto;
     display: inline-block;
     vertical-align: middle;
     transition: transform 0.2s ease-in-out;
 }
 .back-arrow-img:hover {
-    transform: scale(1.1); /* Slight zoom on hover */
+    transform: scale(1.1);
 }
 
-/* Form Elements */
-.form-group {
-    margin-bottom: 20px; /* More space between form groups */
-    text-align: left; /* Align labels left */
-}
-
+/* --- Form Elements Font --- */
 .form-group label {
-    display: block; /* Label on its own line */
-    margin-bottom: 8px; /* Space below label */
-    font-weight: bold;
+    display: block;
+    margin-bottom: 8px;
+    /* font-weight: bold; */ /* Poppins might not need extra bold */
     color: #333;
+    font-family: 'Poppins', sans-serif; /* Use Poppins for labels */
+    font-weight: 500; /* Medium weight */
 }
 
 .form-container input[type="text"],
-.form-container input[type="email"], /* Kept just in case */
+.form-container input[type="email"],
 .form-container textarea,
-.form-container select { /* Style select dropdowns too */
+.form-container select {
     width: 100%;
-    padding: 12px; /* More padding */
-    margin-bottom: 5px; /* Reduced margin below input */
-    border: 1px solid #ccc; /* Lighter border */
-    border-radius: 6px; /* More rounded inputs */
+    padding: 12px;
+    margin-bottom: 5px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
     box-sizing: border-box;
-    font-family: 'Short Stack', cursive; /* Ensure form inputs use the font */
+    /* font-family: 'Short Stack', cursive; */ /* Remove old */
+    font-family: 'Lora', serif; /* Use Lora for input text */
     font-size: 1rem;
     transition: border-color 0.3s;
 }
-
 .form-container input[type="text"]:focus,
 .form-container input[type="email"]:focus,
 .form-container textarea:focus,
 .form-container select:focus {
-    border-color: #4e83c0; /* Highlight focus */
-    outline: none; /* Remove default browser outline */
+    border-color: #A074B5; /* Match button color for focus */
+    outline: none;
 }
-
 textarea {
-    min-height: 120px; /* Ensure textarea has a decent height */
-    resize: vertical; /* Allow vertical resize */
+    min-height: 120px;
+    resize: vertical;
 }
 
-/* Buttons */
+/* --- Button Fonts & Colors --- */
 .btn, .cancel-btn {
-    font-family: 'Short Stack', cursive;
+    /* font-family: 'Open Sans', sans-serif; */ /* Remove old */
+    font-family: 'Poppins', sans-serif; /* Apply Poppins */
     display: inline-block;
-    padding: 12px 25px; /* Slightly larger buttons */
-    background-color: #4fb9e3; /* Button color */
-    color: white;
+    padding: 12px 28px; /* Adjusted padding */
+    /* background-color: #aa7ea9; */ /* Remove old */
+    background-color: #A074B5; /* Apply Lavender */
+    color: #FFFFFF; /* Apply White text */
     text-decoration: none;
-    border-radius: 8px; /* More rounded buttons */
+    border-radius: 8px;
     border: none;
     cursor: pointer;
-    transition: background-color 0.3s, transform 0.1s;
-    font-size: 1.2rem; /* Adjusted font size */
-    font-weight: bold;
+    transition: background-color 0.3s, transform 0.1s, box-shadow 0.2s; /* Added box-shadow transition */
+    font-size: 1.1rem; /* Slightly smaller button font */
+    font-weight: 500; /* Apply Medium Poppins */
     margin-top: 5px;
-    line-height: 1.4; /* Adjusted line height */
+    line-height: 1.4;
     box-sizing: border-box;
     text-align: center;
+    text-transform: uppercase; /* Optional: Uppercase button text */
+    letter-spacing: 0.5px; /* Optional: Add letter spacing */
 }
 
 .btn:hover, .cancel-btn:hover {
-    background-color: #328fb4; /* Darker shade on hover */
-    transform: translateY(-1px); /* Slight lift on hover */
+    /* background-color: #9a6b99; */ /* Remove old */
+    background-color: #6B497D; /* Apply Dark Plum */
+    transform: translateY(-2px);
+    box-shadow: 0 5px 10px rgba(0,0,0,0.2); /* Enhanced shadow on hover */
 }
-
 .btn:active, .cancel-btn:active {
-    transform: translateY(0px); /* Push down on click */
+    transform: translateY(0px);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.15); /* Shadow when active */
 }
 
 .cancel-btn {
-    background-color: #aaa; /* Grey cancel button */
+    background-color: #B0A8B9; /* Muted gray-purple cancel button */
+    color: #4A4A4A; /* Darker text for cancel */
 }
 .cancel-btn:hover {
-    background-color: #888;
+    background-color: #8D809C; /* Darker shade on hover */
+    color: #FFFFFF;
 }
 
-.button-group { /* Container for multiple buttons */
+.button-group {
     display: flex;
     justify-content: center;
-    gap: 20px; /* More space between buttons */
-    margin-top: 20px; /* Space above button group */
+    gap: 25px; /* Increased gap */
+    margin-top: 30px; /* Increased margin */
     margin-bottom: 1em;
 }
 
-/* Specific button placements */
-.add-new-btn { /* "Add New" button on list pages */
-    display: block; /* Make it block level */
-    width: fit-content; /* Size to content */
-    margin: 0 auto 30px auto; /* Center horizontally, add bottom margin */
-}
-
-.edit-delete-buttons { /* Container for Edit/Delete buttons in list items */
-    white-space: nowrap; /* Prevent buttons from wrapping */
-    align-self: center; /* Vertically center buttons in flex/grid context */
-    text-align: right; /* Fallback alignment */
-}
-
-.edit-delete-buttons .btn { /* Edit/Delete button styling */
-    margin-left: 8px; /* Space between edit/delete */
-    padding: 6px 12px; /* Smaller padding */
-    font-size: 0.9rem; /* Smaller font size */
-    line-height: 1.3;
+/* Edit/Delete Buttons */
+.edit-delete-buttons .btn {
+    margin-left: 8px;
+    padding: 6px 12px;
+    font-size: 0.85rem; /* Adjust size */
+    font-weight: 500; /* Match main buttons */
+    text-transform: none; /* No uppercase for smaller buttons */
+    letter-spacing: 0;
 }
 .edit-delete-buttons form {
-    display: inline-block; /* Keep form inline for delete button */
+    display: inline-block;
     margin: 0;
     padding: 0;
 }
 
+/* --- Mood List Item Fonts --- */
+.mood-item-content {
+    flex-grow: 1;
+    margin-right: 15px;
+    text-align: left;
+}
+.mood-title {
+    font-size: 1.3em;
+    /* font-weight: bold; */ /* Poppins might not need bold */
+    margin-bottom: 8px;
+    color: #333;
+    display: flex;
+    align-items: center;
+    font-family: 'Poppins', sans-serif; /* Poppins for title */
+    font-weight: 600; /* Semi-bold */
+}
+.mood-emoji {
+    font-size: 1.5em;
+    margin-right: 10px;
+    line-height: 1;
+}
+.mood-text {
+    margin-bottom: 10px;
+    color: #555273; /* Match description color */
+    line-height: 1.6;
+    white-space: pre-wrap;
+    font-family: 'Lora', serif; /* Lora for content */
+}
+.mood-meta {
+    font-size: 0.85em;
+    color: #6A5ACD; /* Match tagline color for meta */
+    margin-top: 10px;
+    font-family: 'Poppins', sans-serif; /* Poppins for meta */
+    font-weight: 400;
+}
+.mood-meta time {
+    margin-right: 5px;
+}
 
-/* Mood List Styling */
+
+/* --- KEEP Mood List, Emotion Colors, Error Handling, General List --- */
 .mood-list {
     list-style: none;
     padding: 0;
     margin-top: 20px;
 }
-
+/* ... rest of mood-item styles ... */
+/* ... emotion color classes ... */
+/* ... error handling classes ... */
+/* ... ul, li resets ... */
 .mood-item {
     border: 1px solid #ddd;
     border-radius: 8px;
@@ -233,45 +454,6 @@ textarea {
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
 
-.mood-item-content {
-    flex-grow: 1;
-    margin-right: 15px;
-    text-align: left;
-}
-
-.mood-title {
-    font-size: 1.3em;
-    font-weight: bold;
-    margin-bottom: 8px;
-    color: #333;
-    display: flex;
-    align-items: center;
-}
-
-.mood-emoji {
-    font-size: 1.5em;
-    margin-right: 10px; /* More space after emoji */
-    line-height: 1;
-}
-
-.mood-text {
-    margin-bottom: 10px;
-    color: #555;
-    line-height: 1.5;
-    white-space: pre-wrap; /* Respect line breaks in content */
-}
-
-.mood-meta {
-    font-size: 0.85em;
-    color: #777;
-    margin-top: 10px; /* Space above meta info */
-}
-
-.mood-meta time {
-    margin-right: 5px;
-}
-
-
 /* Emotion Color Classes - Apply border color and light background */
 .emotion-happy   { border-left-color: #FFD700; background-color: hsl(54, 100%, 95%); } /* Gold/LightYellow */
 .emotion-sad     { border-left-color: #6495ED; background-color: hsl(215, 90%, 95%); } /* CornflowerBlue/LightCyan */
@@ -290,6 +472,7 @@ textarea {
     display: block; /* Ensure it's on its own line */
     margin-top: 5px; /* Space above error message */
     font-weight: normal;
+     font-family: 'Poppins', sans-serif; /* Consistent font for errors */
 }
 
 /* Invalid state for form inputs */

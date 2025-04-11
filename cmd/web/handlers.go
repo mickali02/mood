@@ -20,8 +20,8 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 	// return
 
 	templateData := NewTemplateData()
-	templateData.Title = "Mood Tracker Home"
-	templateData.HeaderText = "Welcome!"
+	templateData.Title = "Feel Flow"
+	templateData.HeaderText = "Welcome To Feel Flow!"
 	err := app.render(w, http.StatusOK, "home.tmpl", templateData) // Assumes home.tmpl exists
 	if err != nil {
 		app.serverError(w, r, err)
