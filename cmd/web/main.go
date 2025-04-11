@@ -10,9 +10,8 @@ import (
 	"os"
 	"time"
 
-	_ "github.com/lib/pq" // PostgreSQL driver side effect import
+	_ "github.com/lib/pq"
 
-	// Adjust import path to your project's module structure
 	"github.com/mickali02/mood/internal/data"
 )
 
@@ -20,9 +19,8 @@ import (
 type application struct {
 	logger        *slog.Logger
 	addr          string
-	moods         *data.MoodModel // Holds the mood data access methods
+	moods         *data.MoodModel
 	templateCache map[string]*template.Template
-	// bufferPool sync.Pool // Add this if using the render.go with sync.Pool
 }
 
 func main() {
@@ -45,7 +43,7 @@ func main() {
 		logger.Error("failed to connect to database", slog.String("error", err.Error()))
 		os.Exit(1)
 	}
-	defer db.Close() // Ensure connection pool is closed on exit
+	defer db.Close()
 	logger.Info("database connection pool established")
 
 	// --- Template Cache ---
@@ -62,7 +60,6 @@ func main() {
 		addr:          *addr,
 		moods:         &data.MoodModel{DB: db}, // Inject DB into MoodModel
 		templateCache: templateCache,
-		// bufferPool: bufferPool, // Initialize if using sync.Pool in render.go
 	}
 
 	// --- Start Server ---

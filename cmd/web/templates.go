@@ -52,19 +52,6 @@ func newTemplateCache() (map[string]*template.Template, error) {
 			return nil, err
 		}
 
-		// --- Optional: Add Layouts/Partials ---
-		// If you had base layouts or partial templates, parse them here.
-		// Example:
-		// ts, err = ts.ParseGlob("./ui/html/layouts/*.layout.tmpl")
-		// if err != nil {
-		//     return nil, err
-		// }
-		// ts, err = ts.ParseGlob("./ui/html/partials/*.partial.tmpl")
-		// if err != nil {
-		//     return nil, err
-		// }
-		// --- End Optional ---
-
 		// Add the parsed template set to the cache.
 		cache[fileName] = ts
 	}

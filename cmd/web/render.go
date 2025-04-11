@@ -5,16 +5,7 @@ import (
 	"bytes"
 	"fmt"
 	"net/http"
-	// "sync" // Uncomment if using sync.Pool
 )
-
-/* // Uncomment if using sync.Pool for buffer optimization
-var bufferPool = sync.Pool{
-	New: func() any {
-		return new(bytes.Buffer) // Use new() for pointer
-	},
-}
-*/
 
 // render retrieves a template, executes it, and writes to the response.
 func (app *application) render(w http.ResponseWriter, status int, page string, data *TemplateData) error {
@@ -26,14 +17,10 @@ func (app *application) render(w http.ResponseWriter, status int, page string, d
 		// Log the specific error clearly
 		app.logger.Error("template lookup failed", "template", page, "error", err.Error())
 		// It's better to call serverError here to handle the response
-		// Or return the error and let the caller handle it. Returning is cleaner.
 		return err
 	}
 
 	// --- Buffer Initialization ---
-	// buf := bufferPool.Get().(*bytes.Buffer) // Uncomment if using sync.Pool
-	// buf.Reset() // Uncomment if using sync.Pool
-	// defer bufferPool.Put(buf) // Uncomment if using sync.Pool
 
 	// Use a simple buffer if not using sync.Pool
 	buf := new(bytes.Buffer) // More idiomatic way to get a pointer to a buffer
@@ -45,7 +32,7 @@ func (app *application) render(w http.ResponseWriter, status int, page string, d
 	if err != nil {
 		err = fmt.Errorf("failed to execute template %q: %w", page, err)
 		app.logger.Error("template execution failed", "template", page, "error", err.Error())
-		return err // Return error for caller to handle
+		return err
 	}
 
 	// --- Response Writing ---
@@ -56,10 +43,8 @@ func (app *application) render(w http.ResponseWriter, status int, page string, d
 	// Write the contents of the buffer to the http.ResponseWriter.
 	_, err = buf.WriteTo(w)
 	if err != nil {
-		// It's hard to recover if writing to the response fails. Log it.
 		err = fmt.Errorf("failed to write template buffer to response: %w", err)
 		app.logger.Error("response writing failed", "error", err.Error())
-		// Return error, though the response might be partially written.
 		return err
 	}
 

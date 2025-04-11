@@ -8,16 +8,12 @@ import (
 	"net/http"
 	"strconv"
 
-	// Adjust import paths if your module name is different
 	"github.com/mickali02/mood/internal/data"
 	"github.com/mickali02/mood/internal/validator"
 )
 
 // --- Home Handler ---
 func (app *application) home(w http.ResponseWriter, r *http.Request) {
-	// Optional: Redirect to moods list or render a dedicated home page
-	// http.Redirect(w, r, "/moods", http.StatusSeeOther)
-	// return
 
 	templateData := NewTemplateData()
 	templateData.Title = "Feel Flow"
@@ -112,7 +108,6 @@ func (app *application) createMood(w http.ResponseWriter, r *http.Request) {
 	}
 
 	app.logger.Info("Mood entry created successfully", "id", mood.ID)
-	// Optional: Add flash message here for success
 	http.Redirect(w, r, "/moods", http.StatusSeeOther)
 }
 
@@ -121,7 +116,7 @@ func (app *application) showEditMoodForm(w http.ResponseWriter, r *http.Request)
 	id, err := strconv.ParseInt(r.PathValue("id"), 10, 64)
 	if err != nil || id < 1 {
 		app.logger.Error("Invalid ID parameter for mood edit form", "id", r.PathValue("id"), "error", err)
-		app.notFound(w) // Use notFound helper
+		app.notFound(w)
 		return
 	}
 
@@ -139,7 +134,7 @@ func (app *application) showEditMoodForm(w http.ResponseWriter, r *http.Request)
 	templateData := NewTemplateData()
 	templateData.Title = fmt.Sprintf("Edit Mood Entry #%d", mood.ID)
 	templateData.HeaderText = "Update Your Mood Entry"
-	templateData.Mood = mood // Pass the fetched mood to the template
+	templateData.Mood = mood
 	// Pre-populate FormData from the fetched mood in case of validation errors on Update
 	templateData.FormData = map[string]string{
 		"title":   mood.Title,
@@ -177,10 +172,6 @@ func (app *application) updateMood(w http.ResponseWriter, r *http.Request) {
 	title := r.PostForm.Get("title")
 	content := r.PostForm.Get("content")
 	emotion := r.PostForm.Get("emotion")
-
-	// It's often good practice to fetch the original record to ensure it exists
-	// and maybe for comparison or logging, but Update handles ErrNoRows too.
-	// For simplicity, we proceed directly to validation & update.
 
 	mood := &data.Mood{
 		ID:      id, // Crucial: Set the ID for the update
@@ -227,7 +218,6 @@ func (app *application) updateMood(w http.ResponseWriter, r *http.Request) {
 	}
 
 	app.logger.Info("Mood entry updated successfully", "id", mood.ID)
-	// Optional: Add flash message here for success
 	http.Redirect(w, r, "/moods", http.StatusSeeOther)
 }
 
@@ -258,7 +248,6 @@ func (app *application) deleteMood(w http.ResponseWriter, r *http.Request) {
 		}
 	} else {
 		app.logger.Info("Mood entry deleted successfully", "id", id)
-		// Optional: Add flash message here for success
 	}
 
 	http.Redirect(w, r, "/moods", http.StatusSeeOther)

@@ -7,7 +7,6 @@ import (
 	"errors"
 	"time"
 
-	// Adjust import path if your module name is different
 	"github.com/mickali02/mood/internal/validator"
 )
 
@@ -18,10 +17,10 @@ var ValidEmotions = []string{"Happy", "Sad", "Angry", "Anxious", "Calm", "Excite
 type Mood struct {
 	ID        int64     `json:"id"`
 	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"` // Track last edit time
+	UpdatedAt time.Time `json:"updated_at"`
 	Title     string    `json:"title"`
 	Content   string    `json:"content"`
-	Emotion   string    `json:"emotion"` // Stores the selected emotion string
+	Emotion   string    `json:"emotion"`
 }
 
 // ValidateMood checks the mood struct fields against validation rules.
@@ -33,7 +32,7 @@ func ValidateMood(v *validator.Validator, mood *Mood) {
 	v.Check(validator.MaxLength(mood.Content, 1000), "content", "must not be more than 1000 characters long")
 
 	v.Check(validator.NotBlank(mood.Emotion), "emotion", "must be selected")
-	v.Check(validator.PermittedValue(mood.Emotion, ValidEmotions...), "emotion", "is not a valid emotion") // Check if it's in our allowed list
+	v.Check(validator.PermittedValue(mood.Emotion, ValidEmotions...), "emotion", "is not a valid emotion")
 }
 
 // MoodModel struct provides methods for interacting with the mood data.
@@ -55,7 +54,6 @@ func (m *MoodModel) Insert(mood *Mood) error {
 
 	err := m.DB.QueryRowContext(ctx, query, args...).Scan(&mood.ID, &mood.CreatedAt, &mood.UpdatedAt)
 	if err != nil {
-		// Consider checking for specific DB errors here if needed
 		return err
 	}
 	return nil
@@ -64,7 +62,7 @@ func (m *MoodModel) Insert(mood *Mood) error {
 // Get retrieves a specific mood entry by its ID.
 func (m *MoodModel) Get(id int64) (*Mood, error) {
 	if id < 1 {
-		return nil, sql.ErrNoRows // Or a custom error like ErrRecordNotFound
+		return nil, sql.ErrNoRows
 	}
 
 	query := `
@@ -87,9 +85,9 @@ func (m *MoodModel) Get(id int64) (*Mood, error) {
 
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return nil, sql.ErrNoRows // Consistent error for not found
+			return nil, sql.ErrNoRows
 		}
-		return nil, err // Other database error
+		return nil, err
 	}
 
 	return &mood, nil
@@ -97,16 +95,15 @@ func (m *MoodModel) Get(id int64) (*Mood, error) {
 
 // Update modifies an existing mood entry in the database.
 func (m *MoodModel) Update(mood *Mood) error {
-	// Validation should happen in the handler before calling Update
 	if mood.ID < 1 {
-		return sql.ErrNoRows // Cannot update non-existent record
+		return sql.ErrNoRows
 	}
 
 	query := `
         UPDATE moods
         SET title = $1, content = $2, emotion = $3, updated_at = NOW()
         WHERE id = $4
-        RETURNING updated_at` // Return the new timestamp
+        RETURNING updated_at`
 
 	args := []any{
 		mood.Title,
@@ -121,7 +118,7 @@ func (m *MoodModel) Update(mood *Mood) error {
 	err := m.DB.QueryRowContext(ctx, query, args...).Scan(&mood.UpdatedAt)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return sql.ErrNoRows // Record with that ID didn't exist
+			return sql.ErrNoRows
 		}
 		return err
 	}
@@ -131,7 +128,7 @@ func (m *MoodModel) Update(mood *Mood) error {
 // Delete removes a specific mood entry from the database.
 func (m *MoodModel) Delete(id int64) error {
 	if id < 1 {
-		return sql.ErrNoRows // Or a custom error
+		return sql.ErrNoRows
 	}
 
 	query := `

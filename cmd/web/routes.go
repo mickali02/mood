@@ -7,12 +7,10 @@ import (
 
 // routes defines and returns the HTTP request multiplexer (router).
 func (app *application) routes() http.Handler {
-	mux := http.NewServeMux() // Using standard library mux
-
+	mux := http.NewServeMux()
 	// --- Static Files ---
 	// Serve files from the "./ui/static/" directory.
 	fileServer := http.FileServer(http.Dir("./ui/static/"))
-	// Route requests for /static/ paths, stripping the /static prefix.
 	mux.Handle("GET /static/", http.StripPrefix("/static", fileServer))
 
 	// --- Application Routes ---
@@ -30,5 +28,5 @@ func (app *application) routes() http.Handler {
 
 	// --- Middleware ---
 	// Wrap the mux with middleware. Logging first, then others if needed.
-	return app.loggingMiddleware(mux) // Defined in middleware.go
+	return app.loggingMiddleware(mux)
 }
