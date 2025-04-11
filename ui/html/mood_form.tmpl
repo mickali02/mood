@@ -1,0 +1,68 @@
+<!-- mood/ui/html/mood_form.tmpl -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>{{.Title}}</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Short+Stack&display=swap" rel="stylesheet">
+  </head>
+  <body>
+    <div class="form-container">
+      <h1>{{.HeaderText}}</h1>
+      <!-- Form submits via POST to /mood/new -->
+      <form action="/mood/new" method="POST" novalidate> <!-- Use novalidate to rely on server-side validation -->
+        <!-- Title Field -->
+        <div class="form-group">
+          <label for="title">Title:</label>
+          <!-- Use 'index .FormData "title"' to repopulate field on error -->
+          <input type="text" id="title" name="title" value="{{index .FormData "title"}}" required class="{{if index .FormErrors "title"}}invalid{{end}}">
+          <!-- Display validation error for title -->
+          {{with index .FormErrors "title"}}
+            <span class="error-message">{{.}}</span>
+          {{end}}
+        </div>
+
+        <!-- Emotion Dropdown -->
+        <div class="form-group">
+          <label for="emotion">How are you feeling?</label>
+          <select id="emotion" name="emotion" required class="{{if index .FormErrors "emotion"}}invalid{{end}}">
+              <!-- Default disabled option -->
+              <option value="" disabled {{if not (index .FormData "emotion")}}selected{{end}}>-- Select Emotion --</option>
+              <!-- Loop through available emotions passed from handler -->
+              {{range .Emotions}}
+                  <!-- Mark option as selected if it matches repopulated form data -->
+                  <option value="{{.Name}}" {{if eq (index $.FormData "emotion") .Name}}selected{{end}}>
+                      {{.Emoji}} {{.Name}} <!-- Show emoji and name -->
+                  </option>
+              {{end}}
+          </select>
+          <!-- Display validation error for emotion -->
+          {{with index .FormErrors "emotion"}}
+            <span class="error-message">{{.}}</span>
+          {{end}}
+        </div>
+
+        <!-- Content Field -->
+        <div class="form-group">
+          <label for="content">Details:</label>
+          <!-- Use 'index .FormData "content"' to repopulate field on error -->
+          <textarea id="content" name="content" required class="{{if index .FormErrors "content"}}invalid{{end}}">{{index .FormData "content"}}</textarea>
+          <!-- Display validation error for content -->
+          {{with index .FormErrors "content"}}
+            <span class="error-message">{{.}}</span>
+          {{end}}
+        </div>
+
+        <!-- Buttons -->
+        <div class="button-group">
+          <button type="submit" class="btn">Save Mood</button>
+          <a href="/moods" class="btn cancel-btn">Cancel</a> <!-- Link back to the list page -->
+        </div>
+      </form>
+    </div>
+  </body>
+</html>

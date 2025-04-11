@@ -1,0 +1,24 @@
+<!-- ui/html/home.tmpl -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{.Title}}</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Short+Stack&display=swap" rel="stylesheet">
+</head>
+<body class="home-page"> <!-- Add class if you have specific home page styles -->
+    <div class="container">
+        <h1>{{.HeaderText}}</h1>
+        <p>Track your daily moods easily.</p>
+        <div class="button-group">
+            <a href="/moods" class="btn">View Moods</a>
+            <a href="/mood/new" class="btn">Log New Mood</a>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,68 @@
+<!-- mood/ui/html/mood_edit_form.tmpl -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>{{.Title}}</title> <!-- Title will likely include the ID -->
+    <link rel="stylesheet" href="/static/styles.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Short+Stack&display=swap" rel="stylesheet">
+  </head>
+  <body>
+    <div class="form-container">
+      <h1>{{.HeaderText}}</h1> <!-- Header text for editing -->
+
+      <!-- IMPORTANT: Form action includes the mood ID for the update handler -->
+      <form action="/mood/edit/{{.Mood.ID}}" method="POST" novalidate>
+
+        <!-- Title Field -->
+        <div class="form-group">
+          <label for="title">Title:</label>
+          <!-- Pre-fill value from the existing Mood object -->
+          <!-- Note: We use .Mood.Title directly for initial load. FormData is mainly for errors. -->
+          <input type="text" id="title" name="title" value="{{with .FormData.title}}{{.}}{{else}}{{.Mood.Title}}{{end}}" required class="{{if index .FormErrors "title"}}invalid{{end}}">
+          {{with index .FormErrors "title"}}
+            <span class="error-message">{{.}}</span>
+          {{end}}
+        </div>
+
+        <!-- Emotion Dropdown -->
+        <div class="form-group">
+          <label for="emotion">How are you feeling?</label>
+          <select id="emotion" name="emotion" required class="{{if index .FormErrors "emotion"}}invalid{{end}}">
+              <option value="" disabled {{if not .Mood.Emotion}}selected{{end}}>-- Select Emotion --</option>
+              {{ $selectedEmotion := "" }}
+              {{ with .FormData.emotion }}{{ $selectedEmotion = . }}{{ else }}{{ $selectedEmotion = $.Mood.Emotion }}{{ end }}
+              {{range .Emotions}}
+                  <!-- Check against the effective emotion (from FormData on error, or original Mood) -->
+                  <option value="{{.Name}}" {{if eq $selectedEmotion .Name}}selected{{end}}>
+                      {{.Emoji}} {{.Name}}
+                  </option>
+              {{end}}
+          </select>
+          {{with index .FormErrors "emotion"}}
+            <span class="error-message">{{.}}</span>
+          {{end}}
+        </div>
+
+        <!-- Content Field -->
+        <div class="form-group">
+          <label for="content">Details:</label>
+          <!-- Pre-fill content from the existing Mood object -->
+          <textarea id="content" name="content" required class="{{if index .FormErrors "content"}}invalid{{end}}">{{with .FormData.content}}{{.}}{{else}}{{.Mood.Content | html}}{{end}}</textarea>
+          {{with index .FormErrors "content"}}
+            <span class="error-message">{{.}}</span>
+          {{end}}
+        </div>
+
+        <!-- Buttons -->
+        <div class="button-group">
+          <button type="submit" class="btn">Update Mood</button> <!-- Button text indicates update -->
+          <a href="/moods" class="btn cancel-btn">Cancel</a> <!-- Link back to list -->
+        </div>
+      </form>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,314 @@
+/* mood/ui/static/styles.css */
+
+/* Reset and Base Styles */
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Short Stack', cursive;
+    /* --- CHANGE THIS FILENAME if your background image is different --- */
+    background: #e0f0ff url("/static/resources/nature.png") no-repeat center center; /* Light blue fallback */
+    /* --- END CHANGE --- */
+    background-size: contain;
+    background-attachment: fixed;
+    color: #333; /* Default text color */
+    line-height: 1.6;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    width: 100%;
+    overflow-x: hidden; /* Prevent horizontal scroll */
+}
+
+/* Typography */
+h1, .page-header {
+    color: #4e83c0; /* Primary blue color */
+    font-size: 2.8rem;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+p {
+    margin-bottom: 1em;
+    color: #444; /* Slightly darker text for paragraphs */
+    font-size: 1.1rem; /* Slightly larger paragraph text */
+}
+
+/* Layout Containers */
+.home-page { /* Specific styles for the home page body */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* Center content vertically */
+    text-align: center;
+}
+
+.container { /* Main content container for list pages */
+    width: 90%; /* Wider container */
+    max-width: 900px; /* Increased max width */
+    margin: 30px auto; /* More margin */
+    padding: 30px; /* More padding */
+    background-color: rgba(255, 255, 255, 0.85); /* Slightly more opaque background */
+    border-radius: 12px; /* More rounded corners */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15); /* Slightly stronger shadow */
+    position: relative; /* For absolute positioning of back arrow */
+    text-align: center; /* Center buttons like "Add New" */
+}
+
+.form-container { /* Container for forms */
+    background-color: rgba(255, 255, 255, 0.95); /* More opaque for forms */
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    width: 100%;
+    max-width: 600px;
+    margin: 40px auto; /* More vertical margin for forms */
+}
+
+/* Header and Navigation */
+.page-header { /* Header specifically on list/form pages */
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #4e83c0;
+    font-family: 'Short Stack', cursive;
+    text-align: center;
+    margin: 20px 0 30px 0; /* Adjusted margins */
+}
+
+.back-arrow { /* Back arrow link positioning */
+    position: absolute;
+    left: 30px; /* Adjusted position */
+    top: 30px;  /* Adjusted position */
+    z-index: 10;
+}
+
+.back-arrow-img { /* Back arrow image styling */
+    width: 70px; /* Slightly smaller arrow */
+    height: auto;
+    display: inline-block;
+    vertical-align: middle;
+    transition: transform 0.2s ease-in-out;
+}
+.back-arrow-img:hover {
+    transform: scale(1.1); /* Slight zoom on hover */
+}
+
+/* Form Elements */
+.form-group {
+    margin-bottom: 20px; /* More space between form groups */
+    text-align: left; /* Align labels left */
+}
+
+.form-group label {
+    display: block; /* Label on its own line */
+    margin-bottom: 8px; /* Space below label */
+    font-weight: bold;
+    color: #333;
+}
+
+.form-container input[type="text"],
+.form-container input[type="email"], /* Kept just in case */
+.form-container textarea,
+.form-container select { /* Style select dropdowns too */
+    width: 100%;
+    padding: 12px; /* More padding */
+    margin-bottom: 5px; /* Reduced margin below input */
+    border: 1px solid #ccc; /* Lighter border */
+    border-radius: 6px; /* More rounded inputs */
+    box-sizing: border-box;
+    font-family: 'Short Stack', cursive; /* Ensure form inputs use the font */
+    font-size: 1rem;
+    transition: border-color 0.3s;
+}
+
+.form-container input[type="text"]:focus,
+.form-container input[type="email"]:focus,
+.form-container textarea:focus,
+.form-container select:focus {
+    border-color: #4e83c0; /* Highlight focus */
+    outline: none; /* Remove default browser outline */
+}
+
+textarea {
+    min-height: 120px; /* Ensure textarea has a decent height */
+    resize: vertical; /* Allow vertical resize */
+}
+
+/* Buttons */
+.btn, .cancel-btn {
+    font-family: 'Short Stack', cursive;
+    display: inline-block;
+    padding: 12px 25px; /* Slightly larger buttons */
+    background-color: #4fb9e3; /* Button color */
+    color: white;
+    text-decoration: none;
+    border-radius: 8px; /* More rounded buttons */
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.1s;
+    font-size: 1.2rem; /* Adjusted font size */
+    font-weight: bold;
+    margin-top: 5px;
+    line-height: 1.4; /* Adjusted line height */
+    box-sizing: border-box;
+    text-align: center;
+}
+
+.btn:hover, .cancel-btn:hover {
+    background-color: #328fb4; /* Darker shade on hover */
+    transform: translateY(-1px); /* Slight lift on hover */
+}
+
+.btn:active, .cancel-btn:active {
+    transform: translateY(0px); /* Push down on click */
+}
+
+.cancel-btn {
+    background-color: #aaa; /* Grey cancel button */
+}
+.cancel-btn:hover {
+    background-color: #888;
+}
+
+.button-group { /* Container for multiple buttons */
+    display: flex;
+    justify-content: center;
+    gap: 20px; /* More space between buttons */
+    margin-top: 20px; /* Space above button group */
+    margin-bottom: 1em;
+}
+
+/* Specific button placements */
+.add-new-btn { /* "Add New" button on list pages */
+    display: block; /* Make it block level */
+    width: fit-content; /* Size to content */
+    margin: 0 auto 30px auto; /* Center horizontally, add bottom margin */
+}
+
+.edit-delete-buttons { /* Container for Edit/Delete buttons in list items */
+    white-space: nowrap; /* Prevent buttons from wrapping */
+    align-self: center; /* Vertically center buttons in flex/grid context */
+    text-align: right; /* Fallback alignment */
+}
+
+.edit-delete-buttons .btn { /* Edit/Delete button styling */
+    margin-left: 8px; /* Space between edit/delete */
+    padding: 6px 12px; /* Smaller padding */
+    font-size: 0.9rem; /* Smaller font size */
+    line-height: 1.3;
+}
+.edit-delete-buttons form {
+    display: inline-block; /* Keep form inline for delete button */
+    margin: 0;
+    padding: 0;
+}
+
+
+/* Mood List Styling */
+.mood-list {
+    list-style: none;
+    padding: 0;
+    margin-top: 20px;
+}
+
+.mood-item {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    padding: 15px 20px; /* Adjusted padding */
+    background-color: #fff;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    transition: box-shadow 0.2s ease-in-out, border-left-color 0.3s ease;
+    border-left-width: 6px; /* Thicker color bar */
+    border-left-style: solid;
+    border-left-color: transparent; /* Default */
+}
+
+.mood-item:hover {
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.mood-item-content {
+    flex-grow: 1;
+    margin-right: 15px;
+    text-align: left;
+}
+
+.mood-title {
+    font-size: 1.3em;
+    font-weight: bold;
+    margin-bottom: 8px;
+    color: #333;
+    display: flex;
+    align-items: center;
+}
+
+.mood-emoji {
+    font-size: 1.5em;
+    margin-right: 10px; /* More space after emoji */
+    line-height: 1;
+}
+
+.mood-text {
+    margin-bottom: 10px;
+    color: #555;
+    line-height: 1.5;
+    white-space: pre-wrap; /* Respect line breaks in content */
+}
+
+.mood-meta {
+    font-size: 0.85em;
+    color: #777;
+    margin-top: 10px; /* Space above meta info */
+}
+
+.mood-meta time {
+    margin-right: 5px;
+}
+
+
+/* Emotion Color Classes - Apply border color and light background */
+.emotion-happy   { border-left-color: #FFD700; background-color: hsl(54, 100%, 95%); } /* Gold/LightYellow */
+.emotion-sad     { border-left-color: #6495ED; background-color: hsl(215, 90%, 95%); } /* CornflowerBlue/LightCyan */
+.emotion-angry   { border-left-color: #DC143C; background-color: hsl(348, 100%, 95%); } /* Crimson/LavenderBlush */
+.emotion-anxious { border-left-color: #FF8C00; background-color: hsl(33, 100%, 95%); } /* DarkOrange/LightYellow */
+.emotion-calm    { border-left-color: #98FB98; background-color: hsl(120, 90%, 95%); } /* PaleGreen/Honeydew */
+.emotion-excited { border-left-color: #FF69B4; background-color: hsl(330, 100%, 95%); } /* HotPink/LavenderBlush */
+.emotion-neutral { border-left-color: #D3D3D3; background-color: hsl(0, 0%, 95%); } /* LightGray/WhiteSmoke */
+.emotion-unknown { border-left-color: #777777; background-color: hsl(0, 0%, 92%); } /* Gray */
+
+
+/* Error Handling */
+.error-message { /* Styling for validation error messages */
+    color: #d84949; /* Red color */
+    font-size: 0.9em;
+    display: block; /* Ensure it's on its own line */
+    margin-top: 5px; /* Space above error message */
+    font-weight: normal;
+}
+
+/* Invalid state for form inputs */
+input.invalid,
+textarea.invalid,
+select.invalid {
+    border-color: #d84949 !important; /* Force border color */
+    background-color: #fff0f0; /* Light red background */
+}
+
+/* General list styling (removing default bullets etc. from Tapir example) */
+ul {
+    list-style: none;
+    padding: 0;
+}
+
+li { /* Applied directly to mood-item now, so less specific rules needed */
+    background: none;
+    border: none;
+    padding: 0;
+    margin-bottom: 0; /* Margin is on .mood-item now */
+}
