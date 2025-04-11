@@ -7,6 +7,14 @@
     <link rel="stylesheet" href="/static/styles.css">
 </head>
 <body>
+    <div id="leaves">
+        <i></i><i></i><i></i><i></i><i></i>
+        <i></i><i></i><i></i><i></i><i></i>
+        <i></i><i></i><i></i><i></i><i></i>
+        <i></i><i></i><i></i><i></i><i></i>
+        <i></i><i></i><i></i><i></i><i></i>    
+        <i></i><i></i><i></i><i></i><i></i>
+    </div>
     <div class="container">
         <!-- Optional Back Arrow -->
         <a href="/" class="back-arrow" aria-label="Back to Home">
@@ -14,8 +22,6 @@
         </a>
 
         <div class="page-header">{{.HeaderText}}</div> <!-- Display header text -->
-        <a href="/mood/new" class="btn add-new-btn">Log New Mood</a> <!-- Button to add new entry -->
-
         {{if .Moods}} <!-- Check if there are any moods to display -->
         <ul class="mood-list">
         {{range .Moods}} <!-- Loop through each mood entry -->
@@ -54,7 +60,7 @@
             <!-- Message shown if no moods exist -->
             <p>No mood entries yet. <a href="/mood/new">Log your first mood!</a></p>
         {{end}} <!-- End of if .Moods -->
-
+        <a href="/mood/new" class="btn add-new-btn">Log New Mood</a> <!-- Button to add new entry -->
     </div>
 </body>
 </html>

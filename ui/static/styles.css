@@ -8,13 +8,12 @@
     padding: 0;
 }
 
-/* --- Body Font (Using Lora as suggested for Description/Body) --- */
+/* --- Body --- */
 body {
-    /* font-family: 'Short Stack', cursive; */ /* Remove old font */
-    font-family: 'Lora', serif; /* Apply Lora */
-    background-color: #e0f0ff; /* Fallback color */
-    color: #4A4A4A; /* Soft Charcoal for default text */
-    line-height: 1.7; /* Slightly increased line height for Lora */
+    font-family: 'Lora', serif; 
+    background-color: #e0f0ff; 
+    color: #4A4A4A;
+    line-height: 1.7; 
     display: flex;
     flex-direction: column;
     min-height: 100vh;
@@ -39,18 +38,16 @@ body::before {
 }
 
 /* Cherry blossom animations */
-/* --- KEEP ALL #leaves and @keyframes blossom-falling rules --- */
 #leaves {
     position: absolute;
     top: 0;
     width: 100%;
     height: 100%;
     overflow: hidden;
-    z-index: -1; /* Keep behind container but above body::before if needed*/
+    z-index: -1; 
     pointer-events: none;
   }
-  /* ... all #leaves i styles ... */
-  /* ... all @keyframes ... */
+
 #leaves i {
     display: inline-block;
     width: 20px;
@@ -157,48 +154,42 @@ body::before {
       opacity: 0;
     }
   }
-/* --- H1 Font & Color (for Home Page Header primarily) --- */
+/* --- H1 Font & Color (--- */
 h1 {
-    /* font-family: 'Sacramento', cursive; */ /* Remove old */
-    font-family: 'Parisienne', cursive; /* Apply Parisienne */
-    /* color: #9a6b99; */ /* Remove old */
-    color: #5E3A76; /* Apply Deep Lavender */
-    font-size: 4.5rem; /* Adjust size as needed */
+    font-family: 'Parisienne', cursive; 
+    color: #aa5baa; 
+    font-size: 4.5rem; 
     text-align: center;
-    margin-bottom: 15px; /* Adjusted margin */
-    font-weight: normal; /* Script fonts usually don't need bold */
-    line-height: 1.2; /* Adjust line height for script font */
+    margin-bottom: 15px; 
+    font-weight: normal; 
+    line-height: 1.2; 
 }
 
 /* --- Tagline Font & Color --- */
 .tagline {
-    /* font-family: 'Open Sans', sans-serif; */ /* Remove old */
-    font-family: 'Playfair Display', serif; /* Apply Playfair Display */
-    font-weight: 400; /* Regular weight */
-    font-size: 1.5rem; /* Adjust size */
-    /* color: #7d8cc4; */ /* Remove old */
-    color: #6A5ACD; /* Apply Medium Blue-Purple */
+    font-family: 'Playfair Display', serif; 
+    font-weight: 400; 
+    font-size: 1.5rem; 
+    color: #9964a3; 
     margin-bottom: 1.5rem;
-    letter-spacing: 0.5px; /* Optional: Add subtle letter spacing */
+    letter-spacing: 0.5px; /
 }
 
 /* --- Description Font & Color --- */
 .description {
-    /* font-family: 'Open Sans', sans-serif; */ /* Remove old */
-    font-family: 'Lora', serif; /* Apply Lora (consistent with body) */
+    font-family: 'Lora', serif; 
     font-weight: 400;
     font-size: 1.1rem;
-    /* color: #666; */ /* Remove old */
-    color: #555273; /* Apply Cool Gray */
+    color: #7b5c99; 
     max-width: 80%;
-    margin: 0 auto 2.5rem; /* Increased bottom margin */
-    line-height: 1.7; /* Consistent with body */
+    margin: 0 auto 2.5rem; 
+    line-height: 1.7; 
 }
 
 /* --- General Paragraphs (if not .tagline or .description) --- */
 p {
     margin-bottom: 1em;
-    color: #4A4A4A; /* Soft Charcoal for general paragraphs */
+    color: #4A4A4A; 
     font-size: 1.1rem;
 }
 
@@ -211,22 +202,22 @@ p {
     text-align: center;
 }
 
-.container {
+.container , .form-container{
     width: 90%;
-    max-width: 750px; /* Adjusted max-width for potentially longer text */
+    max-width: 750px; 
     margin: 30px auto;
-    padding: 50px 40px; /* Increased padding */
-    min-height: auto; /* Remove min-height or adjust */
-    background-color: rgba(255, 245, 250, 0.85); /* Slightly more opaque pink-white */
-    border-radius: 15px; /* More rounded */
+    padding: 50px 40px; 
+    min-height: auto; 
+    background-color: rgba(255, 245, 250, 0.85); 
+    border-radius: 15px; 
     box-shadow:
-        0 6px 15px rgba(0, 0, 0, 0.1), /* Adjusted shadow */
-        0 0 40px rgba(255, 182, 203, 0.25); /* Enhanced pink glow */
+        0 6px 15px rgba(0, 0, 0, 0.1), 
+        0 0 40px rgba(255, 182, 203, 0.25); 
     position: relative;
     text-align: center;
-    backdrop-filter: blur(2px); /* Slightly more blur */
-    border: 1px solid rgba(255, 192, 203, 0.4); /* Slightly stronger border */
-    z-index: 2; /* Ensure container is above blurred background but below petals */
+    backdrop-filter: blur(2px); 
+    border: 1px solid rgba(255, 192, 203, 0.4); 
+    z-index: 2; 
 }
 
 .container::before {
@@ -237,28 +228,34 @@ p {
     width: 100%;
     height: 100%;
     background: linear-gradient(135deg, rgba(255, 230, 240, 0.25) 0%, rgba(255, 182, 193, 0.15) 100%);
-    border-radius: 15px; /* Match container */
+    border-radius: 15px; 
     z-index: -1;
 }
 
 .form-container {
-    background-color: rgba(255, 255, 255, 0.95);
-    padding: 40px;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    width: 100%;
-    max-width: 600px;
-    margin: 40px auto;
+    width: 90%;
+    max-width: 750px; 
+    margin: 30px auto;
+    padding: 50px 40px; 
+    min-height: auto; 
+    background-color: rgba(255, 245, 250, 0.85); 
+    border-radius: 15px; 
+    box-shadow:
+        0 6px 15px rgba(0, 0, 0, 0.1), 
+        0 0 40px rgba(255, 182, 203, 0.25); 
+    position: relative;
+    text-align: left;
+    backdrop-filter: blur(2px); 
+    border: 1px solid rgba(255, 192, 203, 0.4); 
+    z-index: 2; 
 }
 
 /* --- Page Header for non-home pages --- */
 .page-header {
-    /* font-family: 'Short Stack', cursive; */ /* Remove old */
-    font-family: 'Poppins', sans-serif; /* Use Poppins for non-home headers */
+    font-family: 'Poppins', sans-serif; 
     font-size: 2.5rem;
-    font-weight: 600; /* Semi-bold Poppins */
-    /* color: #4e83c0; */ /* Remove old */
-    color: #5E3A76; /* Match H1 color */
+    font-weight: 600; 
+    color: #5E3A76; 
     text-align: center;
     margin: 20px 0 30px 0;
 }
@@ -285,10 +282,9 @@ p {
 .form-group label {
     display: block;
     margin-bottom: 8px;
-    /* font-weight: bold; */ /* Poppins might not need extra bold */
     color: #333;
-    font-family: 'Poppins', sans-serif; /* Use Poppins for labels */
-    font-weight: 500; /* Medium weight */
+    font-family: 'Poppins', sans-serif; 
+    font-weight: 500; 
 }
 
 .form-container input[type="text"],
@@ -301,18 +297,19 @@ p {
     border: 1px solid #ccc;
     border-radius: 6px;
     box-sizing: border-box;
-    /* font-family: 'Short Stack', cursive; */ /* Remove old */
-    font-family: 'Lora', serif; /* Use Lora for input text */
+    font-family: 'Lora', serif; 
     font-size: 1rem;
     transition: border-color 0.3s;
 }
+
 .form-container input[type="text"]:focus,
 .form-container input[type="email"]:focus,
 .form-container textarea:focus,
 .form-container select:focus {
-    border-color: #A074B5; /* Match button color for focus */
+    border-color: #A074B5; 
     outline: none;
 }
+
 textarea {
     min-height: 120px;
     resize: vertical;
@@ -320,45 +317,42 @@ textarea {
 
 /* --- Button Fonts & Colors --- */
 .btn, .cancel-btn {
-    /* font-family: 'Open Sans', sans-serif; */ /* Remove old */
-    font-family: 'Poppins', sans-serif; /* Apply Poppins */
+    font-family: 'Poppins', sans-serif; 
     display: inline-block;
-    padding: 12px 28px; /* Adjusted padding */
-    /* background-color: #aa7ea9; */ /* Remove old */
-    background-color: #A074B5; /* Apply Lavender */
-    color: #FFFFFF; /* Apply White text */
+    padding: 12px 28px; 
+    background-color: #A074B5; 
+    color: #FFFFFF; 
     text-decoration: none;
     border-radius: 8px;
     border: none;
     cursor: pointer;
-    transition: background-color 0.3s, transform 0.1s, box-shadow 0.2s; /* Added box-shadow transition */
-    font-size: 1.1rem; /* Slightly smaller button font */
-    font-weight: 500; /* Apply Medium Poppins */
+    transition: background-color 0.3s, transform 0.1s, box-shadow 0.2s; 
+    font-size: 1.1rem; 
+    font-weight: 500; 
     margin-top: 5px;
     line-height: 1.4;
     box-sizing: border-box;
     text-align: center;
-    text-transform: uppercase; /* Optional: Uppercase button text */
-    letter-spacing: 0.5px; /* Optional: Add letter spacing */
+    text-transform: uppercase; 
+    letter-spacing: 0.5px; 
 }
 
 .btn:hover, .cancel-btn:hover {
-    /* background-color: #9a6b99; */ /* Remove old */
-    background-color: #6B497D; /* Apply Dark Plum */
+    background-color: #6B497D; 
     transform: translateY(-2px);
-    box-shadow: 0 5px 10px rgba(0,0,0,0.2); /* Enhanced shadow on hover */
+    box-shadow: 0 5px 10px rgba(0,0,0,0.2); 
 }
 .btn:active, .cancel-btn:active {
     transform: translateY(0px);
-    box-shadow: 0 2px 5px rgba(0,0,0,0.15); /* Shadow when active */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.15); 
 }
 
 .cancel-btn {
-    background-color: #B0A8B9; /* Muted gray-purple cancel button */
-    color: #4A4A4A; /* Darker text for cancel */
+    background-color: #B0A8B9;
+    color: #4A4A4A; 
 }
 .cancel-btn:hover {
-    background-color: #8D809C; /* Darker shade on hover */
+    background-color: #8D809C; 
     color: #FFFFFF;
 }
 
@@ -408,16 +402,16 @@ textarea {
 }
 .mood-text {
     margin-bottom: 10px;
-    color: #555273; /* Match description color */
+    color: #555273; 
     line-height: 1.6;
     white-space: pre-wrap;
-    font-family: 'Lora', serif; /* Lora for content */
+    font-family: 'Lora', serif; 
 }
 .mood-meta {
     font-size: 0.85em;
-    color: #6A5ACD; /* Match tagline color for meta */
+    color: #6A5ACD;
     margin-top: 10px;
-    font-family: 'Poppins', sans-serif; /* Poppins for meta */
+    font-family: 'Poppins', sans-serif; 
     font-weight: 400;
 }
 .mood-meta time {
@@ -431,10 +425,7 @@ textarea {
     padding: 0;
     margin-top: 20px;
 }
-/* ... rest of mood-item styles ... */
-/* ... emotion color classes ... */
-/* ... error handling classes ... */
-/* ... ul, li resets ... */
+
 .mood-item {
     border: 1px solid #ddd;
     border-radius: 8px;
@@ -445,9 +436,9 @@ textarea {
     justify-content: space-between;
     align-items: flex-start;
     transition: box-shadow 0.2s ease-in-out, border-left-color 0.3s ease;
-    border-left-width: 6px; /* Thicker color bar */
+    border-left-width: 6px; 
     border-left-style: solid;
-    border-left-color: transparent; /* Default */
+    border-left-color: transparent; 
 }
 
 .mood-item:hover {
@@ -455,43 +446,42 @@ textarea {
 }
 
 /* Emotion Color Classes - Apply border color and light background */
-.emotion-happy   { border-left-color: #FFD700; background-color: hsl(54, 100%, 95%); } /* Gold/LightYellow */
-.emotion-sad     { border-left-color: #6495ED; background-color: hsl(215, 90%, 95%); } /* CornflowerBlue/LightCyan */
-.emotion-angry   { border-left-color: #DC143C; background-color: hsl(348, 100%, 95%); } /* Crimson/LavenderBlush */
-.emotion-anxious { border-left-color: #FF8C00; background-color: hsl(33, 100%, 95%); } /* DarkOrange/LightYellow */
-.emotion-calm    { border-left-color: #98FB98; background-color: hsl(120, 90%, 95%); } /* PaleGreen/Honeydew */
-.emotion-excited { border-left-color: #FF69B4; background-color: hsl(330, 100%, 95%); } /* HotPink/LavenderBlush */
-.emotion-neutral { border-left-color: #D3D3D3; background-color: hsl(0, 0%, 95%); } /* LightGray/WhiteSmoke */
-.emotion-unknown { border-left-color: #777777; background-color: hsl(0, 0%, 92%); } /* Gray */
+.emotion-happy   { border-left-color: #FFD700; background-color: hsl(54, 100%, 95%); } 
+.emotion-sad     { border-left-color: #6495ED; background-color: hsl(215, 90%, 95%); } 
+.emotion-angry   { border-left-color: #DC143C; background-color: hsl(348, 100%, 95%); } 
+.emotion-anxious { border-left-color: #FF8C00; background-color: hsl(33, 100%, 95%); } 
+.emotion-calm    { border-left-color: #98FB98; background-color: hsl(120, 90%, 95%); } 
+.emotion-excited { border-left-color: #FF69B4; background-color: hsl(330, 100%, 95%); } 
+.emotion-neutral { border-left-color: #D3D3D3; background-color: hsl(0, 0%, 95%); } 
+.emotion-unknown { border-left-color: #777777; background-color: hsl(0, 0%, 92%); } 
 
 
 /* Error Handling */
-.error-message { /* Styling for validation error messages */
-    color: #d84949; /* Red color */
+.error-message { 
+    color: #d84949; 
     font-size: 0.9em;
-    display: block; /* Ensure it's on its own line */
-    margin-top: 5px; /* Space above error message */
+    display: block; 
+    margin-top: 5px; 
     font-weight: normal;
-     font-family: 'Poppins', sans-serif; /* Consistent font for errors */
+     font-family: 'Poppins', sans-serif; 
 }
 
 /* Invalid state for form inputs */
 input.invalid,
 textarea.invalid,
 select.invalid {
-    border-color: #d84949 !important; /* Force border color */
-    background-color: #fff0f0; /* Light red background */
+    border-color: #d84949 !important; 
+    background-color: #fff0f0;
 }
 
-/* General list styling (removing default bullets etc. from Tapir example) */
 ul {
     list-style: none;
     padding: 0;
 }
 
-li { /* Applied directly to mood-item now, so less specific rules needed */
+li { 
     background: none;
     border: none;
     padding: 0;
-    margin-bottom: 0; /* Margin is on .mood-item now */
+    margin-bottom: 0; 
 }
