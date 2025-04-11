@@ -26,7 +26,3 @@ BEFORE UPDATE ON moods
 FOR EACH ROW
 EXECUTE FUNCTION update_updated_at_column();
 
--- Optional: Add some initial sample data if you want
--- INSERT INTO moods (title, content, emotion) VALUES
--- ('First Entry', 'Feeling pretty good today!', 'Happy'),
--- ('A Bit Down', 'Work was stressful.', 'Anxious');
