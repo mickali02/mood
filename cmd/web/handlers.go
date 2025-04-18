@@ -12,6 +12,20 @@ import (
 	"github.com/mickali02/mood/internal/validator"
 )
 
+// --- NEW Handler for the Dashboard Page ---
+func (app *application) showDashboardPage(w http.ResponseWriter, r *http.Request) {
+	templateData := NewTemplateData()
+	templateData.Title = "Your Dashboard"
+	// Later, you would fetch the actual username here
+	// For now, we can add it directly or modify TemplateData if needed.
+	// Let's assume the template handles the hardcoded name for simplicity now.
+
+	err := app.render(w, http.StatusOK, "dashboard.tmpl", templateData)
+	if err != nil {
+		app.serverError(w, r, err)
+	}
+}
+
 // --- NEW Handler for the Separate Landing Page ---
 func (app *application) showLandingPage(w http.ResponseWriter, r *http.Request) {
 	templateData := NewTemplateData()                  // Use your existing helper

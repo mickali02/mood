@@ -18,11 +18,10 @@ func (app *application) routes() http.Handler {
 	// This remains the default page when visiting "/"
 	mux.HandleFunc("GET /{$}", app.home) // Root path matches exactly
 
-	// === ADD Route for the NEW Separate Landing Page ===
-	mux.HandleFunc("GET /landing", app.showLandingPage) // New page at /landing
-
-	// === ADD Route for the NEW About Page ===
+	// === Landing, About, Dashboard ===
+	mux.HandleFunc("GET /landing", app.showLandingPage)
 	mux.HandleFunc("GET /about", app.showAboutPage)
+	mux.HandleFunc("GET /dashboard", app.showDashboardPage)
 
 	// === EXISTING MOOD ROUTES (Unchanged) ===
 	mux.HandleFunc("GET /moods", app.listMoods)
