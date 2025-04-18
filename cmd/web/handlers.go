@@ -12,6 +12,31 @@ import (
 	"github.com/mickali02/mood/internal/validator"
 )
 
+// --- NEW Handler for the Separate Landing Page ---
+func (app *application) showLandingPage(w http.ResponseWriter, r *http.Request) {
+	templateData := NewTemplateData()                  // Use your existing helper
+	templateData.Title = "Feel Flow - Special Welcome" // Set a distinct title
+
+	// Render the new landing.tmpl template
+	err := app.render(w, http.StatusOK, "landing.tmpl", templateData)
+	if err != nil {
+		app.serverError(w, r, err) // Use your existing serverError helper
+	}
+}
+
+// --- NEW Handler for the About Page ---
+func (app *application) showAboutPage(w http.ResponseWriter, r *http.Request) {
+	templateData := NewTemplateData() // Use your existing helper
+	templateData.Title = "About Feel Flow"
+	// No other specific data needed for a static about page usually
+
+	// Render the about.tmpl template
+	err := app.render(w, http.StatusOK, "about.tmpl", templateData)
+	if err != nil {
+		app.serverError(w, r, err) // Use your existing serverError helper
+	}
+}
+
 // --- Home Handler ---
 func (app *application) home(w http.ResponseWriter, r *http.Request) {
 
