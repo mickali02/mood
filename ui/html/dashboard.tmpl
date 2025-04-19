@@ -6,13 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="/static/styles.css">
 </head>
 <body class="dashboard-page">
     <!-- Animated Stars Background -->
-    <div class="stars-container" id="stars-container">
-        <!-- Stars will be added via JavaScript -->
-    </div>
+    <div class="stars-container" id="stars-container"></div>
     
     <!-- Decorative Elements -->
     <div class="moon"></div>
@@ -25,38 +24,33 @@
                 <ul>
                     <li>
                         <a href="/landing" data-title="Home">
-                            <img src="/static/resources/icons/home.png" alt="Home" class="nav-icon">
+                            <i class="bi bi-house-fill nav-icon"></i>
                         </a>
                     </li>
                     <li>
                         <a href="/mood/new" data-title="Add New Entry">
-                             <img src="/static/resources/icons/add.png" alt="Add Entry" class="nav-icon">
+                            <i class="bi bi-plus-circle-fill nav-icon"></i>
                         </a>
                     </li>
                     <li>
-                        <a href="/moods" data-title="View Moods">
-                            <img src="/static/resources/icons/list.png" alt="View Moods" class="nav-icon">
-                        </a>
-                    </li>
-                     <li>
                         <a href="#" data-title="Search">
-                            <img src="/static/resources/icons/search.png" alt="Search" class="nav-icon">
+                            <i class="bi bi-search nav-icon"></i>
                         </a>
                     </li>
                     <li>
                         <a href="#" data-title="Mood Stats">
-                             <img src="/static/resources/icons/stats.png" alt="Stats" class="nav-icon">
+                            <i class="bi bi-bar-chart-fill nav-icon"></i>
                         </a>
                     </li>
-                    <li class="nav-separator"></li> <!-- Separator -->
-                     <li>
+                    <li class="nav-separator"></li>
+                    <li>
                         <a href="#" data-title="Profile">
-                            <img src="/static/resources/icons/profile.png" alt="Profile" class="nav-icon">
+                            <i class="bi bi-person-circle nav-icon"></i>
                         </a>
                     </li>
                     <li>
                         <a href="#" data-title="Logout">
-                            <img src="/static/resources/icons/logout.png" alt="Logout" class="nav-icon">
+                            <i class="bi bi-box-arrow-right nav-icon"></i>
                         </a>
                     </li>
                 </ul>
@@ -74,35 +68,5 @@
             </section>
         </main>
     </div>
-
-    <!-- JavaScript for creating animated stars -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const starsContainer = document.getElementById('stars-container');
-            const starCount = 50; // Number of stars to create
-            
-            // Create stars
-            for (let i = 0; i < starCount; i++) {
-                const star = document.createElement('div');
-                
-                // Random star properties
-                const size = Math.random() < 0.6 ? 'small' : (Math.random() < 0.9 ? 'medium' : 'large');
-                const top = Math.random() * 100;
-                const left = Math.random() * 100;
-                const duration = 3 + Math.random() * 7; // Between 3-10s
-                const delay = Math.random() * 5; // Between 0-5s
-                
-                // Set star styles
-                star.classList.add('star', size);
-                star.style.top = `${top}%`;
-                star.style.left = `${left}%`;
-                star.style.setProperty('--duration', `${duration}s`);
-                star.style.setProperty('--delay', `${delay}s`);
-                
-                // Add to container
-                starsContainer.appendChild(star);
-            }
-        });
-    </script>
 </body>
 </html>

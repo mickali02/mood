@@ -4,58 +4,62 @@
   <head>
     <meta charset="UTF-8">
     <title>{{.Title}}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css"> <!-- If needed for icons -->
     <link rel="stylesheet" href="/static/styles.css">
   </head>
-  <body>
-      <div id="leaves">
-        <i></i><i></i><i></i><i></i><i></i>
-        <i></i><i></i><i></i><i></i><i></i>
-        <i></i><i></i><i></i><i></i><i></i>
-        <i></i><i></i><i></i><i></i><i></i>
-        <i></i><i></i><i></i><i></i><i></i>    
-        <i></i><i></i><i></i><i></i><i></i>
-    </div>
-    <div class="form-container">
+  <body class="mood-form-page"> <!-- Add specific body class -->
+    <!-- Removed #leaves div -->
+    <!-- Optional: Add starry background elements if desired via HTML/JS, or rely on CSS background -->
+
+    <div class="form-container"> <!-- This container will get new styles -->
       <h1>{{.HeaderText}}</h1>
       <!-- Form submits via POST to /mood/new -->
       <form action="/mood/new" method="POST" novalidate> <!-- Use novalidate to rely on server-side validation -->
+
         <!-- Title Field -->
         <div class="form-group">
           <label for="title">Title:</label>
-          <!-- Use 'index .FormData "title"' to repopulate field on error -->
-          <input type="text" id="title" name="title" value="{{index .FormData "title"}}" required class="{{if index .FormErrors "title"}}invalid{{end}}">
-          <!-- Display validation error for title -->
+          <input type="text" id="title" name="title" value="{{index .FormData "title"}}" required class="{{if index .FormErrors "title"}}invalid{{end}}" placeholder="Give your entry a title...">
           {{with index .FormErrors "title"}}
             <span class="error-message">{{.}}</span>
           {{end}}
         </div>
 
-        <!-- Emotion Dropdown -->
+        <!-- NEW Emotion Selector -->
         <div class="form-group">
-          <label for="emotion">How are you feeling?</label>
-          <select id="emotion" name="emotion" required class="{{if index .FormErrors "emotion"}}invalid{{end}}">
-              <!-- Default disabled option -->
-              <option value="" disabled {{if not (index .FormData "emotion")}}selected{{end}}>-- Select Emotion --</option>
-              <!-- Loop through available emotions passed from handler -->
+          <label>How are you feeling?</label> <!-- Label for the group -->
+           {{with index .FormErrors "emotion"}}
+             <span class="error-message emotion-group-error">{{.}}</span> <!-- Error for the whole group -->
+           {{end}}
+          <div class="emotion-selector {{if index .FormErrors "emotion"}}has-error{{end}}">
+              {{ $selectedEmotion := index .FormData "emotion" }} <!-- Get potentially selected emotion -->
               {{range .Emotions}}
-                  <!-- Mark option as selected if it matches repopulated form data -->
-                  <option value="{{.Name}}" {{if eq (index $.FormData "emotion") .Name}}selected{{end}}>
-                      {{.Emoji}} {{.Name}} <!-- Show emoji and name -->
-                  </option>
+                <div class="emotion-option-wrapper">
+                    <!-- Hidden radio button holds the value -->
+                    <input
+                        type="radio"
+                        id="emotion-{{.Name}}"
+                        name="emotion"
+                        value="{{.Name}}"
+                        {{if eq $selectedEmotion .Name}}checked{{end}}
+                        required
+                        class="hidden-radio"
+                    >
+                    <!-- Label is the visible, clickable button -->
+                    <label for="emotion-{{.Name}}" class="emotion-option">
+                        <span class="emotion-option-emoji">{{.Emoji}}</span>
+                        <span class="emotion-option-name">{{.Name}}</span>
+                    </label>
+                </div>
               {{end}}
-          </select>
-          <!-- Display validation error for emotion -->
-          {{with index .FormErrors "emotion"}}
-            <span class="error-message">{{.}}</span>
-          {{end}}
+          </div>
         </div>
 
         <!-- Content Field -->
         <div class="form-group">
           <label for="content">Details:</label>
-          <!-- Use 'index .FormData "content"' to repopulate field on error -->
-          <textarea id="content" name="content" required class="{{if index .FormErrors "content"}}invalid{{end}}">{{index .FormData "content"}}</textarea>
-          <!-- Display validation error for content -->
+          <textarea id="content" name="content" required class="{{if index .FormErrors "content"}}invalid{{end}}" placeholder="Describe how you're feeling...">{{index .FormData "content"}}</textarea>
           {{with index .FormErrors "content"}}
             <span class="error-message">{{.}}</span>
           {{end}}
@@ -63,8 +67,10 @@
 
         <!-- Buttons -->
         <div class="button-group">
-          <button type="submit" class="btn">Save Mood</button>
-          <a href="/moods" class="btn cancel-btn">Cancel</a> <!-- Link back to the list page -->
+          <!-- Use dashboard button style if different -->
+          <button type="submit" class="btn dashboard-add-btn">Save Mood</button>
+           <!-- Update cancel button styling if needed -->
+          <a href="/moods" class="btn cancel-btn">Cancel</a>
         </div>
       </form>
     </div>
