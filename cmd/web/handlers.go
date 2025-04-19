@@ -12,15 +12,32 @@ import (
 	"github.com/mickali02/mood/internal/validator"
 )
 
-// --- NEW Handler for the Dashboard Page ---
+// --- Handler for the Dashboard Page (Revised Logic) ---
 func (app *application) showDashboardPage(w http.ResponseWriter, r *http.Request) {
+	// 1. Fetch all moods
+	moods, err := app.moods.GetAll() // GetAll sorts by newest first
+	if err != nil && !errors.Is(err, sql.ErrNoRows) {
+		app.logger.Error("Failed to fetch moods for dashboard", "error", err)
+		// Proceed, template will show empty state or potentially an error message later
+	}
+
+	// 2. Prepare template data
 	templateData := NewTemplateData()
 	templateData.Title = "Your Dashboard"
-	// Later, you would fetch the actual username here
-	// For now, we can add it directly or modify TemplateData if needed.
-	// Let's assume the template handles the hardcoded name for simplicity now.
 
-	err := app.render(w, http.StatusOK, "dashboard.tmpl", templateData)
+	// 3. Populate fields based on fetched moods
+	if len(moods) > 0 {
+		templateData.HasMoodEntries = true
+		templateData.Moods = moods // <-- PASS THE ENTIRE SLICE
+	} else {
+		templateData.HasMoodEntries = false
+		templateData.Moods = []*data.Mood{} // Pass an empty slice explicitly
+	}
+	// We no longer need LatestMood specifically for this approach
+	// templateData.LatestMood = nil // Can be removed if not used elsewhere
+
+	// 4. Render the template
+	err = app.render(w, http.StatusOK, "dashboard.tmpl", templateData)
 	if err != nil {
 		app.serverError(w, r, err)
 	}
@@ -122,6 +139,7 @@ func (app *application) createMood(w http.ResponseWriter, r *http.Request) {
 	data.ValidateMood(v, mood) // Use the mood validator from data package
 
 	if !v.ValidData() {
+		// ... (error handling - render mood_form again - remains the same) ...
 		templateData := NewTemplateData()
 		templateData.Title = "New Mood Entry (Error)"
 		templateData.HeaderText = "Log Your Mood"
@@ -140,6 +158,7 @@ func (app *application) createMood(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// --- Successful creation path ---
 	err = app.moods.Insert(mood)
 	if err != nil {
 		app.serverError(w, r, err)
@@ -147,7 +166,8 @@ func (app *application) createMood(w http.ResponseWriter, r *http.Request) {
 	}
 
 	app.logger.Info("Mood entry created successfully", "id", mood.ID)
-	http.Redirect(w, r, "/moods", http.StatusSeeOther)
+	// --- REDIRECT CHANGE HERE ---
+	http.Redirect(w, r, "/dashboard", http.StatusSeeOther) // <-- Target changed to /dashboard
 }
 
 // showEditMoodForm displays the form for editing an existing mood entry.
@@ -223,11 +243,17 @@ func (app *application) updateMood(w http.ResponseWriter, r *http.Request) {
 	data.ValidateMood(v, mood)
 
 	if !v.ValidData() {
+		// Fetch original mood again to pass to template for context if needed,
+		// although we are primarily showing the attempted (invalid) data back.
+		// Re-fetching might be redundant if template only needs mood.ID
+
 		templateData := NewTemplateData()
-		templateData.Title = fmt.Sprintf("Edit Mood Entry #%d (Error)", mood.ID)
+		templateData.Title = fmt.Sprintf("Edit Mood Entry #%d (Error)", id) // Use ID from path
 		templateData.HeaderText = "Update Your Mood Entry"
-		// Pass the *attempted* mood data back, not necessarily the original fetched one
-		templateData.Mood = mood
+		// Decide if you want to pass the original or attempted mood here.
+		// Passing attempted `mood` struct ensures user sees what they typed wrong.
+		// If originalMood was fetched, you could potentially pass it too, e.g., templateData.OriginalMood = originalMood
+		templateData.Mood = mood // Pass the struct with attempted data
 		templateData.FormErrors = v.Errors
 		// Repopulate FormData from the submitted (invalid) data
 		templateData.FormData = map[string]string{
@@ -235,17 +261,20 @@ func (app *application) updateMood(w http.ResponseWriter, r *http.Request) {
 			"content": content,
 			"emotion": emotion,
 		}
+		// If not passing attempted mood struct, ensure mood ID is available if template needs it.
+		// templateData.Mood = &data.Mood{ID: id} // Minimal mood if needed just for ID in form action
 
 		app.logger.Warn("Validation failed for mood update", "id", id, "errors", v.Errors)
 		// Re-render the EDIT form
-		err := app.render(w, http.StatusUnprocessableEntity, "mood_edit_form.tmpl", templateData)
-		if err != nil {
-			app.serverError(w, r, err)
+		renderErr := app.render(w, http.StatusUnprocessableEntity, "mood_edit_form.tmpl", templateData)
+		if renderErr != nil {
+			app.serverError(w, r, renderErr)
 		}
 		return
 	}
 
-	err = app.moods.Update(mood)
+	// --- Successful update path ---
+	err = app.moods.Update(mood) // mood struct already has ID, Title, Content, Emotion
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			app.logger.Warn("Mood entry not found for update", "id", id)
@@ -257,7 +286,8 @@ func (app *application) updateMood(w http.ResponseWriter, r *http.Request) {
 	}
 
 	app.logger.Info("Mood entry updated successfully", "id", mood.ID)
-	http.Redirect(w, r, "/moods", http.StatusSeeOther)
+	// --- REDIRECT CHANGE HERE ---
+	http.Redirect(w, r, "/dashboard", http.StatusSeeOther) // Redirect to Dashboard
 }
 
 // deleteMood handles the deletion of a mood entry.
@@ -289,7 +319,8 @@ func (app *application) deleteMood(w http.ResponseWriter, r *http.Request) {
 		app.logger.Info("Mood entry deleted successfully", "id", id)
 	}
 
-	http.Redirect(w, r, "/moods", http.StatusSeeOther)
+	// --- REDIRECT CHANGE HERE ---
+	http.Redirect(w, r, "/dashboard", http.StatusSeeOther) // Redirect to Dashboard
 }
 
 // --- Error Helpers ---
@@ -313,3 +344,6 @@ func (app *application) clientError(w http.ResponseWriter, status int) {
 func (app *application) notFound(w http.ResponseWriter) {
 	app.clientError(w, http.StatusNotFound)
 }
+
+// Ensure you replace the existing updateMood and deleteMood functions in your
+// mood/cmd/web/handlers.go file with these updated versions.

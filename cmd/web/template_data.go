@@ -7,12 +7,14 @@ import (
 
 // EmotionDetails holds display info for an emotion
 type EmotionDetails struct {
+	// These fields below DO NOT CHANGE for this task
 	Name  string
 	Emoji string
 	Color string
 }
 
 // Define the global mapping for emotions - Centralized map
+// This map DOES NOT CHANGE for this task
 var EmotionMap = map[string]EmotionDetails{
 	"Happy":   {Name: "Happy", Emoji: "😊", Color: "emotion-happy"},
 	"Sad":     {Name: "Sad", Emoji: "😢", Color: "emotion-sad"},
@@ -25,8 +27,10 @@ var EmotionMap = map[string]EmotionDetails{
 
 // TemplateData holds data passed to HTML templates
 type TemplateData struct {
-	Title      string
-	HeaderText string
+	Title          string
+	HeaderText     string
+	HasMoodEntries bool       // <-- ADD THIS LINE HERE
+	LatestMood     *data.Mood // <-- ADD THIS LINE HERE
 
 	// Form handling
 	FormErrors map[string]string
@@ -34,7 +38,7 @@ type TemplateData struct {
 
 	// Page-specific data
 	Moods    []*data.Mood
-	Mood     *data.Mood
+	Mood     *data.Mood // Used for edit form primarily
 	Emotions []EmotionDetails
 }
 
@@ -51,16 +55,20 @@ func NewTemplateData() *TemplateData {
 		}
 	}
 
+	// The initialization adds the new fields with their zero values (false and nil)
 	return &TemplateData{
 		Title:      "Mood Tracker",
 		HeaderText: "How are you feeling?",
 		FormErrors: make(map[string]string),
 		FormData:   make(map[string]string),
 		Emotions:   emotionsList,
+		// HasMoodEntries defaults to false
+		// LatestMood defaults to nil
 	}
 }
 
 // Helper function (can be used directly or via template funcs)
+// This function DOES NOT CHANGE for this task
 func GetEmotionDetails(emotion string) EmotionDetails {
 	if details, ok := EmotionMap[emotion]; ok {
 		return details

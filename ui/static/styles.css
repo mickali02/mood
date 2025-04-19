@@ -635,54 +635,50 @@ body.about-page-background {
 
 /* --- Dashboard Body --- */
 body.dashboard-page {
-    /* Use a different background */
-    background: url('/static/resources/dashboard.png') no-repeat center center fixed;
-    background-size: cover;
+    /* Inherits background from Section 2 */
     font-family: 'Poppins', sans-serif;
-    color: #e0e0e0; /* Light text for dark background */
-    display: flex; /* Use flex for layout */
+    color: #e0e0e0;
+    display: flex;
     min-height: 100vh;
-    overflow: hidden; /* Prevent body scroll if sidebar is fixed height */
-    position: relative; /* For the animated stars */
+    /* overflow: hidden; <-- Can cause issues if main content needs scroll */
+    position: relative;
 }
 
 /* --- Dashboard Container (Holds Sidebar + Main Content) --- */
 .dashboard-container {
     display: flex;
     width: 100%;
-    height: 100vh; /* Full viewport height */
-    padding: 20px; /* Add padding to create floating effect */
-    gap: 25px; /* Space between sidebar and main content */
-    position: relative; /* For positioning elements */
-    z-index: 2; /* Above animated background */
+    /* height: 100vh; <-- Let height be determined by content */
+    min-height: 100vh; /* Ensure it fills viewport */
+    padding: 20px;
+    gap: 25px;
+    position: relative;
+    z-index: 2;
 }
 
 /* --- Dashboard Sidebar --- */
 .dashboard-sidebar {
-    width: 80px; /* Much smaller for icon-only display */
-    height: auto; /* Adjust height based on content */
-    background-color: rgba(40, 42, 54, 0.6); /* More transparent */
-    backdrop-filter: blur(12px); /* Stronger blur effect */
-    -webkit-backdrop-filter: blur(12px); /* Safari support */
+    width: 80px;
+    height: fit-content; /* Size to content */
+    max-height: calc(100vh - 80px); /* Prevent excessive height, adjust 80px based on padding */
+    background-color: rgba(40, 42, 54, 0.65);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     display: flex;
     flex-direction: column;
-    padding: 25px 0; /* Padding top/bottom */
-    flex-shrink: 0; /* Prevent sidebar from shrinking */
-    border-radius: 20px; /* Rounded corners */
+    padding: 25px 0;
+    flex-shrink: 0;
+    border-radius: 20px;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
-    margin: 20px 0; /* Center vertically */
-    align-self: center; /* Center vertically */
-    justify-content: center; /* Center content vertically */
-     /* Add the following two lines: */
-     position: relative; /* Ensure it creates a stacking context */
-     z-index: 5;         /* Give it a higher stacking level */
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    margin: auto 0; /* Center vertically */
+    align-self: center; /* Align self center vertically */
+    position: sticky; /* Make sidebar sticky */
+    top: 40px; /* Position sticky sidebar */
+    z-index: 5;
 }
 
-/* Remove the logo */
-.sidebar-logo {
-    display: none;
-}
-
+/* Sidebar Nav specific styles */
 .sidebar-nav ul {
     list-style: none;
     padding: 0;
@@ -690,194 +686,285 @@ body.dashboard-page {
     width: 100%;
     display: flex;
     flex-direction: column;
-    gap: 15px; /* Space between icons */
+    gap: 15px;
     align-items: center;
 }
 
 .sidebar-nav li {
     width: 100%;
-    position: relative; /* For tooltip positioning */
+    position: relative;
     display: flex;
     justify-content: center;
 }
 
-/* --- UPDATED RULE --- */
 .sidebar-nav a {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 50px; /* Fixed width for icons */
-    height: 50px; /* Fixed height for icons */
-    color: #bdc1c6; /* Sidebar link color - Icon inherits this by default */
+    width: 50px;
+    height: 50px;
+    color: #bdc1c6;
     text-decoration: none;
-    /* font-size: 0; <<< REMOVED THIS LINE */
     font-weight: 500;
     transition: all 0.3s ease;
-    border-radius: 50%; /* Circular buttons */
+    border-radius: 50%;
     background-color: rgba(255, 255, 255, 0.08);
     position: relative;
 }
 
-/* --- UPDATED RULE --- */
 .sidebar-nav a:hover,
 .sidebar-nav a.active {
     background-color: rgba(255, 255, 255, 0.2);
-    color: #ffffff; /* Highlight color on hover/active - Icon inherits this */
-    transform: scale(1.1); /* Grow effect on hover */
-    box-shadow: 0 0 15px rgba(160, 116, 181, 0.5); /* Glow effect */
+    color: #ffffff;
+    transform: scale(1.1);
+    box-shadow: 0 0 15px rgba(160, 116, 181, 0.5);
 }
 
-/* Tooltip effect for icon names */
+/* Tooltip */
 .sidebar-nav a::after {
     content: attr(data-title);
     position: absolute;
-    left: 60px; /* Position to the right of icon */
+    left: 110%; /* Position to the right */
     top: 50%;
     transform: translateY(-50%);
-    background-color: rgba(160, 116, 181, 0.9);
+    background-color: rgba(50, 52, 64, 0.9); /* Darker tooltip */
     color: white;
-    padding: 8px 15px;
-    border-radius: 12px;
-    font-size: 0.9rem; /* Tooltip text size */
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 0.85rem;
     white-space: nowrap;
     opacity: 0;
     pointer-events: none;
-    transition: all 0.3s ease;
+    transition: opacity 0.3s ease, left 0.3s ease;
     z-index: 10;
-    box-shadow: 0 3px 10px rgba(0,0,0,0.3);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
     visibility: hidden;
 }
-
 .sidebar-nav a:hover::after {
     opacity: 1;
     visibility: visible;
-    left: 70px; /* Move slightly right on hover */
+    left: 120%; /* Move slightly */
 }
 
-/* --- REMOVED the old .nav-icon rule that had the filter --- */
-/* --- REMOVED the stray .nav-icon rule from the bottom --- */
-/* --- REMOVED the stray .nav-icon:hover rule from the bottom --- */
-
-/* --- ADDED Corrected Rule for Icons --- */
+/* Icons */
 .nav-icon {
-    width: 24px;       /* Match desired icon dimensions */
-    height: 24px;      /* Match desired icon dimensions */
-    font-size: 24px;   /* Set the font size for the icon glyph */
-    line-height: 1;    /* Prevent extra vertical space */
-    color: inherit;    /* Use the color of the parent <a> tag */
-    opacity: 1;        /* Make fully visible */
-    transition: all 0.3s ease; /* Keep transitions */
-    /* The bootstrap-icons font-family is applied via their CSS */
+    font-size: 22px;
+    line-height: 1;
+    color: inherit;
+    transition: all 0.3s ease;
 }
-
-/* --- UPDATED RULE (Just cleanup) --- */
 .sidebar-nav a:hover .nav-icon {
-    /* Icons inherit the white color from a:hover */
-    /* opacity: 1; is already set above */
-    transform: scale(1.1); /* Keep Slight grow effect */
-    /* No filter needed */
-    /* No explicit color needed */
+     transform: scale(1.1);
 }
 
-
+/* Separator */
 .nav-separator {
-    width: 30px;
+    width: 60%;
     height: 1px;
-    background-color: rgba(255, 255, 255, 0.2);
-    margin: 5px 0; /* Smaller margin for icon-only nav */
+    background-color: rgba(255, 255, 255, 0.15);
+    margin: 10px auto;
 }
 
-/* --- Dashboard Main Content Area (No changes needed below this line for the icon issue) --- */
+/* Disabled Link Styling (Optional) */
+.sidebar-nav a.disabled-link {
+    opacity: 0.4;
+    pointer-events: none;
+    cursor: default;
+}
+.sidebar-nav a.disabled-link:hover {
+    background-color: rgba(255, 255, 255, 0.08);
+    transform: none;
+    box-shadow: none;
+    color: #bdc1c6;
+}
+.sidebar-nav a.disabled-link:hover::after {
+    opacity: 0;
+    visibility: hidden;
+}
+
+
+/* --- Dashboard Main Content Area --- */
 .dashboard-main {
     flex-grow: 1;
-    height: calc(100% - 40px);
-    overflow-y: auto;
-    padding: 40px;
+    /* height: calc(100vh - 40px); Remove fixed height */
+    min-height: calc(100vh - 40px); /* Use min-height */
+    overflow-y: auto; /* Allow scroll */
+    padding: 30px 40px; /* Adjust padding */
     display: flex;
     flex-direction: column;
-    background-color: rgba(40, 42, 54, 0.4);
-    backdrop-filter: blur(5px);
-    -webkit-backdrop-filter: blur(5px);
+    background-color: rgba(40, 42, 54, 0.55); /* Slightly adjusted */
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
     border-radius: 20px;
-    margin: 20px;
+    margin: 0; /* No margin needed */
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    align-self: stretch; /* Fill vertical space */
 }
 
+/* --- Dashboard Header --- */
 .dashboard-header {
-    margin-bottom: 40px;
-    padding-bottom: 0;
+    margin-bottom: 25px; /* Reduced margin */
+    padding-bottom: 15px;
     text-align: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    flex-shrink: 0; /* Prevent header from shrinking */
 }
 
 .dashboard-header h1 {
     font-family: 'Playfair Display', serif;
     color: #ffffff;
-    font-size: 2.5rem;
+    font-size: 2.1rem; /* Adjusted size */
     font-weight: 600;
     margin: 0;
     line-height: 1.3;
-    text-shadow: 0 2px 10px rgba(0,0,0,0.2);
-    position: relative;
-    display: inline-block;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.2);
+}
+/* Removed H1 pseudo elements for simplicity */
+
+
+/* --- NEW: Dashboard Search Bar --- */
+.dashboard-search-bar {
+    margin-bottom: 30px;
+    padding: 0 10px;
+    flex-shrink: 0; /* Prevent search bar from shrinking */
 }
 
-.dashboard-header h1::before,
-.dashboard-header h1::after {
-    content: "✦";
-    position: absolute;
-    font-size: 1.5rem;
+.dashboard-search-bar form {
+    display: flex;
+    align-items: center;
+    max-width: 700px; /* Wider */
+    margin: 0 auto; /* Center */
+    background-color: rgba(40, 42, 54, 0.7); /* Opaque */
+    border-radius: 25px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.dashboard-search-bar input[type="search"] {
+    flex-grow: 1;
+    padding: 12px 20px;
+    border: none;
+    background-color: transparent;
+    color: #e0e0e0;
+    font-family: 'Poppins', sans-serif;
+    font-size: 1rem;
+    outline: none;
+}
+.dashboard-search-bar input[type="search"]::placeholder {
+    color: #9aabbc;
     opacity: 0.9;
 }
-
-.dashboard-header h1::before {
-    left: -30px;
-    top: 10px;
+.dashboard-search-bar input[type="search"]::-webkit-search-cancel-button,
+.dashboard-search-bar input[type="search"]::-webkit-search-decoration {
+  -webkit-appearance: none;
+  appearance: none;
 }
 
-.dashboard-header h1::after {
-    right: -30px;
-    top: 10px;
+.dashboard-search-bar .btn.search-btn {
+    padding: 12px 18px;
+    border-radius: 0 25px 25px 0;
+    background-color: #a074b5;
+    border: none;
+    margin: 0;
+    box-shadow: none;
+    font-size: 1.1rem;
+    line-height: 1;
+    flex-shrink: 0;
+}
+.dashboard-search-bar .btn.search-btn:hover {
+     background-color: #8a6aaf;
+     transform: none;
+     box-shadow: none;
 }
 
-.dashboard-content {
-    flex-grow: 1;
+
+/* --- NEW: Dashboard Mood List Section --- */
+.dashboard-mood-list {
+    flex-grow: 1; /* Allow list to take remaining space */
+    overflow-y: auto; /* Add scrollbar ONLY if list overflows its container */
+    /* Add some padding if needed, e.g., padding: 0 10px; */
+}
+
+.dashboard-main .mood-list { /* Target ul specifically */
+    padding: 0;
+    margin: 0; /* Reset margin if needed */
+}
+
+.dashboard-main .mood-item {
+    width: 100%; /* Take full width */
+    max-width: none;
+    margin-left: 0;
+    margin-right: 0;
+    margin-bottom: 18px;
+    background-color: rgba(55, 58, 80, 0.65); /* Slightly more opaque */
+    padding: 18px 25px; /* Adjust padding */
+    border-radius: 12px; /* Consistent rounding */
+    border: 1px solid rgba(255, 255, 255, 0.1); /* Subtler border */
+    /* Base mood-item styles (flex, etc.) should be inherited or added */
+     display: flex;
+     justify-content: space-between;
+     align-items: center;
+     transition: box-shadow 0.2s ease-in-out, background-color 0.2s;
+     border-left-width: 5px;
+     border-left-style: solid;
+     border-left-color: transparent; /* Base */
+     text-align: left;
+}
+.dashboard-main .mood-item:hover {
+    box-shadow: 0 5px 18px rgba(0,0,0,0.15);
+    background-color: rgba(65, 68, 90, 0.7);
+}
+
+/* Mood item content adjustments if needed */
+.dashboard-main .mood-item-content {
+     flex-grow: 1;
+     margin-right: 20px;
+}
+.dashboard-main .mood-title {
+    font-size: 1.15em; /* Adjust */
+    margin-bottom: 6px;
+    /* color, font-family, weight inherited */
+}
+.dashboard-main .mood-emoji {
+     font-size: 1.3em;
+     margin-right: 10px;
+}
+.dashboard-main .mood-text {
+    font-size: 0.9rem; /* Slightly smaller */
+    color: #c8c8d8; /* Lighter gray */
+    margin-bottom: 8px;
+    line-height: 1.5;
+    /* font-family inherited */
+}
+.dashboard-main .mood-meta {
+    font-size: 0.75em; /* Smaller */
+    opacity: 0.8;
+     /* color, font-family inherited */
+}
+
+/* Edit/Delete buttons */
+.dashboard-main .edit-delete-buttons {
+    flex-shrink: 0;
+}
+
+
+/* --- NEW: Centering for "No Entries" Message --- */
+.dashboard-content-centered {
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
+    justify-content: center;
     text-align: center;
-    padding: 20px;
+    padding: 40px 20px;
+    flex-grow: 1; /* Take available space */
 }
-
-.dashboard-content p {
-    font-size: 1.2rem;
-    color: #e0e0e0;
-    margin-bottom: 35px;
-    max-width: 500px;
-    line-height: 1.6;
-}
-
-.btn.dashboard-add-btn {
-    padding: 15px 35px;
+.dashboard-content-centered p {
     font-size: 1.1rem;
-    background-color: rgba(160, 116, 181, 0.9);
-    border: none;
-    color: white;
-    border-radius: 30px;
-    transition: all 0.3s ease;
-    box-shadow: 0 5px 15px rgba(160, 116, 181, 0.3);
-    position: relative;
-    overflow: hidden;
+    color: #bdc1c6;
+    margin-bottom: 25px;
 }
-
-.btn.dashboard-add-btn:hover {
-    background-color: rgba(160, 116, 181, 1);
-    transform: translateY(-3px);
-    box-shadow: 0 8px 20px rgba(160, 116, 181, 0.5);
-}
-
-.btn.dashboard-add-btn:active {
-    transform: translateY(0);
-}
+/* Button uses .btn.dashboard-add-btn */
 
 /* mood/ui/static/styles.css */
 
