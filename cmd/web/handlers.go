@@ -7,39 +7,83 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/mickali02/mood/internal/data"
 	"github.com/mickali02/mood/internal/validator"
 )
 
-// --- Handler for the Dashboard Page (Revised Logic) ---
+// mood/cmd/web/handlers.go
+
+// --- Handler for the Dashboard Page (Revised Logic with Filters) ---
 func (app *application) showDashboardPage(w http.ResponseWriter, r *http.Request) {
-	// 1. Fetch all moods
-	moods, err := app.moods.GetAll() // GetAll sorts by newest first
-	if err != nil && !errors.Is(err, sql.ErrNoRows) {
-		app.logger.Error("Failed to fetch moods for dashboard", "error", err)
-		// Proceed, template will show empty state or potentially an error message later
+	// 1. Read filter parameters from URL query
+	searchQuery := r.URL.Query().Get("query")
+	filterEmotion := r.URL.Query().Get("emotion")
+	filterStartDateStr := r.URL.Query().Get("start_date") // expecting YYYY-MM-DD
+	filterEndDateStr := r.URL.Query().Get("end_date")     // expecting YYYY-MM-DD
+
+	// 2. Parse date strings (handle errors gracefully)
+	var filterStartDate, filterEndDate time.Time
+	var dateParseError error
+
+	if filterStartDateStr != "" {
+		// Use a layout that matches the HTML date input format
+		filterStartDate, dateParseError = time.Parse("2006-01-02", filterStartDateStr)
+		if dateParseError != nil {
+			app.logger.Warn("Invalid start date format received", "date", filterStartDateStr, "error", dateParseError)
+			// Ignore invalid date for filtering, but keep the string for the template
+			filterStartDate = time.Time{} // Reset to zero value
+		}
+	}
+	if filterEndDateStr != "" {
+		filterEndDate, dateParseError = time.Parse("2006-01-02", filterEndDateStr)
+		if dateParseError != nil {
+			app.logger.Warn("Invalid end date format received", "date", filterEndDateStr, "error", dateParseError)
+			filterEndDate = time.Time{} // Reset to zero value
+		}
+		// Optional: Ensure end date is not before start date if both provided and valid
+		if !filterStartDate.IsZero() && !filterEndDate.IsZero() && filterEndDate.Before(filterStartDate) {
+			app.logger.Warn("End date is before start date, ignoring end date filter", "start", filterStartDateStr, "end", filterEndDateStr)
+			// Clear the parsed end date so it's not used in the query
+			filterEndDate = time.Time{}
+			// Keep filterEndDateStr so the user sees what they entered, even if ignored
+		}
 	}
 
-	// 2. Prepare template data
+	// 3. Create FilterCriteria struct
+	criteria := data.FilterCriteria{
+		TextQuery: searchQuery,
+		Emotion:   filterEmotion,
+		StartDate: filterStartDate, // Use the parsed time.Time values
+		EndDate:   filterEndDate,   // Use the parsed time.Time values
+	}
+
+	// 4. Fetch moods using the combined filters
+	app.logger.Info("Fetching filtered moods", "criteria", fmt.Sprintf("%+v", criteria)) // Log criteria
+	moods, err := app.moods.GetFiltered(criteria)
+
+	// Handle database errors (excluding ErrNoRows which means empty list/search)
+	if err != nil && !errors.Is(err, sql.ErrNoRows) { // No need to check ErrNoRows from GetFiltered
+		app.logger.Error("Failed to fetch filtered moods for dashboard", "error", err, "criteria", fmt.Sprintf("%+v", criteria))
+		// Proceed to render, template will show empty state
+		moods = []*data.Mood{} // Ensure moods is an empty slice on error
+	}
+
+	// 5. Prepare template data
 	templateData := NewTemplateData()
 	templateData.Title = "Your Dashboard"
+	templateData.SearchQuery = searchQuery            // Pass text query back
+	templateData.FilterEmotion = filterEmotion        // Pass selected emotion back
+	templateData.FilterStartDate = filterStartDateStr // Pass original date strings back for form value
+	templateData.FilterEndDate = filterEndDateStr     // Pass original date strings back for form value
+	templateData.Moods = moods                        // Pass the filtered moods
+	templateData.HasMoodEntries = len(moods) > 0      // Base flag on filtered results
 
-	// 3. Populate fields based on fetched moods
-	if len(moods) > 0 {
-		templateData.HasMoodEntries = true
-		templateData.Moods = moods // <-- PASS THE ENTIRE SLICE
-	} else {
-		templateData.HasMoodEntries = false
-		templateData.Moods = []*data.Mood{} // Pass an empty slice explicitly
-	}
-	// We no longer need LatestMood specifically for this approach
-	// templateData.LatestMood = nil // Can be removed if not used elsewhere
-
-	// 4. Render the template
-	err = app.render(w, http.StatusOK, "dashboard.tmpl", templateData)
-	if err != nil {
-		app.serverError(w, r, err)
+	// 6. Render the template
+	renderErr := app.render(w, http.StatusOK, "dashboard.tmpl", templateData)
+	if renderErr != nil {
+		app.serverError(w, r, renderErr)
 	}
 }
 

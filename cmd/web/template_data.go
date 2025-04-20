@@ -7,14 +7,14 @@ import (
 
 // EmotionDetails holds display info for an emotion
 type EmotionDetails struct {
-	// These fields below DO NOT CHANGE for this task
+	// No changes needed here
 	Name  string
 	Emoji string
 	Color string
 }
 
 // Define the global mapping for emotions - Centralized map
-// This map DOES NOT CHANGE for this task
+// No changes needed here
 var EmotionMap = map[string]EmotionDetails{
 	"Happy":   {Name: "Happy", Emoji: "😊", Color: "emotion-happy"},
 	"Sad":     {Name: "Sad", Emoji: "😢", Color: "emotion-sad"},
@@ -29,17 +29,24 @@ var EmotionMap = map[string]EmotionDetails{
 type TemplateData struct {
 	Title          string
 	HeaderText     string
-	HasMoodEntries bool       // <-- ADD THIS LINE HERE
-	LatestMood     *data.Mood // <-- ADD THIS LINE HERE
+	HasMoodEntries bool   // Flag based on final mood list count
+	SearchQuery    string // Text search query
 
-	// Form handling
+	// --- Filter fields ---
+	FilterEmotion   string // Currently selected emotion filter
+	FilterStartDate string // Currently selected start date (YYYY-MM-DD string for template)
+	FilterEndDate   string // Currently selected end date (YYYY-MM-DD string for template)
+
+	// Form handling (primarily for add/edit forms)
 	FormErrors map[string]string
 	FormData   map[string]string
 
 	// Page-specific data
-	Moods    []*data.Mood
-	Mood     *data.Mood // Used for edit form primarily
-	Emotions []EmotionDetails
+	Moods    []*data.Mood     // Holds filtered or all moods for the dashboard/list
+	Mood     *data.Mood       // For pre-filling the edit form
+	Emotions []EmotionDetails // For populating emotion filter/form options
+
+	// LatestMood     *data.Mood // REMOVED - Dashboard now shows list
 }
 
 // NewTemplateData creates a default TemplateData instance
@@ -55,20 +62,23 @@ func NewTemplateData() *TemplateData {
 		}
 	}
 
-	// The initialization adds the new fields with their zero values (false and nil)
+	// Initialize TemplateData with defaults
 	return &TemplateData{
 		Title:      "Mood Tracker",
 		HeaderText: "How are you feeling?",
 		FormErrors: make(map[string]string),
 		FormData:   make(map[string]string),
 		Emotions:   emotionsList,
+		// SearchQuery defaults to ""
+		// FilterEmotion defaults to ""
+		// FilterStartDate defaults to ""
+		// FilterEndDate defaults to ""
 		// HasMoodEntries defaults to false
-		// LatestMood defaults to nil
 	}
 }
 
 // Helper function (can be used directly or via template funcs)
-// This function DOES NOT CHANGE for this task
+// No changes needed here
 func GetEmotionDetails(emotion string) EmotionDetails {
 	if details, ok := EmotionMap[emotion]; ok {
 		return details

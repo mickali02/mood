@@ -5,28 +5,28 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{.Title}}</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <!-- Fonts, Icons, Stylesheet -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lora&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="/static/styles.css">
 </head>
 <body class="dashboard-page">
 
     <div class="dashboard-container">
-        <!-- Sidebar (remains the same) -->
-        <aside class="dashboard-sidebar">
+        <!-- Sidebar -->
+         <aside class="dashboard-sidebar">
             <nav class="sidebar-nav">
                  <ul>
                     <li><a href="/dashboard" data-title="Dashboard" class="active"><i class="bi bi-grid-1x2-fill nav-icon"></i></a></li>
-                    <!-- Link to /moods can be removed if dashboard replaces it, or kept as alternative view -->
-                    <!-- <li><a href="/moods" data-title="View All Entries"><i class="bi bi-list-ul nav-icon"></i></a></li> -->
+                    <!-- Removed /moods link as dashboard shows the list -->
                     <li><a href="/mood/new" data-title="Add New Entry"><i class="bi bi-plus-circle-fill nav-icon"></i></a></li>
-                    <li><a href="#" data-title="Search" class="{{if not .HasMoodEntries}}disabled-link{{end}}"><i class="bi bi-search nav-icon"></i></a></li>
-                    <li><a href="#" data-title="Mood Stats" class="{{if not .HasMoodEntries}}disabled-link{{end}}"><i class="bi bi-bar-chart-fill nav-icon"></i></a></li>
+                    <!-- Removed Search icon link as search is on page -->
+                    <li><a href="#" data-title="Mood Stats" class="{{if not .Moods}}disabled-link{{end}}"><i class="bi bi-bar-chart-fill nav-icon"></i></a></li>
                     <li class="nav-separator"></li>
                     <li><a href="#" data-title="Profile"><i class="bi bi-person-circle nav-icon"></i></a></li>
                     <li><a href="#" data-title="Logout"><i class="bi bi-box-arrow-right nav-icon"></i></a></li>
-                </ul>
-            </nav>
+               </ul>
+           </nav>
         </aside>
 
         <!-- Main Dashboard Content -->
@@ -35,23 +35,67 @@
                 <h1>Hi welcome back Mickali!</h1>
             </header>
 
-            <!-- Conditionally Display Search Bar -->
-            {{if .HasMoodEntries}}
-            <section class="dashboard-search-bar">
-                <form action="/search" method="GET">
-                  <input type="search" name="query" placeholder="Search your entries..." aria-label="Search entries">
-                  <button type="submit" class="btn search-btn"><i class="bi bi-search"></i></button>
+            <!-- Combined Search and Filter Bar -->
+            <section class="dashboard-filter-bar">
+                 <!-- Form uses GET method, action targets the dashboard itself -->
+                <form action="/dashboard" method="GET" class="filter-form">
+                    <!-- Text Search Input -->
+                    <div class="filter-group text-search-group">
+                         <label for="query" class="visually-hidden">Search Term</label> <!-- Hidden label for accessibility -->
+                         <div class="search-input-wrapper">
+                            <input
+                                type="search"
+                                id="query"
+                                name="query"
+                                placeholder="Search entries..."
+                                value="{{.SearchQuery}}" {{/* Pre-fill search box */}}
+                            >
+                            <!-- Removed separate search button, combined below -->
+                         </div>
+                    </div>
+
+                     <!-- Emotion Filter Dropdown -->
+                    <div class="filter-group emotion-filter-group">
+                         <label for="emotion">Emotion:</label>
+                         <select id="emotion" name="emotion">
+                             <option value="">All Emotions</option> {{/* Default empty value */}}
+                             {{range .Emotions}}
+                                 <option value="{{.Name}}" {{if eq $.FilterEmotion .Name}}selected{{end}}>
+                                     {{.Emoji}} {{.Name}}
+                                 </option>
+                             {{end}}
+                         </select>
+                    </div>
+
+                     <!-- Date Filter Inputs -->
+                    <div class="filter-group date-filter-group">
+                        <label for="start_date">From:</label>
+                        <input type="date" id="start_date" name="start_date" value="{{.FilterStartDate}}">
+                    </div>
+                     <div class="filter-group date-filter-group">
+                        <label for="end_date">To:</label>
+                        <input type="date" id="end_date" name="end_date" value="{{.FilterEndDate}}">
+                    </div>
+
+                     <!-- Combined Filter/Search Buttons -->
+                     <div class="filter-group filter-button-group">
+                        {{/* This button submits the whole form including text search and filters */}}
+                        <button type="submit" class="btn filter-apply-btn">Filter / Search</button>
+                        {{/* Add a clear button only if any filters or search query are active */}}
+                        {{if or .SearchQuery .FilterEmotion .FilterStartDate .FilterEndDate}}
+                           <a href="/dashboard" class="btn cancel-btn clear-filters-btn">Clear All</a>
+                        {{end}}
+                    </div>
                 </form>
-                <!-- Potential Filter Area (Placeholder for future) -->
-                <!-- <div class="dashboard-filters"> ... Filters here ... </div> -->
             </section>
-            {{end}}
+
 
             <!-- Mood List Section -->
             <section class="dashboard-mood-list">
+                 {{/* Check if the .Moods slice (passed from handler) has items */}}
                 {{if .Moods}}
-                    <ul class="mood-list"> <!-- Reuse class from moods.tmpl -->
-                        {{range .Moods}} {{/* Loop through all moods passed */}}
+                    <ul class="mood-list"> <!-- Use the class styled in CSS -->
+                        {{range .Moods}} {{/* Loop through the moods */}}
                             {{ $details := GetEmotionDetails .Emotion }}
                             <li class="mood-item {{ $details.Color }}">
                                 <div class="mood-item-content">
@@ -61,41 +105,35 @@
                                     </div>
                                     <p class="mood-text">{{.Content | html}}</p>
                                     <div class="mood-meta">
-                                        <time datetime="{{.CreatedAt.Format "2006-01-02T15:04:05Z"}}">
-                                            Logged: {{ .CreatedAt | HumanDate }}
-                                        </time>
+                                        <time datetime="{{.CreatedAt.Format "2006-01-02T15:04:05Z"}}">Logged: {{ .CreatedAt | HumanDate }}</time>
                                         {{ $updatedThreshold := AddMinutes .CreatedAt 1 }}
                                         {{if .UpdatedAt.After $updatedThreshold }}
-                                        <time datetime="{{.UpdatedAt.Format "2006-01-02T15:04:05Z"}}">
-                                            | Updated: {{ .UpdatedAt | HumanDate }}
-                                        </time>
+                                        <time datetime="{{.UpdatedAt.Format "2006-01-02T15:04:05Z"}}"> | Updated: {{ .UpdatedAt | HumanDate }}</time>
                                         {{end}}
                                     </div>
                                 </div>
                                 <div class="edit-delete-buttons">
                                     <a href="/mood/edit/{{.ID}}" class="btn edit-btn">Edit</a>
-                                    <form action="/mood/delete/{{.ID}}" method="POST" style="display: inline;">
-                                        <button type="submit" class="btn delete-btn" onclick="return confirm('Are you sure you want to delete this mood entry?');">Delete</button>
-                                    </form>
+                                    <form action="/mood/delete/{{.ID}}" method="POST" style="display: inline;"><button type="submit" class="btn delete-btn" onclick="return confirm('Are you sure?');">Delete</button></form>
                                 </div>
                             </li>
-                        {{end}} {{/* End range loop */}}
+                        {{end}} {{/* End range .Moods */}}
                     </ul>
                 {{else}}
-                    <!-- Message when no entries exist -->
-                     <div class="dashboard-content-centered"> <!-- Centering wrapper -->
-                        <p>You haven't logged any moods yet. Let's get started on your healing journey!</p>
-                        <a href="/mood/new" class="btn dashboard-add-btn">ADD YOUR FIRST MOOD ENTRY</a>
+                    {{/* No moods to display - show appropriate message */}}
+                    <div class="dashboard-content-centered">
+                        {{if or .SearchQuery .FilterEmotion .FilterStartDate .FilterEndDate}}
+                            {{/* Message specific to empty search/filter results */}}
+                            <p>No mood entries found matching your filters.</p>
+                            <a href="/dashboard" class="btn cancel-btn">Clear Filters</a>
+                        {{else}}
+                             {{/* Message for when there are genuinely no entries in DB */}}
+                            <p>You haven't logged any moods yet!</p>
+                            <a href="/mood/new" class="btn dashboard-add-btn">ADD YOUR FIRST MOOD ENTRY</a>
+                        {{end}}
                     </div>
-                {{end}}
+                {{end}} {{/* End if .Moods */}}
             </section>
-
-             <!-- Add New Entry Button - Place consistently (maybe only if entries exist?) -->
-             <!-- Or keep it in the sidebar -->
-             <!-- Let's remove the button from here for now, sidebar link is primary -->
-             <!-- {{if .HasMoodEntries}}
-                 <a href="/mood/new" class="btn dashboard-add-btn add-new-at-bottom">Add Another Entry</a>
-             {{end}} -->
 
         </main>
     </div>
