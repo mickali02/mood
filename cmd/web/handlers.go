@@ -7,118 +7,108 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
-	"time"
+	"time" // Make sure time is imported
 
 	"github.com/mickali02/mood/internal/data"
 	"github.com/mickali02/mood/internal/validator"
 )
 
-// mood/cmd/web/handlers.go
-
-// --- Handler for the Dashboard Page (Revised Logic with Filters) ---
+// --- Handler for the Dashboard Page (Corrected Types) ---
 func (app *application) showDashboardPage(w http.ResponseWriter, r *http.Request) {
-	// 1. Read filter parameters from URL query
+	// ... (1. Read filters, 2. Parse dates - remain the same) ...
 	searchQuery := r.URL.Query().Get("query")
 	filterEmotion := r.URL.Query().Get("emotion")
-	filterStartDateStr := r.URL.Query().Get("start_date") // expecting YYYY-MM-DD
-	filterEndDateStr := r.URL.Query().Get("end_date")     // expecting YYYY-MM-DD
-
-	// 2. Parse date strings (handle errors gracefully)
+	filterStartDateStr := r.URL.Query().Get("start_date")
+	filterEndDateStr := r.URL.Query().Get("end_date")
 	var filterStartDate, filterEndDate time.Time
 	var dateParseError error
-
-	if filterStartDateStr != "" {
-		// Use a layout that matches the HTML date input format
+	if filterStartDateStr != "" { /* ... date parsing ... */
 		filterStartDate, dateParseError = time.Parse("2006-01-02", filterStartDateStr)
 		if dateParseError != nil {
-			app.logger.Warn("Invalid start date format received", "date", filterStartDateStr, "error", dateParseError)
-			// Ignore invalid date for filtering, but keep the string for the template
-			filterStartDate = time.Time{} // Reset to zero value
+			app.logger.Warn("Invalid start date format", "date", filterStartDateStr, "error", dateParseError)
+			filterStartDate = time.Time{}
 		}
 	}
-	if filterEndDateStr != "" {
+	if filterEndDateStr != "" { /* ... date parsing ... */
 		filterEndDate, dateParseError = time.Parse("2006-01-02", filterEndDateStr)
 		if dateParseError != nil {
-			app.logger.Warn("Invalid end date format received", "date", filterEndDateStr, "error", dateParseError)
-			filterEndDate = time.Time{} // Reset to zero value
-		}
-		// Optional: Ensure end date is not before start date if both provided and valid
-		if !filterStartDate.IsZero() && !filterEndDate.IsZero() && filterEndDate.Before(filterStartDate) {
-			app.logger.Warn("End date is before start date, ignoring end date filter", "start", filterStartDateStr, "end", filterEndDateStr)
-			// Clear the parsed end date so it's not used in the query
+			app.logger.Warn("Invalid end date format", "date", filterEndDateStr, "error", dateParseError)
 			filterEndDate = time.Time{}
-			// Keep filterEndDateStr so the user sees what they entered, even if ignored
+		}
+		if !filterStartDate.IsZero() && !filterEndDate.IsZero() && filterEndDate.Before(filterStartDate) {
+			app.logger.Warn("End date before start date", "start", filterStartDateStr, "end", filterEndDateStr)
+			filterEndDate = time.Time{}
 		}
 	}
 
-	// 3. Create FilterCriteria struct
-	criteria := data.FilterCriteria{
+	// 3. Create FilterCriteria struct (using data package type)
+	criteria := data.FilterCriteria{ // <-- Use data.FilterCriteria
 		TextQuery: searchQuery,
 		Emotion:   filterEmotion,
-		StartDate: filterStartDate, // Use the parsed time.Time values
-		EndDate:   filterEndDate,   // Use the parsed time.Time values
+		StartDate: filterStartDate,
+		EndDate:   filterEndDate,
 	}
 
-	// 4. Fetch moods using the combined filters
-	app.logger.Info("Fetching filtered moods", "criteria", fmt.Sprintf("%+v", criteria)) // Log criteria
+	// 4. Fetch filtered moods
+	app.logger.Info("Fetching filtered moods", "criteria", fmt.Sprintf("%+v", criteria))
 	moods, err := app.moods.GetFiltered(criteria)
-
-	// Handle database errors (excluding ErrNoRows which means empty list/search)
-	if err != nil && !errors.Is(err, sql.ErrNoRows) { // No need to check ErrNoRows from GetFiltered
-		app.logger.Error("Failed to fetch filtered moods for dashboard", "error", err, "criteria", fmt.Sprintf("%+v", criteria))
-		// Proceed to render, template will show empty state
-		moods = []*data.Mood{} // Ensure moods is an empty slice on error
+	if err != nil {
+		app.logger.Error("Failed to fetch filtered moods", "error", err, "criteria", fmt.Sprintf("%+v", criteria))
+		moods = []*data.Mood{}
 	}
 
-	// 5. Prepare template data
-	templateData := NewTemplateData()
-	templateData.Title = "Your Dashboard"
-	templateData.SearchQuery = searchQuery            // Pass text query back
-	templateData.FilterEmotion = filterEmotion        // Pass selected emotion back
-	templateData.FilterStartDate = filterStartDateStr // Pass original date strings back for form value
-	templateData.FilterEndDate = filterEndDateStr     // Pass original date strings back for form value
-	templateData.Moods = moods                        // Pass the filtered moods
-	templateData.HasMoodEntries = len(moods) > 0      // Base flag on filtered results
+	// --- 5. Fetch distinct emotions using data method ---
+	availableEmotions, err := app.moods.GetDistinctEmotionDetails() // Returns []data.EmotionDetail
+	if err != nil {
+		app.logger.Error("Failed to fetch distinct emotions for filter", "error", err)
+		availableEmotions = []data.EmotionDetail{} // <-- Use data.EmotionDetail{} for empty slice
+	}
+	// --- End Fetch ---
 
-	// 6. Render the template
+	// 6. Prepare template data
+	templateData := NewTemplateData()
+	templateData.Title = "Dashboard"
+	templateData.SearchQuery = searchQuery
+	templateData.FilterEmotion = filterEmotion
+	templateData.FilterStartDate = filterStartDateStr
+	templateData.FilterEndDate = filterEndDateStr
+	templateData.Moods = moods
+	templateData.HasMoodEntries = len(moods) > 0
+	templateData.AvailableEmotions = availableEmotions // <-- Assign the []data.EmotionDetail slice
+
+	// 7. Render the template
 	renderErr := app.render(w, http.StatusOK, "dashboard.tmpl", templateData)
 	if renderErr != nil {
 		app.serverError(w, r, renderErr)
 	}
 }
 
-// --- NEW Handler for the Separate Landing Page ---
+// --- Landing Page Handler (No Changes) ---
 func (app *application) showLandingPage(w http.ResponseWriter, r *http.Request) {
-	templateData := NewTemplateData()                  // Use your existing helper
-	templateData.Title = "Feel Flow - Special Welcome" // Set a distinct title
-
-	// Render the new landing.tmpl template
+	templateData := NewTemplateData()
+	templateData.Title = "Feel Flow - Special Welcome"
 	err := app.render(w, http.StatusOK, "landing.tmpl", templateData)
 	if err != nil {
-		app.serverError(w, r, err) // Use your existing serverError helper
+		app.serverError(w, r, err)
 	}
 }
 
-// --- NEW Handler for the About Page ---
+// --- About Page Handler (No Changes) ---
 func (app *application) showAboutPage(w http.ResponseWriter, r *http.Request) {
-	templateData := NewTemplateData() // Use your existing helper
+	templateData := NewTemplateData()
 	templateData.Title = "About Feel Flow"
-	// No other specific data needed for a static about page usually
-
-	// Render the about.tmpl template
 	err := app.render(w, http.StatusOK, "about.tmpl", templateData)
 	if err != nil {
-		app.serverError(w, r, err) // Use your existing serverError helper
+		app.serverError(w, r, err)
 	}
 }
 
-// --- Home Handler ---
+// --- Home Handler (No Changes) ---
 func (app *application) home(w http.ResponseWriter, r *http.Request) {
-
 	templateData := NewTemplateData()
 	templateData.Title = "Feel Flow"
 	templateData.HeaderText = "Welcome To Feel Flow!"
-	err := app.render(w, http.StatusOK, "home.tmpl", templateData) // Assumes home.tmpl exists
+	err := app.render(w, http.StatusOK, "home.tmpl", templateData)
 	if err != nil {
 		app.serverError(w, r, err)
 	}
@@ -126,36 +116,43 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 
 // --- Mood Handlers ---
 
-// listMoods retrieves and displays all mood entries.
+// listMoods (Likely to be removed or refactored if dashboard is primary view)
 func (app *application) listMoods(w http.ResponseWriter, r *http.Request) {
-	moods, err := app.moods.GetAll()
-	if err != nil {
-		app.serverError(w, r, err)
-		return
-	}
+	// This handler likely becomes redundant if dashboard handles listing/filtering
+	app.logger.Warn("Accessed deprecated /moods endpoint")
+	http.Redirect(w, r, "/dashboard", http.StatusPermanentRedirect) // Redirect to dashboard
 
-	templateData := NewTemplateData()
-	templateData.Title = "Your Mood Entries"
-	templateData.HeaderText = "Recent Moods"
-	templateData.Moods = moods
-	err = app.render(w, http.StatusOK, "moods.tmpl", templateData)
-	if err != nil {
-		app.serverError(w, r, err)
-	}
+	/* -- Original Logic (kept for reference) --
+	   moods, err := app.moods.GetAll()
+	   if err != nil {
+	       app.serverError(w, r, err)
+	       return
+	   }
+	   templateData := NewTemplateData()
+	   templateData.Title = "Your Mood Entries"
+	   templateData.HeaderText = "Recent Moods"
+	   templateData.Moods = moods // Pass the full list
+	   err = app.render(w, http.StatusOK, "moods.tmpl", templateData)
+	   if err != nil {
+	       app.serverError(w, r, err)
+	   }
+	*/
 }
 
-// showMoodForm displays the form for creating a new mood entry.
+// showMoodForm (Uses DefaultEmotions from NewTemplateData)
 func (app *application) showMoodForm(w http.ResponseWriter, r *http.Request) {
-	templateData := NewTemplateData()
+	templateData := NewTemplateData() // Populates .DefaultEmotions
 	templateData.Title = "New Mood Entry"
 	templateData.HeaderText = "Log Your Mood"
+	templateData.FormData = make(map[string]string) // Ensure FormData exists
+
 	err := app.render(w, http.StatusOK, "mood_form.tmpl", templateData)
 	if err != nil {
 		app.serverError(w, r, err)
 	}
 }
 
-// createMood handles the submission of the new mood form.
+// createMood (Handles custom emotion fields)
 func (app *application) createMood(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		w.Header().Set("Allow", http.MethodPost)
@@ -169,29 +166,42 @@ func (app *application) createMood(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Read submitted data, including new hidden fields
 	title := r.PostForm.Get("title")
 	content := r.PostForm.Get("content")
-	emotion := r.PostForm.Get("emotion")
+	emotionName := r.PostForm.Get("emotion") // From hidden input#final_emotion_name
+	emoji := r.PostForm.Get("emoji")         // From hidden input#final_emotion_emoji
+	color := r.PostForm.Get("color")         // From hidden input#final_emotion_color
 
+	// Populate the Mood struct with all fields
 	mood := &data.Mood{
 		Title:   title,
 		Content: content,
-		Emotion: emotion,
+		Emotion: emotionName,
+		Emoji:   emoji,
+		Color:   color,
 	}
 
+	// Validate the mood struct (including new fields)
 	v := validator.NewValidator()
-	data.ValidateMood(v, mood) // Use the mood validator from data package
+	// Make sure your validator package includes the HexColorRX regex and Matches function
+	data.ValidateMood(v, mood)
 
 	if !v.ValidData() {
-		// ... (error handling - render mood_form again - remains the same) ...
+		// Validation failed, re-render the form with errors and submitted data
 		templateData := NewTemplateData()
 		templateData.Title = "New Mood Entry (Error)"
 		templateData.HeaderText = "Log Your Mood"
 		templateData.FormErrors = v.Errors
+		// Repopulate FormData with ALL submitted values for hidden fields too
+		// Also include the radio button choice to help JS re-select it
 		templateData.FormData = map[string]string{
-			"title":   title,
-			"content": content,
-			"emotion": emotion,
+			"title":          title,
+			"content":        content,
+			"emotion":        emotionName,                      // Value from hidden #final_emotion_name
+			"emoji":          emoji,                            // Value from hidden #final_emotion_emoji
+			"color":          color,                            // Value from hidden #final_emotion_color
+			"emotion_choice": r.PostForm.Get("emotion_choice"), // Value from selected radio
 		}
 
 		app.logger.Warn("Validation failed for new mood entry", "errors", v.Errors)
@@ -203,30 +213,37 @@ func (app *application) createMood(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// --- Successful creation path ---
-	err = app.moods.Insert(mood)
+	err = app.moods.Insert(mood) // Insert now includes emoji/color
 	if err != nil {
 		app.serverError(w, r, err)
 		return
 	}
 
 	app.logger.Info("Mood entry created successfully", "id", mood.ID)
-	// --- REDIRECT CHANGE HERE ---
-	http.Redirect(w, r, "/dashboard", http.StatusSeeOther) // <-- Target changed to /dashboard
+	http.Redirect(w, r, "/dashboard", http.StatusSeeOther) // Redirect to dashboard
 }
 
-// showEditMoodForm displays the form for editing an existing mood entry.
+// showEditMoodForm (Needs updating for custom emotions)
 func (app *application) showEditMoodForm(w http.ResponseWriter, r *http.Request) {
+	// TODO: Update this function and mood_edit_form.tmpl to support editing custom emotions.
+	// This will likely involve:
+	// 1. Fetching the mood (already done, includes emoji/color).
+	// 2. Passing DefaultEmotions to the template.
+	// 3. Updating the template to use radios + modal like mood_form.tmpl.
+	// 4. Using JS on the edit form to pre-select the correct radio (default or other)
+	//    and pre-fill the modal if the current mood is custom.
+
 	id, err := strconv.ParseInt(r.PathValue("id"), 10, 64)
 	if err != nil || id < 1 {
-		app.logger.Error("Invalid ID parameter for mood edit form", "id", r.PathValue("id"), "error", err)
+		app.logger.Error("Invalid ID parameter for edit", "id", r.PathValue("id"), "error", err)
 		app.notFound(w)
 		return
 	}
 
-	mood, err := app.moods.Get(id)
+	mood, err := app.moods.Get(id) // Get now fetches emoji/color too
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			app.logger.Warn("Mood entry not found for edit", "id", id)
+			app.logger.Warn("Mood not found for edit", "id", id)
 			app.notFound(w)
 		} else {
 			app.serverError(w, r, err)
@@ -237,31 +254,40 @@ func (app *application) showEditMoodForm(w http.ResponseWriter, r *http.Request)
 	templateData := NewTemplateData()
 	templateData.Title = fmt.Sprintf("Edit Mood Entry #%d", mood.ID)
 	templateData.HeaderText = "Update Your Mood Entry"
-	templateData.Mood = mood
-	// Pre-populate FormData from the fetched mood in case of validation errors on Update
+	templateData.Mood = mood // Pass the full mood object (includes emoji/color)
+
+	// Pre-populate FormData (used if update validation fails)
 	templateData.FormData = map[string]string{
 		"title":   mood.Title,
 		"content": mood.Content,
 		"emotion": mood.Emotion,
+		"emoji":   mood.Emoji, // Pass existing emoji
+		"color":   mood.Color, // Pass existing color
+		// We'll need JS to determine the initial 'emotion_choice' radio state
 	}
 
+	// Render the OLD edit form template for now.
+	// It won't correctly handle editing custom details yet.
+	app.logger.Warn("Rendering OLD edit form - does not support custom emotion editing yet")
 	err = app.render(w, http.StatusOK, "mood_edit_form.tmpl", templateData)
 	if err != nil {
 		app.serverError(w, r, err)
 	}
 }
 
-// updateMood handles the submission of the mood edit form.
+// updateMood (Needs updating for custom emotions)
 func (app *application) updateMood(w http.ResponseWriter, r *http.Request) {
+	// TODO: Update this handler to read hidden emoji/color fields from the
+	// (future) updated mood_edit_form.tmpl, similar to createMood.
+
+	// --- Current Placeholder Logic (based on OLD form) ---
 	if r.Method != http.MethodPost {
 		w.Header().Set("Allow", http.MethodPost)
 		app.clientError(w, http.StatusMethodNotAllowed)
 		return
 	}
-
 	id, err := strconv.ParseInt(r.PathValue("id"), 10, 64)
 	if err != nil || id < 1 {
-		app.logger.Error("Invalid ID parameter for mood update", "id", r.PathValue("id"), "error", err)
 		app.notFound(w)
 		return
 	}
@@ -272,44 +298,58 @@ func (app *application) updateMood(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Read OLD form fields (will change)
 	title := r.PostForm.Get("title")
 	content := r.PostForm.Get("content")
-	emotion := r.PostForm.Get("emotion")
+	emotionName := r.PostForm.Get("emotion") // From OLD dropdown
+	// Missing: emoji, color from new hidden fields in updated form
 
+	// Temp: Fetch existing to potentially get emoji/color (will be replaced)
+	existingMood, err := app.moods.Get(id)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			app.notFound(w)
+			return
+		}
+		app.serverError(w, r, err)
+		return
+	}
+	tempEmoji := existingMood.Emoji                 // Fallback
+	tempColor := existingMood.Color                 // Fallback
+	if details, ok := EmotionMap[emotionName]; ok { // If default emotion selected
+		tempEmoji = details.Emoji
+		tempColor = GetEmotionDetails(emotionName).Color // Use helper
+	}
+	// --- End Temporary Logic ---
+
+	// Populate mood struct (using temp emoji/color)
 	mood := &data.Mood{
-		ID:      id, // Crucial: Set the ID for the update
+		ID:      id,
 		Title:   title,
 		Content: content,
-		Emotion: emotion,
+		Emotion: emotionName,
+		Emoji:   tempEmoji, // TODO: Replace with value from hidden form field
+		Color:   tempColor, // TODO: Replace with value from hidden form field
 	}
 
 	v := validator.NewValidator()
-	data.ValidateMood(v, mood)
+	data.ValidateMood(v, mood) // Validate everything
 
 	if !v.ValidData() {
-		// Fetch original mood again to pass to template for context if needed,
-		// although we are primarily showing the attempted (invalid) data back.
-		// Re-fetching might be redundant if template only needs mood.ID
-
 		templateData := NewTemplateData()
-		templateData.Title = fmt.Sprintf("Edit Mood Entry #%d (Error)", id) // Use ID from path
+		templateData.Title = fmt.Sprintf("Edit Mood Entry #%d (Error)", id)
 		templateData.HeaderText = "Update Your Mood Entry"
-		// Decide if you want to pass the original or attempted mood here.
-		// Passing attempted `mood` struct ensures user sees what they typed wrong.
-		// If originalMood was fetched, you could potentially pass it too, e.g., templateData.OriginalMood = originalMood
-		templateData.Mood = mood // Pass the struct with attempted data
+		templateData.Mood = mood // Pass attempted mood back
 		templateData.FormErrors = v.Errors
-		// Repopulate FormData from the submitted (invalid) data
-		templateData.FormData = map[string]string{
+		templateData.FormData = map[string]string{ // Repopulate with attempted data
 			"title":   title,
 			"content": content,
-			"emotion": emotion,
+			"emotion": emotionName,
+			"emoji":   tempEmoji,
+			"color":   tempColor,
 		}
-		// If not passing attempted mood struct, ensure mood ID is available if template needs it.
-		// templateData.Mood = &data.Mood{ID: id} // Minimal mood if needed just for ID in form action
-
 		app.logger.Warn("Validation failed for mood update", "id", id, "errors", v.Errors)
-		// Re-render the EDIT form
+		// Render OLD edit form template
 		renderErr := app.render(w, http.StatusUnprocessableEntity, "mood_edit_form.tmpl", templateData)
 		if renderErr != nil {
 			app.serverError(w, r, renderErr)
@@ -318,33 +358,29 @@ func (app *application) updateMood(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// --- Successful update path ---
-	err = app.moods.Update(mood) // mood struct already has ID, Title, Content, Emotion
+	err = app.moods.Update(mood) // Update now includes emoji/color
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			app.logger.Warn("Mood entry not found for update", "id", id)
 			app.notFound(w)
-		} else {
-			app.serverError(w, r, err)
+			return
 		}
+		app.serverError(w, r, err)
 		return
 	}
 
 	app.logger.Info("Mood entry updated successfully", "id", mood.ID)
-	// --- REDIRECT CHANGE HERE ---
-	http.Redirect(w, r, "/dashboard", http.StatusSeeOther) // Redirect to Dashboard
+	http.Redirect(w, r, "/dashboard", http.StatusSeeOther) // Redirect to dashboard
 }
 
-// deleteMood handles the deletion of a mood entry.
+// deleteMood (Redirect already updated)
 func (app *application) deleteMood(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		w.Header().Set("Allow", http.MethodPost)
 		app.clientError(w, http.StatusMethodNotAllowed)
 		return
 	}
-
 	id, err := strconv.ParseInt(r.PathValue("id"), 10, 64)
 	if err != nil || id < 1 {
-		app.logger.Error("Invalid ID parameter for mood delete", "id", r.PathValue("id"), "error", err)
 		app.notFound(w)
 		return
 	}
@@ -352,31 +388,24 @@ func (app *application) deleteMood(w http.ResponseWriter, r *http.Request) {
 	err = app.moods.Delete(id)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			// Item already deleted, arguably not an error for the *user*
 			app.logger.Warn("Attempted to delete non-existent mood entry", "id", id)
-			// Redirecting is fine, maybe add a flash message "Item already deleted"
 		} else {
 			app.serverError(w, r, err)
-			return // Don't redirect on server error
+			return
 		}
 	} else {
 		app.logger.Info("Mood entry deleted successfully", "id", id)
 	}
-
-	// --- REDIRECT CHANGE HERE ---
 	http.Redirect(w, r, "/dashboard", http.StatusSeeOther) // Redirect to Dashboard
 }
 
-// --- Error Helpers ---
-
+// --- Error Helpers (No Changes) ---
 func (app *application) serverError(w http.ResponseWriter, r *http.Request, err error) {
 	var (
 		method = r.Method
 		uri    = r.URL.RequestURI()
 	)
-	// Log detailed error
 	app.logger.Error("Internal server error", "error", err.Error(), "method", method, "uri", uri)
-	// Send generic response to client
 	http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 }
 
@@ -384,10 +413,6 @@ func (app *application) clientError(w http.ResponseWriter, status int) {
 	http.Error(w, http.StatusText(status), status)
 }
 
-// notFound is a convenience wrapper for sending a 404 Not Found response.
 func (app *application) notFound(w http.ResponseWriter) {
 	app.clientError(w, http.StatusNotFound)
 }
-
-// Ensure you replace the existing updateMood and deleteMood functions in your
-// mood/cmd/web/handlers.go file with these updated versions.

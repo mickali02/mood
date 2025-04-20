@@ -59,7 +59,7 @@
                          <label for="emotion">Emotion:</label>
                          <select id="emotion" name="emotion">
                              <option value="">All Emotions</option> {{/* Default empty value */}}
-                             {{range .Emotions}}
+                             {{range .AvailableEmotions}}  <-- CORRECTED FIELD NAME
                                  <option value="{{.Name}}" {{if eq $.FilterEmotion .Name}}selected{{end}}>
                                      {{.Emoji}} {{.Name}}
                                  </option>
