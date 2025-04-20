@@ -13,21 +13,10 @@
 
     <div class="form-container">
       <h1>{{.HeaderText}}</h1>
+            <!-- Form submits via POST to /mood/new -->
       <form action="/mood/new" method="POST" novalidate id="mood-entry-form">
 
-         <!-- Title and Content Fields -->
-        <div class="form-group">
-          <label for="title">Title:</label>
-          <input type="text" id="title" name="title" value="{{index .FormData "title"}}" required class="{{if index .FormErrors "title"}}invalid{{end}}" placeholder="Give your entry a title...">
-          {{with index .FormErrors "title"}} <span class="error-message">{{.}}</span> {{end}}
-        </div>
-         <div class="form-group">
-          <label for="content">Details:</label>
-          <textarea id="content" name="content" required class="{{if index .FormErrors "content"}}invalid{{end}}" placeholder="Describe how you're feeling...">{{index .FormData "content"}}</textarea>
-          {{with index .FormErrors "content"}} <span class="error-message">{{.}}</span> {{end}}
-        </div>
-
-        <!-- Emotion Selector -->
+        <!-- === MOVED: Emotion Selector First === -->
         <div class="form-group">
           <label>How are you feeling?</label>
           {{with index .FormErrors "emotion"}} <span class="error-message emotion-group-error">{{.}}</span> {{end}}
@@ -54,14 +43,28 @@
               </div>
           </div>
         </div>
+        <!-- === END MOVED === -->
 
-        <!-- Hidden fields -->
-        <input type="hidden" name="emotion" id="final_emotion_name" value="{{index .FormData "emotion"}}"> <!-- Pre-fill hidden fields on error -->
+         <!-- Title Field Second -->
+        <div class="form-group">
+          <label for="title">Title:</label>
+          <input type="text" id="title" name="title" value="{{index .FormData "title"}}" required class="{{if index .FormErrors "title"}}invalid{{end}}" placeholder="Give your entry a title...">
+          {{with index .FormErrors "title"}} <span class="error-message">{{.}}</span> {{end}}
+        </div>
+
+         <!-- Content Field Third -->
+        <div class="form-group">
+          <label for="content">Details:</label>
+          <textarea id="content" name="content" required class="{{if index .FormErrors "content"}}invalid{{end}}" placeholder="Describe how you're feeling...">{{index .FormData "content"}}</textarea>
+          {{with index .FormErrors "content"}} <span class="error-message">{{.}}</span> {{end}}
+        </div>
+
+        <!-- Hidden fields (Order doesn't matter here) -->
+        <input type="hidden" name="emotion" id="final_emotion_name" value="{{index .FormData "emotion"}}">
         <input type="hidden" name="emoji" id="final_emotion_emoji" value="{{index .FormData "emoji"}}">
         <input type="hidden" name="color" id="final_emotion_color" value="{{index .FormData "color"}}">
 
-
-        <!-- Buttons -->
+        <!-- Buttons (Remain last) -->
         <div class="button-group">
           <button type="submit" class="btn dashboard-add-btn">Save Mood</button>
           <a href="/dashboard" class="btn cancel-btn">Cancel</a>

@@ -89,41 +89,7 @@ func (app *application) showAboutPage(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// --- Home Handler (No Changes) ---
-func (app *application) home(w http.ResponseWriter, r *http.Request) {
-	templateData := NewTemplateData()
-	templateData.Title = "Feel Flow"
-	templateData.HeaderText = "Welcome To Feel Flow!"
-	err := app.render(w, http.StatusOK, "home.tmpl", templateData)
-	if err != nil {
-		app.serverError(w, r, err)
-	}
-}
-
 // --- Mood Handlers ---
-
-// listMoods (Likely to be removed or refactored if dashboard is primary view)
-func (app *application) listMoods(w http.ResponseWriter, r *http.Request) {
-	// This handler likely becomes redundant if dashboard handles listing/filtering
-	app.logger.Warn("Accessed deprecated /moods endpoint")
-	http.Redirect(w, r, "/dashboard", http.StatusPermanentRedirect) // Redirect to dashboard
-
-	/* -- Original Logic (kept for reference) --
-	   moods, err := app.moods.GetAll()
-	   if err != nil {
-	       app.serverError(w, r, err)
-	       return
-	   }
-	   templateData := NewTemplateData()
-	   templateData.Title = "Your Mood Entries"
-	   templateData.HeaderText = "Recent Moods"
-	   templateData.Moods = moods // Pass the full list
-	   err = app.render(w, http.StatusOK, "moods.tmpl", templateData)
-	   if err != nil {
-	       app.serverError(w, r, err)
-	   }
-	*/
-}
 
 // showMoodForm (Uses DefaultEmotions from NewTemplateData)
 func (app *application) showMoodForm(w http.ResponseWriter, r *http.Request) {
@@ -261,101 +227,92 @@ func (app *application) showEditMoodForm(w http.ResponseWriter, r *http.Request)
 	}
 }
 
-// updateMood (Needs updating for custom emotions)
+// updateMood (UPDATED to handle custom emotion fields)
 func (app *application) updateMood(w http.ResponseWriter, r *http.Request) {
-	// TODO: Update this handler to read hidden emoji/color fields from the
-	// (future) updated mood_edit_form.tmpl, similar to createMood.
-
-	// --- Current Placeholder Logic (based on OLD form) ---
 	if r.Method != http.MethodPost {
 		w.Header().Set("Allow", http.MethodPost)
 		app.clientError(w, http.StatusMethodNotAllowed)
 		return
 	}
+
+	// Get ID from path
 	id, err := strconv.ParseInt(r.PathValue("id"), 10, 64)
 	if err != nil || id < 1 {
+		app.logger.Error("Invalid ID parameter for mood update", "id", r.PathValue("id"), "error", err)
 		app.notFound(w)
 		return
 	}
 
+	// Parse the form data
 	err = r.ParseForm()
 	if err != nil {
 		app.clientError(w, http.StatusBadRequest)
 		return
 	}
 
-	// Read OLD form fields (will change)
+	// Read submitted data, including hidden fields for emotion details
 	title := r.PostForm.Get("title")
 	content := r.PostForm.Get("content")
-	emotionName := r.PostForm.Get("emotion") // From OLD dropdown
-	// Missing: emoji, color from new hidden fields in updated form
+	emotionName := r.PostForm.Get("emotion") // From hidden input#final_emotion_name
+	emoji := r.PostForm.Get("emoji")         // From hidden input#final_emotion_emoji
+	color := r.PostForm.Get("color")         // From hidden input#final_emotion_color
 
-	// Temp: Fetch existing to potentially get emoji/color (will be replaced)
-	existingMood, err := app.moods.Get(id)
-	if err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
-			app.notFound(w)
-			return
-		}
-		app.serverError(w, r, err)
-		return
-	}
-	tempEmoji := existingMood.Emoji                 // Fallback
-	tempColor := existingMood.Color                 // Fallback
-	if details, ok := EmotionMap[emotionName]; ok { // If default emotion selected
-		tempEmoji = details.Emoji
-		tempColor = GetEmotionDetails(emotionName).Color // Use helper
-	}
-	// --- End Temporary Logic ---
-
-	// Populate mood struct (using temp emoji/color)
+	// Populate the Mood struct with ID and all submitted fields
 	mood := &data.Mood{
-		ID:      id,
+		ID:      id, // Set the ID for the update
 		Title:   title,
 		Content: content,
 		Emotion: emotionName,
-		Emoji:   tempEmoji, // TODO: Replace with value from hidden form field
-		Color:   tempColor, // TODO: Replace with value from hidden form field
+		Emoji:   emoji,
+		Color:   color,
 	}
 
+	// Validate the mood struct (including new fields)
 	v := validator.NewValidator()
-	data.ValidateMood(v, mood) // Validate everything
+	data.ValidateMood(v, mood) // ValidateMood checks emoji/color format
 
 	if !v.ValidData() {
+		// Validation failed, re-render the EDIT form with errors and submitted data
 		templateData := NewTemplateData()
 		templateData.Title = fmt.Sprintf("Edit Mood Entry #%d (Error)", id)
 		templateData.HeaderText = "Update Your Mood Entry"
-		templateData.Mood = mood // Pass attempted mood back
+		// Pass the *attempted* mood data back so JS can potentially re-select/pre-fill
+		templateData.Mood = mood
 		templateData.FormErrors = v.Errors
-		templateData.FormData = map[string]string{ // Repopulate with attempted data
-			"title":   title,
-			"content": content,
-			"emotion": emotionName,
-			"emoji":   tempEmoji,
-			"color":   tempColor,
+		// Repopulate FormData with ALL submitted values for hidden fields too
+		templateData.FormData = map[string]string{
+			"title":          title,
+			"content":        content,
+			"emotion":        emotionName,                      // Value from hidden #final_emotion_name
+			"emoji":          emoji,                            // Value from hidden #final_emotion_emoji
+			"color":          color,                            // Value from hidden #final_emotion_color
+			"emotion_choice": r.PostForm.Get("emotion_choice"), // Value from selected radio
 		}
+
 		app.logger.Warn("Validation failed for mood update", "id", id, "errors", v.Errors)
-		// Render OLD edit form template
-		renderErr := app.render(w, http.StatusUnprocessableEntity, "mood_edit_form.tmpl", templateData)
-		if renderErr != nil {
-			app.serverError(w, r, renderErr)
+		// Re-render the EDIT form template
+		err := app.render(w, http.StatusUnprocessableEntity, "mood_edit_form.tmpl", templateData)
+		if err != nil {
+			app.serverError(w, r, err)
 		}
 		return
 	}
 
 	// --- Successful update path ---
-	err = app.moods.Update(mood) // Update now includes emoji/color
+	err = app.moods.Update(mood) // Update method now includes emoji/color fields
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
+			// Mood was likely deleted between showing the form and submitting it
+			app.logger.Warn("Mood entry not found for update", "id", id)
 			app.notFound(w)
-			return
+		} else {
+			app.serverError(w, r, err)
 		}
-		app.serverError(w, r, err)
 		return
 	}
 
 	app.logger.Info("Mood entry updated successfully", "id", mood.ID)
-	http.Redirect(w, r, "/dashboard", http.StatusSeeOther) // Redirect to dashboard
+	http.Redirect(w, r, "/dashboard", http.StatusSeeOther) // Redirect back to dashboard
 }
 
 // deleteMood (Redirect already updated)
