@@ -6,10 +6,9 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	// "regexp" // <-- REMOVED unused import
 	"strings"
 	"time"
-	"unicode/utf8" // <-- ADDED import for RuneCountInString
+	"unicode/utf8"
 
 	"github.com/mickali02/mood/internal/validator"
 )
@@ -152,25 +151,51 @@ func (m *MoodModel) Delete(id int64) error {
 	return nil
 }
 
-// GetFiltered - Uses FilterCriteria
-func (m *MoodModel) GetFiltered(filters FilterCriteria) ([]*Mood, error) { // <-- Uses FilterCriteria
+// GetFiltered - Handles combined emotion filter
+func (m *MoodModel) GetFiltered(filters FilterCriteria) ([]*Mood, error) {
 	baseQuery := `
         SELECT id, created_at, updated_at, title, content, emotion, emoji, color
         FROM moods WHERE 1=1`
 	args := []any{}
 	paramIndex := 1
 
+	// Text Query Filter
 	if filters.TextQuery != "" {
 		searchTerm := "%" + strings.TrimSpace(filters.TextQuery) + "%"
 		baseQuery += fmt.Sprintf(" AND (title ILIKE $%d OR content ILIKE $%d OR emotion ILIKE $%d)", paramIndex, paramIndex, paramIndex)
 		args = append(args, searchTerm)
 		paramIndex++
 	}
+
+	// --- MODIFIED: Emotion Filter ---
 	if filters.Emotion != "" {
-		baseQuery += fmt.Sprintf(" AND emotion = $%d", paramIndex)
-		args = append(args, filters.Emotion)
-		paramIndex++
+		// Try to split the combined "Name::Emoji" value
+		parts := strings.SplitN(filters.Emotion, "::", 2)
+		if len(parts) == 2 {
+			// If split successful, filter by BOTH name AND emoji
+			emotionName := parts[0]
+			emotionEmoji := parts[1]
+			// Ensure parts are not empty after splitting before adding conditions
+			if emotionName != "" && emotionEmoji != "" {
+				baseQuery += fmt.Sprintf(" AND emotion = $%d AND emoji = $%d", paramIndex, paramIndex+1)
+				args = append(args, emotionName, emotionEmoji)
+				paramIndex += 2 // Increment by 2 parameters
+			} else {
+				// Log if split parts were empty, shouldn't happen with current template logic
+				fmt.Println("Warning: Split emotion filter resulted in empty parts:", filters.Emotion)
+			}
+		} else {
+			// If it doesn't contain "::", maybe it's an old value or something unexpected.
+			// Fallback: just filter by the raw string as the emotion name (less precise).
+			fmt.Println("Warning: Emotion filter value did not contain '::', filtering by name only:", filters.Emotion)
+			baseQuery += fmt.Sprintf(" AND emotion = $%d", paramIndex)
+			args = append(args, filters.Emotion)
+			paramIndex++
+		}
 	}
+	// --- End Modified Emotion Filter ---
+
+	// Date Filters
 	if !filters.StartDate.IsZero() {
 		baseQuery += fmt.Sprintf(" AND created_at >= $%d", paramIndex)
 		args = append(args, filters.StartDate)
@@ -182,16 +207,24 @@ func (m *MoodModel) GetFiltered(filters FilterCriteria) ([]*Mood, error) { // <-
 		args = append(args, endDateStartOfNextDay)
 		paramIndex++
 	}
+
 	baseQuery += " ORDER BY created_at DESC"
 
+	// --- Execute the query ---
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
+
+	// Uncomment for debugging if needed
+	// fmt.Println("Executing Query:", baseQuery)
+	// fmt.Println("With Args:", args)
+
 	rows, err := m.DB.QueryContext(ctx, baseQuery, args...)
 	if err != nil {
 		return nil, fmt.Errorf("filtered query execution: %w", err)
 	}
 	defer rows.Close()
 
+	// --- Scan results ---
 	moods := make([]*Mood, 0)
 	for rows.Next() {
 		var mood Mood
@@ -209,7 +242,7 @@ func (m *MoodModel) GetFiltered(filters FilterCriteria) ([]*Mood, error) { // <-
 		return nil, fmt.Errorf("filtered rows iteration: %w", err)
 	}
 	return moods, nil
-}
+} // End GetFiltered
 
 // GetAll - Calls GetFiltered
 func (m *MoodModel) GetAll() ([]*Mood, error) {

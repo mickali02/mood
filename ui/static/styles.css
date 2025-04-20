@@ -1,13 +1,15 @@
-/* mood/ui/static/styles.css - REFACTORED */
+/* mood/ui/static/css/styles.css - REFORMATTED */
 
 /* ==========================================================================
    1. Global Styles & Imports
    ========================================================================== */
 
    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Poppins:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,700;1,400&display=swap');
-   @import url('https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css'); /* Keep if using icons */
+   @import url('https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css');
    
-   *, *::before, *::after {
+   *,
+   *::before,
+   *::after {
        box-sizing: border-box;
        margin: 0;
        padding: 0;
@@ -18,21 +20,22 @@
       ========================================================================== */
    
    body {
-       /* Default to dashboard theme */
        font-family: 'Poppins', sans-serif;
        background: url('/static/resources/dashboard.png') no-repeat center center fixed;
        background-size: cover;
-       color: #e0e0e0; /* Default light text */
+       color: #e0e0e0;
        line-height: 1.6;
        min-height: 100vh;
-       display: flex; /* Helps with centering content sometimes */
+       display: flex;
        flex-direction: column;
        position: relative;
-       overflow-x: hidden; /* Prevent horizontal scroll */
+       overflow-x: hidden;
    }
    
    /* --- Base Typography --- */
-   h1, h2, h3, h4, h5, h6 {
+   h1,h2,h3,h4,
+   h5,
+   h6 {
        font-family: 'Playfair Display', serif;
        color: #ffffff;
        margin-bottom: 0.75em;
@@ -41,19 +44,19 @@
    }
    
    p {
-       font-family: 'Poppins', sans-serif; /* Default paragraph font */
+       font-family: 'Poppins', sans-serif;
        margin-bottom: 1em;
-       color: #d0d0e0; /* Slightly dimmer than white */
+       color: #d0d0e0;
    }
    
    a {
-       color: #c8a2c8; /* A lighter purple for links */
+       color: #c8a2c8;
        text-decoration: none;
        transition: color 0.3s ease;
    }
    
    a:hover {
-       color: #e6d29e; /* Gold hover from landing */
+       color: #e6d29e;
    }
    
    ul {
@@ -66,37 +69,37 @@
    .btn {
        font-family: 'Poppins', sans-serif;
        display: inline-block;
-       padding: 10px 25px; /* Base padding */
-       background-color: #A074B5; /* Primary Purple */
+       padding: 10px 25px;
+       background-color: #A074B5;
        color: #FFFFFF;
        text-decoration: none;
-       border-radius: 25px; /* Pill shape default */
+       border-radius: 25px;
        border: none;
        cursor: pointer;
        transition: background-color 0.3s, transform 0.1s, box-shadow 0.2s;
-       font-size: 1rem; /* Base font size */
+       font-size: 1rem;
        font-weight: 500;
        line-height: 1.4;
        text-align: center;
        text-transform: uppercase;
        letter-spacing: 0.5px;
-       box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+       box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
    }
    
    .btn:hover {
-       background-color: #8a6aaf; /* Slightly different hover purple */
+       background-color: #8a6aaf;
        transform: translateY(-2px);
-       box-shadow: 0 5px 12px rgba(0,0,0,0.25);
+       box-shadow: 0 5px 12px rgba(0, 0, 0, 0.25);
    }
    
    .btn:active {
        transform: translateY(0px);
-       box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+       box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
    }
    
    /* Specific button variant for dashboard/add actions */
    .btn.dashboard-add-btn {
-       padding: 12px 30px; /* Slightly larger */
+       padding: 12px 30px;
        font-size: 1.05rem;
        background-color: rgba(160, 116, 181, 0.9);
        box-shadow: 0 5px 15px rgba(160, 116, 181, 0.3);
@@ -114,20 +117,21 @@
        color: #bdc1c6;
        border: 1px solid rgba(255, 255, 255, 0.2);
        font-weight: 400;
-       text-transform: none; /* Cancel doesn't need uppercase */
+       text-transform: none;
    }
    
    .btn.cancel-btn:hover {
        background-color: rgba(255, 255, 255, 0.25);
        color: #ffffff;
-       transform: translateY(-2px); /* Consistent hover */
+       transform: translateY(-2px);
    }
    
    /* Edit/Delete Buttons (Smaller) */
    .edit-delete-buttons {
-       white-space: nowrap; /* Prevent wrapping */
-       flex-shrink: 0; /* Don't shrink button container */
+       white-space: nowrap;
+       flex-shrink: 0;
    }
+   
    .edit-delete-buttons .btn {
        margin-left: 8px;
        padding: 6px 15px;
@@ -136,25 +140,30 @@
        text-transform: none;
        letter-spacing: 0;
        border-radius: 15px;
-       box-shadow: none; /* Remove shadow from small buttons */
+       box-shadow: none;
    }
+   
    .edit-delete-buttons form {
        display: inline-block;
        margin: 0;
        padding: 0;
        vertical-align: middle;
    }
+   
    .edit-delete-buttons .btn.edit-btn {
-       background-color: rgba(100, 149, 237, 0.7); /* Cornflower blue-ish */
+       background-color: rgba(100, 149, 237, 0.7);
        color: #fff;
    }
+   
    .edit-delete-buttons .btn.edit-btn:hover {
-        background-color: rgba(100, 149, 237, 0.9);
+       background-color: rgba(100, 149, 237, 0.9);
    }
+   
    .edit-delete-buttons .btn.delete-btn {
-        background-color: rgba(220, 20, 60, 0.7); /* Crimson-ish */
-        color: #fff;
+       background-color: rgba(220, 20, 60, 0.7);
+       color: #fff;
    }
+   
    .edit-delete-buttons .btn.delete-btn:hover {
        background-color: rgba(220, 20, 60, 0.9);
    }
@@ -165,7 +174,7 @@
        margin-bottom: 25px;
    }
    
-   label { /* Base label style */
+   label {
        display: block;
        margin-bottom: 10px;
        color: #bdc1c6;
@@ -175,7 +184,7 @@
    }
    
    input[type="text"],
-   input[type="email"], /* Add other input types if needed */
+   input[type="email"],
    textarea {
        width: 100%;
        padding: 14px 18px;
@@ -183,10 +192,10 @@
        border: 1px solid rgba(255, 255, 255, 0.2);
        border-radius: 8px;
        box-sizing: border-box;
-       font-family: 'Lora', serif; /* Use Lora for text input */
+       font-family: 'Lora', serif;
        font-size: 1rem;
-       background-color: rgba(20, 22, 34, 0.5); /* Dark input background */
-       color: #e0e0e0; /* Light text */
+       background-color: rgba(20, 22, 34, 0.5);
+       color: #e0e0e0;
        transition: border-color 0.3s, background-color 0.3s, box-shadow 0.3s;
    }
    
@@ -199,10 +208,10 @@
    input[type="text"]:focus,
    input[type="email"]:focus,
    textarea:focus {
-       border-color: #a074b5; /* Purple focus */
+       border-color: #a074b5;
        background-color: rgba(30, 32, 44, 0.6);
        outline: none;
-       box-shadow: 0 0 0 3px rgba(160, 116, 181, 0.3); /* Focus glow */
+       box-shadow: 0 0 0 3px rgba(160, 116, 181, 0.3);
    }
    
    textarea {
@@ -210,7 +219,7 @@
        resize: vertical;
    }
    
-   .button-group { /* Centered button group */
+   .button-group {
        display: flex;
        justify-content: center;
        gap: 20px;
@@ -220,7 +229,7 @@
    
    /* --- Error Handling --- */
    .error-message {
-       color: #f87c7c; /* Bright red for dark backgrounds */
+       color: #f87c7c;
        font-size: 0.9em;
        display: block;
        margin-top: 6px;
@@ -229,19 +238,19 @@
    
    input.invalid,
    textarea.invalid {
-       border-color: #e74c3c !important; /* Red border */
-       background-color: rgba(50, 20, 20, 0.5) !important; /* Red tint */
+       border-color: #e74c3c !important;
+       background-color: rgba(50, 20, 20, 0.5) !important;
    }
-   /* Error border for emotion selector */
+   
    .emotion-selector.has-error {
-        border: 1px solid #e74c3c;
-        padding: 10px;
-        margin: -5px; /* Adjust to contain nicely */
-        border-radius: 8px;
+       border: 1px solid #e74c3c;
+       padding: 10px;
+       margin: -5px;
+       border-radius: 8px;
    }
-   /* Error message specifically for emotion group */
+   
    .emotion-group-error {
-        margin-bottom: 10px;
+       margin-bottom: 10px;
    }
    
    
@@ -249,25 +258,21 @@
       3. Landing & About Page Styles (Theme 1: Landing Look)
       ========================================================================== */
    
-   /* Apply landing background and override base text color */
    body.landing-specific-background,
    body.about-page-background {
        background: url('/static/resources/landing.png') no-repeat center center fixed;
        background-size: cover;
-       color: #f0f0f0; /* Override default body color */
+       color: #f0f0f0;
    }
    
-   /* Styles specific to header on landing/about pages */
    .landing-specific-header {
        display: flex;
        justify-content: flex-start;
        align-items: center;
        padding: 20px 50px;
        width: 100%;
-       position: relative; /* Or sticky if needed */
+       position: relative;
        z-index: 10;
-       /* background: rgba(0,0,0,0.1); Optional subtle bg */
-       /* backdrop-filter: blur(3px); */
    }
    
    .landing-specific-logo {
@@ -279,12 +284,12 @@
        width: auto;
    }
    
-   /* Nav styles specific to landing/about header */
    .landing-specific-nav ul {
        display: flex;
        gap: 30px;
        align-items: center;
    }
+   
    .landing-specific-nav a {
        text-decoration: none;
        color: #e0e0ff;
@@ -292,27 +297,28 @@
        font-size: 1.2rem;
        transition: color 0.3s ease;
    }
+   
    .landing-specific-nav a:hover {
-       color: #e6d29e; /* Gold hover */
+       color: #e6d29e;
    }
-   /* Signup button specific to this header */
+   
    .landing-specific-nav .signup-button {
-       /* Uses base .btn styles, override if needed */
        font-size: 0.9rem;
        padding: 8px 25px;
    }
+   
    .landing-specific-nav .signup-button:hover {
-       background-color: #e6d29e; /* Gold hover */
+       background-color: #e6d29e;
        color: #fff;
    }
    
-   /* --- Landing Page Main Content --- */
+   /* Landing Page Main Content */
    .landing-main-content {
        display: flex;
        flex-direction: column;
-       justify-content: center; /* Center content vertically */
-       align-items: flex-start; /* Align content block left */
-       padding: 0 80px; /* Adjust padding */
+       justify-content: center;
+       align-items: flex-start;
+       padding: 0 80px;
        flex-grow: 1;
        position: relative;
        z-index: 5;
@@ -321,41 +327,37 @@
    .landing-content-wrapper {
        max-width: 650px;
        text-align: left;
-       /* Remove background/padding from wrapper if desired */
    }
+   
    .landing-content-wrapper h1 {
-       /* Inherits base H1, override color/size if needed */
        color: #ffffff;
        font-size: 3.5rem;
-       text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+       text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
        text-align: left;
    }
+   
    .landing-content-wrapper p {
-       /* Inherits base p, override color if needed */
        color: #d8d8e0;
        font-size: 1.1rem;
        line-height: 1.7;
        margin-bottom: 30px;
        text-align: left;
    }
-   /* Read More button */
+   
    .read-more-button {
-       /* Uses base .btn styles */
        display: inline-block;
    }
+   
    .read-more-button:hover {
-       background-color: #e6d29e; /* Gold hover */
+       background-color: #e6d29e;
    }
    
    
-   /* --- About Page Specifics --- */
+   /* About Page Specifics */
    body.about-page-background {
-       /* Uses landing background from rule above */
-       /* Add specific overrides if needed, e.g., different text color */
-       color: #333; /* Example: darker text for readability IF content bg is light */
+       color: #333;
    }
    
-   /* If using a wrapper on About page */
    .about-main-content {
        display: flex;
        justify-content: center;
@@ -366,7 +368,7 @@
    }
    
    .about-content-wrapper {
-       background-color: rgba(255, 255, 255, 0.85); /* LIGHT background for contrast */
+       background-color: rgba(255, 255, 255, 0.85);
        backdrop-filter: blur(8px);
        padding: 35px 45px;
        border-radius: 10px;
@@ -374,18 +376,20 @@
        max-width: 850px;
        width: 100%;
        text-align: left;
-       margin-top: 20px; /* Space from header */
+       margin-top: 20px;
        border: 1px solid rgba(255, 255, 255, 0.1);
    }
+   
    .about-content-wrapper h1 {
-       color: #4a0e6c; /* Dark purple heading */
-       border-bottom: 2px solid #d8c1e3; /* Subtle underline */
+       color: #4a0e6c;
+       border-bottom: 2px solid #d8c1e3;
        padding-bottom: 10px;
        font-size: 2.4rem;
        text-align: left;
    }
+   
    .about-content-wrapper p {
-       color: #444; /* Dark grey text */
+       color: #444;
        font-size: 1rem;
        line-height: 1.8;
        text-align: left;
@@ -395,9 +399,6 @@
    /* ==========================================================================
       4. Dashboard Page Styles (/dashboard)
       ========================================================================== */
-   
-   /* Body uses default Theme 2 */
-   
    .dashboard-container {
        display: flex;
        width: 100%;
@@ -411,8 +412,8 @@
    .dashboard-sidebar {
        width: 80px;
        height: fit-content;
-       max-height: calc(100vh - 80px); /* Adjust based on top/padding */
-       background-color: rgba(40, 42, 54, 0.7); /* Darker sidebar */
+       max-height: calc(100vh - 80px);
+       background-color: rgba(40, 42, 54, 0.7);
        backdrop-filter: blur(12px);
        -webkit-backdrop-filter: blur(12px);
        display: flex;
@@ -422,9 +423,9 @@
        border-radius: 20px;
        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
        border: 1px solid rgba(255, 255, 255, 0.1);
-       margin: auto 0; /* Center vertically */
+       margin: auto 0;
        align-self: center;
-       position: sticky; /* Sticky sidebar */
+       position: sticky;
        top: 40px;
        z-index: 5;
    }
@@ -437,40 +438,43 @@
        gap: 15px;
        align-items: center;
    }
+   
    .sidebar-nav li {
        width: 100%;
        position: relative;
        display: flex;
        justify-content: center;
    }
+   
    .sidebar-nav a {
        display: flex;
        align-items: center;
        justify-content: center;
        width: 50px;
        height: 50px;
-       color: #bdc1c6; /* Icon color */
+       color: #bdc1c6;
        text-decoration: none;
        transition: all 0.3s ease;
        border-radius: 50%;
        background-color: rgba(255, 255, 255, 0.08);
        position: relative;
    }
+   
    .sidebar-nav a:hover,
    .sidebar-nav a.active {
        background-color: rgba(255, 255, 255, 0.2);
-       color: #ffffff; /* Active/hover icon color */
+       color: #ffffff;
        transform: scale(1.1);
        box-shadow: 0 0 15px rgba(160, 116, 181, 0.5);
    }
-   /* Tooltip */
+   
    .sidebar-nav a::after {
        content: attr(data-title);
        position: absolute;
        left: 110%;
        top: 50%;
        transform: translateY(-50%);
-       background-color: rgba(50, 52, 64, 0.95); /* Darker tooltip */
+       background-color: rgba(50, 52, 64, 0.95);
        color: white;
        padding: 6px 12px;
        border-radius: 6px;
@@ -480,57 +484,62 @@
        pointer-events: none;
        transition: opacity 0.3s ease, left 0.3s ease;
        z-index: 10;
-       box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
        visibility: hidden;
    }
+   
    .sidebar-nav a:hover::after {
        opacity: 1;
        visibility: visible;
        left: 120%;
    }
-   .nav-icon { /* Icon itself */
+   
+   .nav-icon {
        font-size: 22px;
        line-height: 1;
-       color: inherit; /* Takes color from parent <a> */
+       color: inherit;
        transition: all 0.3s ease;
    }
+   
    .sidebar-nav a:hover .nav-icon {
-        transform: scale(1.1);
+       transform: scale(1.1);
    }
-   /* Separator */
+   
    .nav-separator {
        width: 60%;
        height: 1px;
        background-color: rgba(255, 255, 255, 0.15);
        margin: 10px auto;
    }
-   /* Disabled Link Styling */
+   
    .sidebar-nav a.disabled-link {
        opacity: 0.4;
        pointer-events: none;
        cursor: default;
    }
+   
    .sidebar-nav a.disabled-link:hover {
-       background-color: rgba(255, 255, 255, 0.08); /* No hover effect */
+       background-color: rgba(255, 255, 255, 0.08);
        transform: none;
        box-shadow: none;
-       color: #bdc1c6; /* Keep original color */
+       color: #bdc1c6;
    }
+   
    .sidebar-nav a.disabled-link:hover::after {
-       opacity: 0; /* Hide tooltip */
+       opacity: 0;
        visibility: hidden;
    }
    
-   /* --- Dashboard Main Content Area --- */
+   /* Dashboard Main Area */
    .dashboard-main {
        flex-grow: 1;
-       min-height: calc(100vh - 40px); /* Ensure it can fill space */
-       max-height: calc(100vh - 40px); /* Limit height based on viewport */
-       overflow-y: auto; /* Allow scrolling within main area */
+       min-height: calc(100vh - 40px);
+       max-height: calc(100vh - 40px);
+       overflow-y: auto;
        padding: 30px 40px;
        display: flex;
-       flex-direction: column; /* Stack header, search, list */
-       background-color: rgba(40, 42, 54, 0.6); /* Consistent dark bg */
+       flex-direction: column;
+       background-color: rgba(40, 42, 54, 0.6);
        backdrop-filter: blur(10px);
        -webkit-backdrop-filter: blur(10px);
        border-radius: 20px;
@@ -538,158 +547,230 @@
        align-self: stretch;
    }
    
-   /* Dashboard Header */
    .dashboard-header {
        margin-bottom: 25px;
        padding-bottom: 15px;
        text-align: center;
        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-       flex-shrink: 0; /* Don't shrink header */
+       flex-shrink: 0;
    }
+   
    .dashboard-header h1 {
        font-size: 2.1rem;
        margin: 0;
    }
    
-   /* Dashboard Search Bar */
-   .dashboard-search-bar {
+   /* Dashboard Filter Bar */
+   .dashboard-filter-bar {
        margin-bottom: 30px;
-       padding: 0 10px;
-       flex-shrink: 0; /* Don't shrink search */
-   }
-   .dashboard-search-bar form {
-       display: flex;
-       align-items: center;
-       max-width: 700px;
-       margin: 0 auto;
-       background-color: rgba(40, 42, 54, 0.75); /* Darker form */
-       border-radius: 25px;
-       border: 1px solid rgba(255, 255, 255, 0.15);
-       overflow: hidden;
-       box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-   }
-   .dashboard-search-bar input[type="search"] {
-       flex-grow: 1;
-       padding: 12px 20px;
-       border: none;
-       background-color: transparent;
-       color: #e0e0e0;
-       font-family: 'Poppins', sans-serif;
-       font-size: 1rem;
-       outline: none;
-   }
-   .dashboard-search-bar input[type="search"]::placeholder {
-       color: #9aabbc;
-       opacity: 0.9;
-   }
-   .dashboard-search-bar input[type="search"]::-webkit-search-cancel-button,
-   .dashboard-search-bar input[type="search"]::-webkit-search-decoration {
-     -webkit-appearance: none; appearance: none;
-   }
-   .dashboard-search-bar .btn.search-btn {
-       padding: 12px 18px;
-       border-radius: 0 25px 25px 0;
-       background-color: #a074b5; /* Purple */
-       border: none;
-       margin: 0;
-       box-shadow: none;
-       font-size: 1.1rem; /* Icon size */
-       line-height: 1;
+       padding: 15px 20px;
+       background-color: rgba(40, 42, 54, 0.75);
+       border-radius: 15px;
+       border: 1px solid rgba(255, 255, 255, 0.1);
+       box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
        flex-shrink: 0;
    }
-   .dashboard-search-bar .btn.search-btn:hover {
-        background-color: #8a6aaf;
-        transform: none;
-        box-shadow: none;
-   }
-   /* Disable search button/input if needed */
-   .dashboard-search-bar input[type="search"]:disabled {
-       background-color: rgba(50,50,50,0.3);
-       cursor: not-allowed;
-   }
-   .dashboard-search-bar .btn.search-btn:disabled {
-       background-color: #777;
-       cursor: not-allowed;
-       opacity: 0.6;
+   
+   .filter-form {
+       display: flex;
+       flex-wrap: wrap;
+       align-items: flex-end;
+       gap: 15px 20px;
+       justify-content: center;
    }
    
+   .filter-group {
+       display: flex;
+       flex-direction: column;
+       align-items: flex-start;
+       gap: 5px;
+   }
+   
+   .text-search-group {
+       flex-grow: 1;
+       min-width: 220px;
+       align-self: stretch;
+       justify-content: flex-end;
+   }
+   
+   .search-input-wrapper {
+       display: flex;
+       width: 100%;
+       background-color: rgba(20, 22, 34, 0.6);
+       border: 1px solid rgba(255, 255, 255, 0.2);
+       border-radius: 20px;
+       overflow: hidden;
+       transition: border-color 0.2s, box-shadow 0.2s;
+   }
+   
+   .search-input-wrapper:focus-within {
+       border-color: #a074b5;
+       box-shadow: 0 0 0 2px rgba(160, 116, 181, 0.3);
+   }
+   
+   .search-input-wrapper input[type="search"] {
+       flex-grow: 1;
+       padding: 10px 18px;
+       border: none;
+       background: none;
+       color: #e0e0e0;
+       font-size: 0.95rem;
+       outline: none;
+       font-family: 'Poppins', sans-serif;
+   }
+   
+   .search-input-wrapper input[type="search"]::placeholder {
+       color: #9aabbc;
+       opacity: 0.8;
+   }
+   
+   .emotion-filter-group,
+   .date-filter-group {
+       align-self: stretch;
+       justify-content: flex-end;
+   }
+   
+   .filter-group label {
+       margin-bottom: 0;
+       color: #bdc1c6;
+       font-size: 0.85rem;
+       font-weight: 400;
+       padding-left: 5px;
+   }
+   
+   .filter-group select,
+   .filter-group input[type="date"] {
+       padding: 9px 12px;
+       background-color: rgba(20, 22, 34, 0.6);
+       border: 1px solid rgba(255, 255, 255, 0.2);
+       border-radius: 6px;
+       color: #e0e0e0;
+       font-family: 'Poppins', sans-serif;
+       font-size: 0.9rem;
+       outline: none;
+       transition: border-color 0.2s, box-shadow 0.2s;
+       height: 40px;
+       line-height: normal;
+       width: 160px;
+   }
+   
+   .filter-group select:focus,
+   .filter-group input[type="date"]:focus {
+       border-color: #a074b5;
+       box-shadow: 0 0 0 2px rgba(160, 116, 181, 0.3);
+   }
+   
+   .filter-group select {
+       appearance: none;
+       -webkit-appearance: none;
+       -moz-appearance: none;
+       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23bdc1c6' viewBox='0 0 16 16'%3E%3Cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3E%3C/svg%3E");
+       background-repeat: no-repeat;
+       background-position: right 10px center;
+       padding-right: 35px;
+       cursor: pointer;
+   }
+   
+   .filter-group input[type="date"]::-webkit-calendar-picker-indicator {
+       filter: invert(0.8);
+       cursor: pointer;
+   }
+   
+   .filter-button-group {
+       display: flex;
+       gap: 10px;
+       align-self: flex-end;
+       padding-bottom: 1px;
+   }
+   
+   .filter-apply-btn {
+       text-transform: none;
+       padding: 9px 20px;
+       font-size: 0.95rem;
+       height: 40px;
+   }
+   
+   .clear-filters-btn {
+       text-transform: none;
+       padding: 9px 20px;
+       font-size: 0.95rem;
+       height: 40px;
+   }
    
    /* Dashboard Mood List Section */
    .dashboard-mood-list {
-       flex-grow: 1; /* Takes remaining space */
-       overflow-y: auto; /* Scroll if list is long */
-       /* Add padding to prevent scrollbar overlap */
+       flex-grow: 1;
+       overflow-y: auto;
        padding-right: 10px;
        margin-right: -10px;
    }
    
-   .dashboard-mood-list .mood-list { /* Target the UL */
+   .dashboard-mood-list .mood-list {
        padding: 0;
        margin: 0;
    }
    
    /* Mood Item styling within dashboard */
    .dashboard-main .mood-item {
-       width: 100%; /* Full width within container */
+       width: 100%;
        margin-bottom: 18px;
-       background-color: rgba(55, 58, 80, 0.7); /* Base dark item bg */
+       background-color: rgba(55, 58, 80, 0.7); /* Base dark background */
        padding: 18px 25px;
        border-radius: 12px;
        border: 1px solid rgba(255, 255, 255, 0.1);
-       /* Inherited: display:flex, align:center, etc. */
        border-left-width: 5px;
        border-left-style: solid;
-       border-left-color: transparent; /* Default */
+       /* border-left-color is set via inline style */
        transition: box-shadow 0.2s ease, background-color 0.2s, border-color 0.2s, filter 0.2s;
-       color: #e0e0e0; /* Ensure base text color is light */
+       color: #e0e0e0;
+       display: flex;
+       justify-content: space-between;
+       align-items: center;
+       text-align: left;
    }
+   
    .dashboard-main .mood-item:hover {
-       box-shadow: 0 5px 18px rgba(0,0,0,0.15);
-       filter: brightness(1.15); /* Brighten on hover */
-       border-color: rgba(255, 255, 255, 0.2); /* Brighter border */
+       box-shadow: 0 5px 18px rgba(0, 0, 0, 0.15);
+       filter: brightness(1.15);
+       border-color: rgba(255, 255, 255, 0.2);
    }
-   /* Content within dashboard mood item */
+   
    .dashboard-main .mood-item-content {
-        flex-grow: 1;
-        margin-right: 20px;
+       flex-grow: 1;
+       margin-right: 20px;
    }
+   
    .dashboard-main .mood-item .mood-title {
        font-size: 1.15em;
        margin-bottom: 6px;
-       color: #ffffff; /* White title */
+       color: #ffffff;
        font-weight: 600;
        font-family: 'Poppins', sans-serif;
+       /* Added display flex for emoji alignment */
+       display: flex;
+       align-items: center;
    }
+   
    .dashboard-main .mood-item .mood-emoji {
-        font-size: 1.3em;
-        margin-right: 10px;
-        line-height: 1;
+       font-size: 1.3em;
+       margin-right: 10px;
+       line-height: 1;
    }
+   
    .dashboard-main .mood-item .mood-text {
        font-size: 0.9rem;
-       color: #c8c8d8; /* Light grey */
+       color: #c8c8d8;
        margin-bottom: 8px;
        line-height: 1.5;
-       font-family: 'Lora', serif; /* Lora for details */
+       font-family: 'Lora', serif;
    }
+   
    .dashboard-main .mood-item .mood-meta {
        font-size: 0.75em;
        opacity: 0.8;
-       color: #b0a8b9; /* Muted purple */
+       color: #b0a8b9;
        font-family: 'Poppins', sans-serif;
    }
-   
-   /* Apply specific colors based on emotion class */
-   .dashboard-main .mood-item.emotion-happy   { border-left-color: #FFD700; background-color: rgba(66, 60, 30, 0.7); }
-   .dashboard-main .mood-item.emotion-sad     { border-left-color: #6495ED; background-color: rgba(45, 55, 75, 0.7); }
-   .dashboard-main .mood-item.emotion-angry   { border-left-color: #DC143C; background-color: rgba(70, 35, 40, 0.7); }
-   .dashboard-main .mood-item.emotion-anxious { border-left-color: #FF8C00; background-color: rgba(75, 50, 25, 0.7); }
-   .dashboard-main .mood-item.emotion-calm    { border-left-color: #90EE90; background-color: rgba(45, 65, 45, 0.7); }
-   .dashboard-main .mood-item.emotion-excited { border-left-color: #FF69B4; background-color: rgba(75, 45, 60, 0.7); }
-   .dashboard-main .mood-item.emotion-neutral { border-left-color: #B0C4DE; background-color: rgba(55, 60, 70, 0.7); }
-   .dashboard-main .mood-item.emotion-unknown { border-left-color: #778899; background-color: rgba(50, 55, 60, 0.7); }
-   
-   
    
    /* Centering for "No Entries" Message */
    .dashboard-content-centered {
@@ -699,21 +780,19 @@
        justify-content: center;
        text-align: center;
        padding: 40px 20px;
-       flex-grow: 1; /* Fill space when list is empty */
+       flex-grow: 1;
    }
+   
    .dashboard-content-centered p {
        font-size: 1.1rem;
        color: #bdc1c6;
        margin-bottom: 25px;
    }
-
    
    
    /* ==========================================================================
       5. Mood Form Page Styles (/mood/new, /mood/edit/*)
       ========================================================================== */
-   
-   /* Body uses default Theme 2 */
    body.mood-form-page {
        display: flex;
        justify-content: center;
@@ -721,12 +800,11 @@
        padding: 30px 15px;
    }
    
-   /* Form container */
    .mood-form-page .form-container {
        width: 90%;
        max-width: 700px;
        padding: 35px 45px;
-       background-color: rgba(40, 42, 54, 0.8); /* Slightly more opaque */
+       background-color: rgba(40, 42, 54, 0.8);
        backdrop-filter: blur(10px);
        -webkit-backdrop-filter: blur(10px);
        border-radius: 15px;
@@ -744,22 +822,23 @@
        padding-bottom: 15px;
    }
    
-   /* Form elements inherit base styles */
-   
-   /* Emotion Selector Styling */
+   /* Emotion Selector */
    .emotion-selector {
        display: flex;
        flex-wrap: wrap;
        gap: 10px;
        padding-top: 5px;
    }
+   
    .hidden-radio {
        position: absolute;
        opacity: 0;
        pointer-events: none;
-       width: 0; height: 0;
+       width: 0;
+       height: 0;
    }
-   .emotion-option { /* Label as button */
+   
+   .emotion-option {
        display: inline-flex;
        align-items: center;
        gap: 8px;
@@ -773,470 +852,213 @@
        font-size: 0.9rem;
        user-select: none;
    }
+   
    .emotion-option-emoji {
        font-size: 1.1em;
        line-height: 1;
    }
+   
    .emotion-option:hover {
        background-color: rgba(255, 255, 255, 0.2);
        color: #ffffff;
        border-color: rgba(255, 255, 255, 0.4);
        transform: translateY(-1px);
    }
-   .hidden-radio:checked + .emotion-option {
-       background-color: #a074b5; /* Purple selected */
+   
+   .hidden-radio:checked+.emotion-option {
+       background-color: #a074b5;
        color: #ffffff;
        border-color: #a074b5;
        box-shadow: 0 0 10px rgba(160, 116, 181, 0.4);
    }
-   .hidden-radio:focus + .emotion-option {
-        outline: 2px solid #a074b5;
-        outline-offset: 2px;
-   }
    
-   /* Buttons use base styles */
+   .hidden-radio:focus+.emotion-option {
+       outline: 2px solid #a074b5;
+       outline-offset: 2px;
+   }
    
    
    /* ==========================================================================
-      6. Mood List Page Styles (/moods - IF YOU KEEP IT)
+      6. Mood List Page Styles (/moods - IF YOU KEEP IT) - REMOVED
       ========================================================================== */
+   /* Section intentionally left empty as styles were removed */
    
-   /* Body uses default Theme 2 */
-   body.mood-list-page {
-       display: flex;
+   
+   /* ==========================================================================
+      7. Dashboard Filter Bar Styles - ALREADY INCLUDED IN SECTION 4
+      ========================================================================== */
+   /* Section intentionally left empty as styles are in Section 4 */
+   
+   
+   /* ==========================================================================
+      8. Custom Emotion Modal Styles
+      ========================================================================== */
+   .modal {
+       display: none;
+       position: fixed;
+       z-index: 1000;
+       left: 0;
+       top: 0;
+       width: 100%;
+       height: 100%;
+       overflow: auto;
+       background-color: rgba(0, 0, 0, 0.7);
+       align-items: center;
        justify-content: center;
-       align-items: flex-start;
-       padding: 30px 15px;
    }
    
-   /* Container for mood list page */
-   .mood-list-page .container {
+   .modal-content {
+       background-color: #2f3241;
+       margin: auto;
+       padding: 30px 35px;
+       border: 1px solid rgba(255, 255, 255, 0.15);
        width: 90%;
-       max-width: 800px;
-       padding: 30px 40px;
-       background-color: rgba(40, 42, 54, 0.75);
-       backdrop-filter: blur(10px);
-       -webkit-backdrop-filter: blur(10px);
-       border-radius: 15px;
-       box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-       border: 1px solid rgba(255, 255, 255, 0.1);
-       text-align: center;
-       margin: 0 auto;
+       max-width: 480px;
+       border-radius: 12px;
+       box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+       color: #e0e0e0;
+       position: relative;
    }
    
-   .mood-list-page .page-header {
-       font-size: 2rem;
-       color: #ffffff;
-       margin-bottom: 30px;
+   .modal-header {
        padding-bottom: 15px;
        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-   }
-   
-   /* Back Arrow */
-   .mood-list-page .back-arrow {
-       position: absolute;
-       left: 30px;
-       top: 30px;
-       z-index: 10;
-       display: inline-block;
-   }
-   .mood-list-page .back-arrow-img {
-       width: 50px;
-       height: auto;
-       transition: transform 0.2s ease-in-out, opacity 0.2s;
-       opacity: 0.8;
-       /* Consider filter: invert(1) if arrow is dark */
-   }
-   .mood-list-page .back-arrow:hover .back-arrow-img {
-       transform: scale(1.1) translateX(-3px);
-       opacity: 1.0;
-   }
-   
-   /* Mood List styling (uses .dashboard-main .mood-item styles) */
-   .mood-list-page .mood-list {
-       margin-top: 20px;
-       margin-bottom: 30px;
-   }
-   
-   /* Apply dashboard mood item styles here too */
-   .mood-list-page .mood-item {
-       /* Copy or reuse styles from .dashboard-main .mood-item */
-       width: 100%;
-       margin-bottom: 18px;
-       background-color: rgba(55, 58, 80, 0.7);
-       padding: 18px 25px;
-       border-radius: 12px;
-       border: 1px solid rgba(255, 255, 255, 0.1);
+       margin-bottom: 25px;
        display: flex;
        justify-content: space-between;
        align-items: center;
-       border-left-width: 5px;
-       border-left-style: solid;
-       border-left-color: transparent;
-       transition: box-shadow 0.2s ease, background-color 0.2s, border-color 0.2s, filter 0.2s;
-       color: #e0e0e0;
-       text-align: left;
    }
-   .mood-list-page .mood-item:hover {
-       box-shadow: 0 5px 18px rgba(0,0,0,0.15);
-       filter: brightness(1.15);
-       border-color: rgba(255, 255, 255, 0.2);
+   
+   .modal-header h2 {
+       margin-bottom: 0;
+       color: #fff;
+       font-size: 1.4rem;
+       font-family: 'Playfair Display', serif;
    }
-   /* Apply emotion colors */
-   .mood-list-page .mood-item.emotion-happy   { border-left-color: #FFD700; background-color: rgba(66, 60, 30, 0.7); }
-   .mood-list-page .mood-item.emotion-sad     { border-left-color: #6495ED; background-color: rgba(45, 55, 75, 0.7); }
-   .mood-list-page .mood-item.emotion-angry   { border-left-color: #DC143C; background-color: rgba(70, 35, 40, 0.7); }
-   .mood-list-page .mood-item.emotion-anxious { border-left-color: #FF8C00; background-color: rgba(75, 50, 25, 0.7); }
-   .mood-list-page .mood-item.emotion-calm    { border-left-color: #90EE90; background-color: rgba(45, 65, 45, 0.7); }
-   .mood-list-page .mood-item.emotion-excited { border-left-color: #FF69B4; background-color: rgba(75, 45, 60, 0.7); }
-   .mood-list-page .mood-item.emotion-neutral { border-left-color: #B0C4DE; background-color: rgba(55, 60, 70, 0.7); }
-   .mood-list-page .mood-item.emotion-unknown { border-left-color: #778899; background-color: rgba(50, 55, 60, 0.7); }
-   /* Content inside items */
-   .mood-list-page .mood-item-content { flex-grow: 1; margin-right: 20px; }
-   .mood-list-page .mood-item .mood-title { font-size: 1.15em; margin-bottom: 6px; color: #ffffff; font-weight: 600; font-family: 'Poppins', sans-serif; }
-   .mood-list-page .mood-item .mood-emoji { font-size: 1.3em; margin-right: 10px; line-height: 1; }
-   .mood-list-page .mood-item .mood-text { font-size: 0.9rem; color: #c8c8d8; margin-bottom: 8px; line-height: 1.5; font-family: 'Lora', serif; }
-   .mood-list-page .mood-item .mood-meta { font-size: 0.75em; opacity: 0.8; color: #b0a8b9; font-family: 'Poppins', sans-serif; }
    
+   .modal-close {
+       color: #aaa;
+       font-size: 2rem;
+       font-weight: bold;
+       line-height: 1;
+       cursor: pointer;
+       padding: 0 5px;
+       margin: -5px -10px 0 10px;
+       transition: color 0.2s;
+   }
    
-   /* "No moods" message */
-   .mood-list-page .no-moods-message {
+   .modal-close:hover,
+   .modal-close:focus {
+       color: #fff;
+       text-decoration: none;
+   }
+   
+   .modal .form-group {
+       margin-bottom: 20px;
+   }
+   
+   .modal label {
+       font-size: 0.9rem;
        color: #bdc1c6;
-       margin: 40px 0;
-       font-size: 1.1rem;
-       text-align: center;
-   }
-   .mood-list-page .no-moods-message a {
-       font-weight: 600;
+       margin-bottom: 8px;
+       display: block;
    }
    
-   /* "Add New" button */
-   .mood-list-page .add-new-btn {
-       /* Uses .btn.dashboard-add-btn */
-       margin-top: 20px;
+   .modal input[type="text"],
+   .modal input[type="color"] {
+       width: 100%;
+       padding: 12px 15px;
+       background-color: rgba(20, 22, 34, 0.7);
+       border: 1px solid rgba(255, 255, 255, 0.2);
+       color: #e0e0e0;
+       border-radius: 6px;
+       font-family: 'Poppins', sans-serif;
+       font-size: 0.95rem;
    }
    
-   /* ==========================================================================
-   7. Dashboard Filter Bar Styles
-   ========================================================================== */
-
-.dashboard-filter-bar {
-    margin-bottom: 30px;
-    padding: 15px 20px; /* Adjusted padding */
-    background-color: rgba(40, 42, 54, 0.75); /* Dark background */
-    border-radius: 15px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-    flex-shrink: 0; /* Prevent shrinking */
-}
-
-.filter-form {
-    display: flex;
-    flex-wrap: wrap; /* Allow items to wrap on smaller screens */
-    align-items: flex-end; /* Align items along the bottom */
-    gap: 15px 20px; /* Vertical and horizontal gap */
-    justify-content: center; /* Center items when they wrap */
-}
-
-.filter-group {
-    display: flex;
-    flex-direction: column; /* Stack label above input */
-    align-items: flex-start; /* Align label left */
-    gap: 5px; /* Space between label and input */
-}
-
-/* Text Search Group takes more space */
-.text-search-group {
-    flex-grow: 1;
-    min-width: 220px; /* Minimum width */
-    align-self: stretch; /* Stretch vertically */
-    justify-content: flex-end; /* Align input wrapper bottom */
-}
-.search-input-wrapper {
-    display: flex;
-    width: 100%;
-    background-color: rgba(20, 22, 34, 0.6); /* Dark input bg */
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 20px; /* Pill shape */
-    overflow: hidden;
-    transition: border-color 0.2s, box-shadow 0.2s;
-}
-.search-input-wrapper:focus-within { /* Style wrapper when input inside is focused */
-     border-color: #a074b5;
-     box-shadow: 0 0 0 2px rgba(160, 116, 181, 0.3);
-}
-.search-input-wrapper input[type="search"] {
-    flex-grow: 1;
-    padding: 10px 18px;
-    border: none;
-    background: none;
-    color: #e0e0e0;
-    font-size: 0.95rem;
-    outline: none;
-    font-family: 'Poppins', sans-serif;
-}
-.search-input-wrapper input[type="search"]::placeholder {
-    color: #9aabbc; opacity: 0.8;
-}
-/* Submit button inside search wrapper is removed, use main apply button */
-
-
-/* Emotion & Date Filter Groups */
-.emotion-filter-group,
-.date-filter-group {
-   /* Allow natural width based on content */
-   align-self: stretch; /* Stretch vertically */
-   justify-content: flex-end; /* Align input bottom */
-}
-
-.filter-group label {
-    margin-bottom: 0;
-    color: #bdc1c6;
-    font-size: 0.85rem; /* Smaller label */
-    font-weight: 400;
-    padding-left: 5px; /* Slight indent */
-}
-
-/* Style select and date inputs */
-.filter-group select,
-.filter-group input[type="date"] {
-    padding: 9px 12px; /* Adjusted padding */
-    background-color: rgba(20, 22, 34, 0.6);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 6px;
-    color: #e0e0e0;
-    font-family: 'Poppins', sans-serif;
-    font-size: 0.9rem;
-    outline: none;
-    transition: border-color 0.2s, box-shadow 0.2s;
-    height: 40px; /* Match height roughly with search input */
-    line-height: normal; /* Ensure text is centered vertically */
-    width: 160px; /* Fixed width for date/emotion */
-}
-.filter-group select:focus,
-.filter-group input[type="date"]:focus {
-    border-color: #a074b5;
-    box-shadow: 0 0 0 2px rgba(160, 116, 181, 0.3);
-}
-/* Style dropdown arrow */
-.filter-group select {
-    appearance: none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23bdc1c6' viewBox='0 0 16 16'%3E%3Cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 10px center;
-    padding-right: 35px; /* Make more space for arrow */
-    cursor: pointer;
-}
-/* Style date picker indicator */
-.filter-group input[type="date"]::-webkit-calendar-picker-indicator {
-    filter: invert(0.8); /* Make calendar icon lighter */
-    cursor: pointer;
-}
-
-/* Filter Buttons Group */
-.filter-button-group {
-    /* Pushes to the end due to flex-end alignment of form items */
-    display: flex;
-    gap: 10px;
-    align-self: flex-end; /* Align with bottom of inputs */
-    padding-bottom: 1px; /* Fine-tune vertical alignment */
-}
-.filter-apply-btn {
-    /* Uses base .btn */
-    text-transform: none;
-    padding: 9px 20px;
-    font-size: 0.95rem;
-    height: 40px; /* Match input height */
-}
-.clear-filters-btn {
-    /* Uses base .btn.cancel-btn */
-    text-transform: none;
-    padding: 9px 20px;
-    font-size: 0.95rem;
-    height: 40px; /* Match input height */
-}
-
-/* ==========================================================================
-   8. Custom Emotion Modal Styles
-   ========================================================================== */
-
-/* --- Modal Container --- */
-.modal {
-    display: none; /* Hidden by default */
-    position: fixed; /* Stay in place */
-    z-index: 1000; /* Sit on top */
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: auto; /* Enable scroll if needed */
-    background-color: rgba(0, 0, 0, 0.7); /* Darker overlay */
-    /* Use flexbox to center modal content */
-    align-items: center;
-    justify-content: center;
-}
-
-/* --- Modal Content Box --- */
-.modal-content {
-    background-color: #2f3241; /* Dark background matching theme elements */
-    margin: auto; /* Centered */
-    padding: 30px 35px; /* Padding */
-    border: 1px solid rgba(255, 255, 255, 0.15); /* Subtle border */
-    width: 90%; /* Responsive width */
-    max-width: 480px; /* Max width */
-    border-radius: 12px; /* Rounded corners */
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4); /* Shadow */
-    color: #e0e0e0; /* Light text */
-    position: relative; /* For positioning close button */
-}
-
-/* --- Modal Header --- */
-.modal-header {
-    padding-bottom: 15px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    margin-bottom: 25px; /* Space below header */
-    display: flex; /* Layout for title and close button */
-    justify-content: space-between;
-    align-items: center;
-}
-
-.modal-header h2 {
-    margin-bottom: 0;
-    color: #fff;
-    font-size: 1.4rem; /* Adjusted size */
-    font-family: 'Playfair Display', serif; /* Match other headers */
-}
-
-.modal-close {
-    color: #aaa;
-    /* float: right; <-- Removed, use flexbox positioning */
-    font-size: 2rem; /* Slightly larger */
-    font-weight: bold;
-    line-height: 1;
-    cursor: pointer;
-    padding: 0 5px; /* Easier to click */
-    margin: -5px -10px 0 10px; /* Adjust position slightly */
-    transition: color 0.2s;
-}
-.modal-close:hover,
-.modal-close:focus {
-    color: #fff;
-    text-decoration: none;
-}
-
-/* --- Modal Body & Form --- */
-
-
-.modal .form-group {
-    margin-bottom: 20px;
-}
-
-.modal label {
-    font-size: 0.9rem;
-    color: #bdc1c6;
-    margin-bottom: 8px; /* Space below label */
-    display: block;
-}
-
-.modal input[type="text"],
-.modal input[type="color"] {
-    /* Inherit base input styles if possible, or redefine */
-    width: 100%;
-    padding: 12px 15px;
-    background-color: rgba(20, 22, 34, 0.7); /* Consistent dark input */
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    color: #e0e0e0;
-    border-radius: 6px;
-    font-family: 'Poppins', sans-serif; /* Consistent font */
-    font-size: 0.95rem;
-}
-.modal input[type="text"]:focus,
-.modal input[type="color"]:focus {
-     border-color: #a074b5; /* Theme focus color */
-     box-shadow: 0 0 0 2px rgba(160, 116, 181, 0.3); /* Focus glow */
-     outline: none;
-}
-
-
-.modal input[type="color"] {
-    padding: 5px; /* Color input needs less vertical padding */
-    height: 45px; /* Consistent height */
-    cursor: pointer;
-    width: 100%; /* Take full width */
-}
-.modal input[type="color"]::-webkit-color-swatch-wrapper {
-    padding: 0; /* Remove browser default padding */
-}
-.modal input[type="color"]::-webkit-color-swatch {
-    border: none; /* Remove browser default border */
-    border-radius: 4px;
-}
-
-
-/* --- Emoji Suggestions --- */
-.emoji-suggestions {
-    margin-top: 10px;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-}
-.emoji-suggestion-btn {
-    background-color: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    color: #e0e0e0; /* Emoji should render */
-    padding: 5px 8px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 1.3rem; /* Make emoji larger */
-    line-height: 1;
-    transition: background-color 0.2s, transform 0.1s;
-}
-.emoji-suggestion-btn:hover {
-    background-color: rgba(255, 255, 255, 0.2);
-    transform: scale(1.1);
-}
-.emoji-suggestion-btn:active {
-     transform: scale(1.0);
-}
-
-
-/* --- Modal Footer --- */
-.modal-footer {
-    /* Uses base .button-group, override justification */
-    justify-content: flex-end; /* Align buttons right */
-    margin-top: 25px;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    padding-top: 20px;
-    gap: 10px; /* Space between buttons */
-}
-
-.modal .btn {
-    /* Adjust modal button size/style if needed */
-    font-size: 0.9rem;
-    padding: 8px 18px;
-    text-transform: none; /* No uppercase needed */
-}
-
-
-/* Modal Error Messages */
-.modal .error-message {
-     /* Uses base .error-message style, ensure it's visible */
-     font-size: 0.85rem;
-     margin-top: 4px;
-}
-
-/* Visually hidden class (if needed) */
-.visually-hidden {
-  position: absolute !important;
-  height: 1px; width: 1px;
-  overflow: hidden;
-  clip: rect(1px, 1px, 1px, 1px);
-  white-space: nowrap;
-}
-
-
+   .modal input[type="text"]:focus,
+   .modal input[type="color"]:focus {
+       border-color: #a074b5;
+       box-shadow: 0 0 0 2px rgba(160, 116, 181, 0.3);
+       outline: none;
+   }
+   
+   .modal input[type="color"] {
+       padding: 5px;
+       height: 45px;
+       cursor: pointer;
+       width: 100%;
+   }
+   
+   .modal input[type="color"]::-webkit-color-swatch-wrapper {
+       padding: 0;
+   }
+   
+   .modal input[type="color"]::-webkit-color-swatch {
+       border: none;
+       border-radius: 4px;
+   }
+   
+   /* Emoji Suggestions */
+   .emoji-suggestions {
+       margin-top: 10px;
+       display: flex;
+       flex-wrap: wrap;
+       gap: 8px;
+   }
+   
+   .emoji-suggestion-btn {
+       background-color: rgba(255, 255, 255, 0.1);
+       border: 1px solid rgba(255, 255, 255, 0.2);
+       color: #e0e0e0;
+       padding: 5px 8px;
+       border-radius: 5px;
+       cursor: pointer;
+       font-size: 1.3rem;
+       line-height: 1;
+       transition: background-color 0.2s, transform 0.1s;
+   }
+   
+   .emoji-suggestion-btn:hover {
+       background-color: rgba(255, 255, 255, 0.2);
+       transform: scale(1.1);
+   }
+   
+   .emoji-suggestion-btn:active {
+       transform: scale(1.0);
+   }
+   
+   /* Modal Footer */
+   .modal-footer {
+       justify-content: flex-end;
+       margin-top: 25px;
+       border-top: 1px solid rgba(255, 255, 255, 0.1);
+       padding-top: 20px;
+       gap: 10px;
+       /* inherits display:flex from .button-group */
+   }
+   
+   .modal .btn {
+       font-size: 0.9rem;
+       padding: 8px 18px;
+       text-transform: none;
+   }
+   
+   .modal .error-message {
+       font-size: 0.85rem;
+       margin-top: 4px;
+   }
+   
+   .visually-hidden {
+       position: absolute !important;
+       height: 1px;
+       width: 1px;
+       overflow: hidden;
+       clip: rect(1px, 1px, 1px, 1px);
+       white-space: nowrap;
+   }
+   
+   
    /* ==========================================================================
       End of Styles
       ========================================================================== */

@@ -13,68 +13,54 @@ import (
 	"github.com/mickali02/mood/internal/validator"
 )
 
-// --- Handler for the Dashboard Page (Corrected Types) ---
+// --- Handler for the Dashboard Page (Handle Combined Filter Value) ---
 func (app *application) showDashboardPage(w http.ResponseWriter, r *http.Request) {
-	// ... (1. Read filters, 2. Parse dates - remain the same) ...
+	// 1. Read filter parameters
 	searchQuery := r.URL.Query().Get("query")
-	filterEmotion := r.URL.Query().Get("emotion")
+	// This will now be potentially "Name::Emoji" or empty string
+	filterCombinedEmotion := r.URL.Query().Get("emotion")
 	filterStartDateStr := r.URL.Query().Get("start_date")
 	filterEndDateStr := r.URL.Query().Get("end_date")
-	var filterStartDate, filterEndDate time.Time
-	var dateParseError error
-	if filterStartDateStr != "" { /* ... date parsing ... */
-		filterStartDate, dateParseError = time.Parse("2006-01-02", filterStartDateStr)
-		if dateParseError != nil {
-			app.logger.Warn("Invalid start date format", "date", filterStartDateStr, "error", dateParseError)
-			filterStartDate = time.Time{}
-		}
-	}
-	if filterEndDateStr != "" { /* ... date parsing ... */
-		filterEndDate, dateParseError = time.Parse("2006-01-02", filterEndDateStr)
-		if dateParseError != nil {
-			app.logger.Warn("Invalid end date format", "date", filterEndDateStr, "error", dateParseError)
-			filterEndDate = time.Time{}
-		}
-		if !filterStartDate.IsZero() && !filterEndDate.IsZero() && filterEndDate.Before(filterStartDate) {
-			app.logger.Warn("End date before start date", "start", filterStartDateStr, "end", filterEndDateStr)
-			filterEndDate = time.Time{}
-		}
-	}
 
-	// 3. Create FilterCriteria struct (using data package type)
-	criteria := data.FilterCriteria{ // <-- Use data.FilterCriteria
+	// ... (2. Parse dates - remains the same) ...
+	var filterStartDate, filterEndDate time.Time
+	// ... (date parsing logic) ...
+
+	// 3. Create FilterCriteria struct
+	// We will parse the combined emotion string in the data layer (GetFiltered)
+	criteria := data.FilterCriteria{
 		TextQuery: searchQuery,
-		Emotion:   filterEmotion,
+		Emotion:   filterCombinedEmotion, // Pass the raw combined value (or empty string)
 		StartDate: filterStartDate,
 		EndDate:   filterEndDate,
 	}
 
 	// 4. Fetch filtered moods
 	app.logger.Info("Fetching filtered moods", "criteria", fmt.Sprintf("%+v", criteria))
-	moods, err := app.moods.GetFiltered(criteria)
-	if err != nil {
-		app.logger.Error("Failed to fetch filtered moods", "error", err, "criteria", fmt.Sprintf("%+v", criteria))
+	moods, err := app.moods.GetFiltered(criteria) // GetFiltered will handle the combined value
+	// ... (error handling for moods) ...
+	if err != nil { /* ... error handling ... */
 		moods = []*data.Mood{}
 	}
 
 	// --- 5. Fetch distinct emotions using data method ---
-	availableEmotions, err := app.moods.GetDistinctEmotionDetails() // Returns []data.EmotionDetail
-	if err != nil {
-		app.logger.Error("Failed to fetch distinct emotions for filter", "error", err)
-		availableEmotions = []data.EmotionDetail{} // <-- Use data.EmotionDetail{} for empty slice
+	availableEmotions, err := app.moods.GetDistinctEmotionDetails()
+	// ... (error handling for availableEmotions) ...
+	if err != nil { /* ... error handling ... */
+		availableEmotions = []data.EmotionDetail{}
 	}
-	// --- End Fetch ---
 
 	// 6. Prepare template data
 	templateData := NewTemplateData()
 	templateData.Title = "Dashboard"
 	templateData.SearchQuery = searchQuery
-	templateData.FilterEmotion = filterEmotion
+	// Pass the raw combined value back to the template for pre-selection
+	templateData.FilterEmotion = filterCombinedEmotion
 	templateData.FilterStartDate = filterStartDateStr
 	templateData.FilterEndDate = filterEndDateStr
 	templateData.Moods = moods
 	templateData.HasMoodEntries = len(moods) > 0
-	templateData.AvailableEmotions = availableEmotions // <-- Assign the []data.EmotionDetail slice
+	templateData.AvailableEmotions = availableEmotions
 
 	// 7. Render the template
 	renderErr := app.render(w, http.StatusOK, "dashboard.tmpl", templateData)

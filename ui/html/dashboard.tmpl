@@ -55,12 +55,14 @@
                     </div>
 
                      <!-- Emotion Filter Dropdown -->
-                    <div class="filter-group emotion-filter-group">
+<div class="filter-group emotion-filter-group">
                          <label for="emotion">Emotion:</label>
-                         <select id="emotion" name="emotion">
-                             <option value="">All Emotions</option> {{/* Default empty value */}}
-                             {{range .AvailableEmotions}}  <-- CORRECTED FIELD NAME
-                                 <option value="{{.Name}}" {{if eq $.FilterEmotion .Name}}selected{{end}}>
+                         <select id="emotion" name="emotion"> {{/* Keep name="emotion" for now */}}
+                             <option value="">All Emotions</option>
+                             {{range .AvailableEmotions}}
+                                 {{/* Create a combined value, e.g., "Name::Emoji" */}}
+                                 {{ $optionValue := printf "%s::%s" .Name .Emoji }}
+                                 <option value="{{ $optionValue }}" {{if eq $.FilterEmotion $optionValue}}selected{{end}}>
                                      {{.Emoji}} {{.Name}}
                                  </option>
                              {{end}}
@@ -91,16 +93,17 @@
 
 
             <!-- Mood List Section -->
-            <section class="dashboard-mood-list">
-                 {{/* Check if the .Moods slice (passed from handler) has items */}}
-                {{if .Moods}}
-                    <ul class="mood-list"> <!-- Use the class styled in CSS -->
-                        {{range .Moods}} {{/* Loop through the moods */}}
-                            {{ $details := GetEmotionDetails .Emotion }}
-                            <li class="mood-item {{ $details.Color }}">
+             <section class="dashboard-mood-list">
+                 {{if .Moods}}
+                    <ul class="mood-list">
+                        {{range .Moods}}
+                            {{/* No longer need $details for emoji/color display */}}
+                            {{/* Apply color directly via inline style */}}
+                            <li class="mood-item" style="border-left-color: {{.Color}};">
                                 <div class="mood-item-content">
                                     <div class="mood-title">
-                                         <span class="mood-emoji">{{ $details.Emoji }}</span>
+                                         {{/* Use the Emoji field directly from the mood struct */}}
+                                         <span class="mood-emoji">{{.Emoji}}</span>
                                          <strong>{{.Title | html}}</strong>
                                     </div>
                                     <p class="mood-text">{{.Content | html}}</p>
@@ -117,22 +120,20 @@
                                     <form action="/mood/delete/{{.ID}}" method="POST" style="display: inline;"><button type="submit" class="btn delete-btn" onclick="return confirm('Are you sure?');">Delete</button></form>
                                 </div>
                             </li>
-                        {{end}} {{/* End range .Moods */}}
+                        {{end}}
                     </ul>
                 {{else}}
-                    {{/* No moods to display - show appropriate message */}}
+                    {{/* No results message section remains the same */}}
                     <div class="dashboard-content-centered">
                         {{if or .SearchQuery .FilterEmotion .FilterStartDate .FilterEndDate}}
-                            {{/* Message specific to empty search/filter results */}}
                             <p>No mood entries found matching your filters.</p>
                             <a href="/dashboard" class="btn cancel-btn">Clear Filters</a>
                         {{else}}
-                             {{/* Message for when there are genuinely no entries in DB */}}
                             <p>You haven't logged any moods yet!</p>
                             <a href="/mood/new" class="btn dashboard-add-btn">ADD YOUR FIRST MOOD ENTRY</a>
                         {{end}}
                     </div>
-                {{end}} {{/* End if .Moods */}}
+                {{end}}
             </section>
 
         </main>
