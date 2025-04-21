@@ -7,46 +7,62 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
-	"time" // Make sure time is imported
+	"time"
 
 	"github.com/mickali02/mood/internal/data"
 	"github.com/mickali02/mood/internal/validator"
 )
 
-// --- Handler for the Dashboard Page (Handle Combined Filter Value) ---
+// --- Handler for the Dashboard Page (HTMX Swaps Larger Block) ---
 func (app *application) showDashboardPage(w http.ResponseWriter, r *http.Request) {
 	// 1. Read filter parameters
 	searchQuery := r.URL.Query().Get("query")
-	// This will now be potentially "Name::Emoji" or empty string
 	filterCombinedEmotion := r.URL.Query().Get("emotion")
 	filterStartDateStr := r.URL.Query().Get("start_date")
 	filterEndDateStr := r.URL.Query().Get("end_date")
 
-	// ... (2. Parse dates - remains the same) ...
+	// 2. Parse date strings
 	var filterStartDate, filterEndDate time.Time
-	// ... (date parsing logic) ...
+	var dateParseError error
+	if filterStartDateStr != "" {
+		filterStartDate, dateParseError = time.Parse("2006-01-02", filterStartDateStr)
+		if dateParseError != nil {
+			app.logger.Warn("Invalid start date format", "date", filterStartDateStr, "error", dateParseError)
+			filterStartDate = time.Time{}
+		}
+	}
+	if filterEndDateStr != "" {
+		filterEndDate, dateParseError = time.Parse("2006-01-02", filterEndDateStr)
+		if dateParseError != nil {
+			app.logger.Warn("Invalid end date format", "date", filterEndDateStr, "error", dateParseError)
+			filterEndDate = time.Time{}
+		}
+		if !filterStartDate.IsZero() && !filterEndDate.IsZero() && filterEndDate.Before(filterStartDate) {
+			app.logger.Warn("End date before start date", "start", filterStartDateStr, "end", filterEndDateStr)
+			filterEndDate = time.Time{}
+		}
+	}
 
 	// 3. Create FilterCriteria struct
-	// We will parse the combined emotion string in the data layer (GetFiltered)
 	criteria := data.FilterCriteria{
 		TextQuery: searchQuery,
-		Emotion:   filterCombinedEmotion, // Pass the raw combined value (or empty string)
+		Emotion:   filterCombinedEmotion,
 		StartDate: filterStartDate,
 		EndDate:   filterEndDate,
 	}
 
 	// 4. Fetch filtered moods
 	app.logger.Info("Fetching filtered moods", "criteria", fmt.Sprintf("%+v", criteria))
-	moods, err := app.moods.GetFiltered(criteria) // GetFiltered will handle the combined value
-	// ... (error handling for moods) ...
-	if err != nil { /* ... error handling ... */
+	moods, err := app.moods.GetFiltered(criteria)
+	if err != nil {
+		app.logger.Error("Failed to fetch filtered moods", "error", err)
 		moods = []*data.Mood{}
 	}
 
-	// --- 5. Fetch distinct emotions using data method ---
+	// 5. Fetch distinct emotions
 	availableEmotions, err := app.moods.GetDistinctEmotionDetails()
-	// ... (error handling for availableEmotions) ...
-	if err != nil { /* ... error handling ... */
+	if err != nil {
+		app.logger.Error("Failed to fetch distinct emotions", "error", err)
 		availableEmotions = []data.EmotionDetail{}
 	}
 
@@ -54,20 +70,36 @@ func (app *application) showDashboardPage(w http.ResponseWriter, r *http.Request
 	templateData := NewTemplateData()
 	templateData.Title = "Dashboard"
 	templateData.SearchQuery = searchQuery
-	// Pass the raw combined value back to the template for pre-selection
 	templateData.FilterEmotion = filterCombinedEmotion
 	templateData.FilterStartDate = filterStartDateStr
 	templateData.FilterEndDate = filterEndDateStr
 	templateData.Moods = moods
-	templateData.HasMoodEntries = len(moods) > 0
+	templateData.HasMoodEntries = len(moods) > 0 // Use len(moods) which reflects filters
 	templateData.AvailableEmotions = availableEmotions
 
-	// 7. Render the template
-	renderErr := app.render(w, http.StatusOK, "dashboard.tmpl", templateData)
-	if renderErr != nil {
-		app.serverError(w, r, renderErr)
+	// 7. Handle HTMX request
+	if r.Header.Get("HX-Request") == "true" {
+		app.logger.Info("Handling HTMX request for dashboard content area") // Log reflects larger block
+		ts, ok := app.templateCache["dashboard.tmpl"]
+		if !ok {
+			app.serverError(w, r, fmt.Errorf("template %q does not exist", "dashboard.tmpl"))
+			return
+		}
+		// Execute the block containing filters AND list
+		err = ts.ExecuteTemplate(w, "dashboard-content", templateData) // <-- Use block name for the wrapper
+		if err != nil {
+			app.serverError(w, r, fmt.Errorf("failed to execute template block 'dashboard-content': %w", err))
+		}
+	} else {
+		app.logger.Info("Handling full page request for dashboard")
+		// Render the whole page normally for initial load
+		err = app.render(w, http.StatusOK, "dashboard.tmpl", templateData)
+		if err != nil {
+			// app.render logs its own errors, but maybe log context here
+			app.logger.Error("Full page render failed", "error", err)
+		}
 	}
-}
+} // End showDashboardPage
 
 // --- Landing Page Handler (No Changes) ---
 func (app *application) showLandingPage(w http.ResponseWriter, r *http.Request) {

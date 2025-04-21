@@ -879,19 +879,7 @@
    
    
    /* ==========================================================================
-      6. Mood List Page Styles (/moods - IF YOU KEEP IT) - REMOVED
-      ========================================================================== */
-   /* Section intentionally left empty as styles were removed */
-   
-   
-   /* ==========================================================================
-      7. Dashboard Filter Bar Styles - ALREADY INCLUDED IN SECTION 4
-      ========================================================================== */
-   /* Section intentionally left empty as styles are in Section 4 */
-   
-   
-   /* ==========================================================================
-      8. Custom Emotion Modal Styles
+      6. Custom Emotion Modal Styles
       ========================================================================== */
    .modal {
        display: none;
@@ -1058,7 +1046,48 @@
        white-space: nowrap;
    }
    
-   
    /* ==========================================================================
-      End of Styles
-      ========================================================================== */
+   9. HTMX Indicator Styles
+   ========================================================================== */
+
+.htmx-indicator {
+    display: inline-block; /* Or 'block' if you place it differently */
+    opacity: 0;
+    transition: opacity 200ms ease-in;
+    /* Add visual styling */
+    margin-left: 15px; /* Example spacing */
+    color: #a074b5;    /* Example color */
+    font-size: 0.9rem;
+    font-style: italic;
+    vertical-align: middle; /* Align with text if inline */
+}
+
+/* Show indicator when HTMX is making a request */
+body.htmx-request .htmx-indicator, /* If indicator is outside requesting element */
+.htmx-request .htmx-indicator {     /* If indicator is inside requesting element */
+    opacity: 1;
+}
+
+/* Less common: if the body itself has the indicator class during request */
+body.htmx-request.htmx-indicator {
+    opacity: 1;
+}
+
+/* Style the element that is about to be swapped out */
+.htmx-swapping {
+    opacity: 0.5; /* Fade out the old content */
+    transition: opacity 300ms ease-out;
+}
+
+/* Add this to styles.css */
+.filter-button-group.vertical-buttons {
+    flex-direction: column; /* Stack buttons vertically */
+    align-items: flex-start; /* Align buttons left within the column */
+    align-self: flex-end; /* Keep group aligned with bottom of other filters */
+    gap: 5px; /* Reduce gap for vertical stacking */
+}
+
+.filter-button-group.vertical-buttons .btn {
+     width: 100%; /* Make buttons take full width of the group */
+     text-align: center; /* Center text in button */
+}

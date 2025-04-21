@@ -4,7 +4,7 @@ package main
 import (
 	"html/template"
 	"path/filepath"
-	"time" // Import time package for template functions if needed
+	"time"
 )
 
 // Define template helper functions
@@ -36,24 +36,33 @@ var functions = template.FuncMap{
 func newTemplateCache() (map[string]*template.Template, error) {
 	cache := map[string]*template.Template{}
 
-	// Find all files matching the pattern "*.tmpl" in the html directory.
+	// Get all the 'page' templates (like dashboard.tmpl, mood_form.tmpl)
 	pages, err := filepath.Glob("./ui/html/*.tmpl")
 	if err != nil {
 		return nil, err
 	}
 
 	for _, page := range pages {
-		fileName := filepath.Base(page) // Get the filename (e.g., "moods.tmpl")
+		name := filepath.Base(page)
 
-		// Create a new template set with the base filename, add functions,
-		// and parse the main page template file.
-		ts, err := template.New(fileName).Funcs(functions).ParseFiles(page)
+		// Create a new template set starting with the page template.
+		// Add the template functions.
+		ts, err := template.New(name).Funcs(functions).ParseFiles(page)
 		if err != nil {
 			return nil, err
 		}
 
-		// Add the parsed template set to the cache.
-		cache[fileName] = ts
+		// --- MODIFIED PART ---
+		// Look for and parse any 'fragment' templates (*.tmpl files in fragments dir)
+		// This adds definitions like {{define "mood-list"}} to the set `ts`.
+		ts, err = ts.ParseGlob("./ui/html/fragments/*.tmpl")
+		if err != nil {
+			return nil, err
+		}
+		// --- END MODIFIED PART ---
+
+		// Add the template set to the cache.
+		cache[name] = ts
 	}
 
 	return cache, nil
