@@ -100,15 +100,18 @@
                         <div class="edit-delete-buttons">
                             {{/* Edit link remains a standard link for now */}}
                             <a href="/mood/edit/{{.ID}}" class="btn edit-btn">Edit</a>
-                            {{/* --- MODIFIED Delete Form --- */}}
+
+                            <!-- ****** START OF CHANGES ****** -->
                             <form hx-post="/mood/delete/{{.ID}}"
-                                  hx-target="closest li"        {{/* Target the parent li */}}
-                                  hx-swap="outerHTML"         {{/* Replace the li (effectively deleting) */}}
+                                  hx-target="#dashboard-content-area"  {{/* CHANGE: Target the main content area */}}
+                                  hx-swap="innerHTML"              {{/* CHANGE: Replace the *contents* of the area */}}
                                   hx-confirm="Are you sure you want to delete this entry?"
+                                  hx-indicator=".htmx-indicator"   {{/* ADDED: Show loading indicator */}}
                                   style="display: inline;">
                                 <button type="submit" class="btn delete-btn">Delete</button>
                             </form>
-                             {{/* --- END MODIFIED Delete Form --- */}}
+                            <!-- ****** END OF CHANGES ****** -->
+
                         </div>
                     </li>
                 {{end}}
