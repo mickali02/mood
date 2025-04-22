@@ -877,6 +877,11 @@
        justify-content: center;
        align-items: center;
        padding: 30px 15px;
+       background-image: url('/static/resources/form.png');
+       background-size: cover;                     /* Scale to cover viewport */
+       background-position: center center;         /* Center the image */
+       background-repeat: no-repeat;               /* Do not tile the image */
+       background-attachment: fixed;
    }
    
    .mood-form-page .form-container {

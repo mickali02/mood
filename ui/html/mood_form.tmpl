@@ -12,6 +12,15 @@
     <!-- === END QUILL === -->
 
     <link rel="stylesheet" href="/static/styles.css"> <!-- Your main CSS -->
+
+    <!-- ============================ -->
+    <!-- === ADDED HTMX SCRIPT TAG === -->
+    <!-- ============================ -->
+    <script src="https://unpkg.com/htmx.org@1.9.10" integrity="sha384-D1Kt99CQMDuVetoL1lrYwg5t+9QdHe7NLX/SoJYkXDFfX37iInKRy5xLSi8nO7UC" crossorigin="anonymous"></script>
+    <!-- ============================ -->
+    <!-- === END HTMX SCRIPT TAG === -->
+    <!-- ============================ -->
+
   </head>
   <body class="mood-form-page">
 
@@ -60,12 +69,14 @@
            <!-- === Quill Editor === -->
           <div class="form-group">
             <label for="editor-container">Details:</label>
+            <!-- Ensure the editor container ID matches what your JS uses -->
             <div id="editor-container" class="{{if index .FormErrors "content"}}invalid-editor{{end}}"></div>
+            <!-- Hidden input to store Quill content -->
             <input type="hidden" id="content" name="content" value="{{index .FormData "content"}}">
             {{with index .FormErrors "content"}} <span class="error-message">{{.}}</span> {{end}}
           </div>
 
-          <!-- === Hidden Fields === -->
+          <!-- === Hidden Fields (for selected emotion details) === -->
           <input type="hidden" name="emotion" id="final_emotion_name" value="{{index .FormData "emotion"}}">
           <input type="hidden" name="emoji" id="final_emotion_emoji" value="{{index .FormData "emoji"}}">
           <input type="hidden" name="color" id="final_emotion_color" value="{{index .FormData "color"}}">
@@ -98,6 +109,7 @@
                 <input type="text" id="custom_emotion_emoji" placeholder="Click a suggestion or paste" maxlength="5" readonly>
                  <span class="error-message" id="custom-emoji-error"></span>
                  <div class="emoji-suggestions">
+                    <!-- Emoji buttons... -->
                     <button type="button" class="emoji-suggestion-btn">😊</button> <button type="button" class="emoji-suggestion-btn">😄</button> <button type="button" class="emoji-suggestion-btn">😂</button> <button type="button" class="emoji-suggestion-btn">😍</button> <button type="button" class="emoji-suggestion-btn">🤩</button> <button type="button" class="emoji-suggestion-btn">😘</button> <button type="button" class="emoji-suggestion-btn">😉</button> <button type="button" class="emoji-suggestion-btn">😌</button> <button type="button" class="emoji-suggestion-btn">😢</button> <button type="button" class="emoji-suggestion-btn">😭</button> <button type="button" class="emoji-suggestion-btn">😠</button> <button type="button" class="emoji-suggestion-btn">😡</button> <button type="button" class="emoji-suggestion-btn">😟</button> <button type="button" class="emoji-suggestion-btn">😴</button> <button type="button" class="emoji-suggestion-btn">🤔</button> <button type="button" class="emoji-suggestion-btn">😐</button> <button type="button" class="emoji-suggestion-btn">🤐</button> <button type="button" class="emoji-suggestion-btn">🥳</button> <button type="button" class="emoji-suggestion-btn">😎</button> <button type="button" class="emoji-suggestion-btn">🤢</button> <button type="button" class="emoji-suggestion-btn">🤯</button> <button type="button" class="emoji-suggestion-btn">🥺</button> <button type="button" class="emoji-suggestion-btn">🥶</button> <button type="button" class="emoji-suggestion-btn">😇</button>
                  </div>
             </div>
@@ -115,6 +127,7 @@
     </div>
 
     <!-- Load the mood_form.js for modal logic -->
+    <!-- Ensure this script runs *after* HTMX is loaded if it interacts with HTMX events -->
     <script src="/static/js/mood_form.js"></script>
 
     <!-- === QUILL SCRIPT === -->
@@ -122,6 +135,7 @@
     <!-- === END QUILL === -->
 
     <!-- === LOAD OUR EDITOR INITIALIZATION SCRIPT === -->
+    <!-- Ensure this script runs *after* Quill and the #editor-container element exist -->
     <script src="/static/js/rich_editor.js"></script>
     <!-- === END LOAD SCRIPT === -->
 
