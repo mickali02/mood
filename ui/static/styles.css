@@ -1,4 +1,4 @@
-/* mood/ui/static/css/styles.css - Complete & Formatted */
+/* mood/ui/static/css/styles.css - Cleaned & Formatted */
 
 /* ==========================================================================
    1. Global Styles & Imports
@@ -6,7 +6,7 @@
 
    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Poppins:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,700;1,400&display=swap');
    @import url('https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css');
-
+   
    *,
    *::before,
    *::after {
@@ -14,11 +14,12 @@
        margin: 0;
        padding: 0;
    }
-
+   
    /* ==========================================================================
       2. Core Application Styles (Defaults - Theme 2: Dashboard Look)
       ========================================================================== */
-
+   
+   /* --- Default Body Styles --- */
    body {
        font-family: 'Poppins', sans-serif;
        background: url('/static/resources/dashboard.png') no-repeat center center fixed;
@@ -29,54 +30,49 @@
        display: flex;
        flex-direction: column;
        position: relative;
-       overflow-x: hidden; /* Prevent horizontal scroll */
+       overflow-x: hidden;
    }
-
+   
    /* --- Base Typography --- */
-   h1,
-   h2,
-   h3,
-   h4,
-   h5,
-   h6 {
+   h1, h2, h3, h4, h5, h6 { /* Grouped heading styles */
        font-family: 'Playfair Display', serif;
        color: #ffffff;
        margin-bottom: 0.75em;
        line-height: 1.3;
        font-weight: 600;
    }
-
+   
    p {
        font-family: 'Poppins', sans-serif;
        margin-bottom: 1em;
        color: #d0d0e0;
    }
-
+   
    a {
        color: #c8a2c8;
        text-decoration: none;
        transition: color 0.3s ease;
    }
-
+   
    a:hover {
        color: #e6d29e;
    }
-
+   
    ul {
        list-style: none;
        padding: 0;
        margin: 0;
    }
-
+   
    /* --- Base Button Styles --- */
    .btn {
        font-family: 'Poppins', sans-serif;
        display: inline-block;
        padding: 10px 25px;
-       background-color: #A074B5;
+       background-color: #A074B5; /* Primary Purple */
        color: #FFFFFF;
        text-decoration: none;
-       border-radius: 25px;
+       border-radius: 25px; /* Default Pill Shape */
        border: none;
        cursor: pointer;
        transition: background-color 0.3s, transform 0.1s, box-shadow 0.2s;
@@ -88,62 +84,55 @@
        letter-spacing: 0.5px;
        box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
    }
-
+   
    .btn:hover {
-       background-color: #8a6aaf;
+       background-color: #8a6aaf; /* Darker purple */
        transform: translateY(-2px);
        box-shadow: 0 5px 12px rgba(0, 0, 0, 0.25);
    }
-
+   
    .btn:active {
        transform: translateY(0px);
        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
    }
-
-   /* Specific button variant for dashboard/add actions */
-   .btn.dashboard-add-btn {
+   
+   /* --- Button Variants --- */
+   .btn.dashboard-add-btn { /* Specific style for Add buttons */
        padding: 12px 30px;
        font-size: 1.05rem;
        background-color: rgba(160, 116, 181, 0.9);
        box-shadow: 0 5px 15px rgba(160, 116, 181, 0.3);
    }
-
+   
    .btn.dashboard-add-btn:hover {
        background-color: rgba(160, 116, 181, 1);
        transform: translateY(-3px);
        box-shadow: 0 8px 20px rgba(160, 116, 181, 0.5);
    }
-
-   /* Cancel Button */
-   .btn.cancel-btn {
+   
+   .btn.cancel-btn { /* Cancel/Clear buttons */
        background-color: rgba(255, 255, 255, 0.15);
        color: #bdc1c6;
        border: 1px solid rgba(255, 255, 255, 0.2);
        font-weight: 400;
        text-transform: none;
    }
-
+   
    .btn.cancel-btn:hover {
        background-color: rgba(255, 255, 255, 0.25);
        color: #ffffff;
        transform: translateY(-2px);
    }
-
-   /* Edit/Delete Buttons (Positioned at card bottom) */
+   
+   /* Small Edit/Delete buttons */
    .edit-delete-buttons {
        white-space: nowrap;
        flex-shrink: 0;
-       margin-top: auto; /* Push buttons to the bottom */
-       padding-top: 15px; /* Space above buttons */
-       border-top: 1px solid rgba(255, 255, 255, 0.1); /* Separator line */
-       width: 100%; /* Make it span card width */
-       display: flex;
-       justify-content: flex-end; /* Align buttons right */
-       gap: 10px;
+       /* Alignment handled by parent flex container (.mood-item) */
    }
-
-   .edit-delete-buttons .btn {
-       margin-left: 0; /* Remove default margin */
+   
+   .edit-delete-buttons .btn { /* Base style for small buttons */
+       margin-left: 8px;
        padding: 6px 15px;
        font-size: 0.85rem;
        font-weight: 500;
@@ -152,37 +141,38 @@
        border-radius: 15px;
        box-shadow: none;
    }
-
-   .edit-delete-buttons form {
+   
+   .edit-delete-buttons form { /* Ensure form doesn't add extra space */
        display: inline-block;
        margin: 0;
        padding: 0;
-       vertical-align: middle; /* Align form with button */
+       vertical-align: middle;
    }
-
-   .edit-delete-buttons .btn.edit-btn {
+   
+   .edit-delete-buttons .btn.edit-btn { /* Edit button color */
        background-color: rgba(100, 149, 237, 0.7);
        color: #fff;
    }
-
+   
    .edit-delete-buttons .btn.edit-btn:hover {
        background-color: rgba(100, 149, 237, 0.9);
    }
-
-   .edit-delete-buttons .btn.delete-btn {
+   
+   .edit-delete-buttons .btn.delete-btn { /* Delete button color */
        background-color: rgba(220, 20, 60, 0.7);
        color: #fff;
    }
-
+   
    .edit-delete-buttons .btn.delete-btn:hover {
        background-color: rgba(220, 20, 60, 0.9);
    }
-
-   /* --- Base Form Styling (for dark theme) --- */
+   
+   
+   /* --- Base Form Styling (Dark Theme) --- */
    .form-group {
        margin-bottom: 25px;
    }
-
+   
    label {
        display: block;
        margin-bottom: 10px;
@@ -191,7 +181,8 @@
        font-weight: 500;
        font-size: 1rem;
    }
-
+   
+   /* Group common input/textarea styles */
    input[type="text"],
    input[type="email"],
    input[type="search"],
@@ -207,31 +198,31 @@
        background-color: rgba(20, 22, 34, 0.5);
        color: #e0e0e0;
        transition: border-color 0.3s, background-color 0.3s, box-shadow 0.3s;
-       outline: none;
+       outline: none; /* Added to remove default outline */
    }
-
+   
    input[type="text"]::placeholder,
    input[type="search"]::placeholder,
    textarea::placeholder {
        color: #888dac;
        opacity: 0.8;
    }
-
-   /* General focus styles for inputs OTHER THAN the specific search input */
+   
+   /* General input focus (excluding specific search wrapper) */
    input[type="text"]:focus,
    input[type="email"]:focus,
    textarea:focus {
        border-color: #a074b5;
        background-color: rgba(30, 32, 44, 0.6);
-       outline: none;
        box-shadow: 0 0 0 3px rgba(160, 116, 181, 0.3);
    }
-
+   
    textarea {
        min-height: 140px;
        resize: vertical;
    }
-
+   
+   /* Button layout group */
    .button-group {
        display: flex;
        justify-content: center;
@@ -239,7 +230,7 @@
        margin-top: 30px;
        padding-top: 10px;
    }
-
+   
    /* --- Error Handling --- */
    .error-message {
        color: #f87c7c;
@@ -248,71 +239,228 @@
        margin-top: 6px;
        font-weight: 400;
    }
-
+   
    input.invalid,
    textarea.invalid {
        border-color: #e74c3c !important;
        background-color: rgba(50, 20, 20, 0.5) !important;
    }
-
-   .emotion-selector.has-error {
+   
+   .emotion-selector.has-error { /* Border around emotion pills if invalid */
        border: 1px solid #e74c3c;
        padding: 10px;
        margin: -5px;
        border-radius: 8px;
    }
-
-   .emotion-group-error {
+   
+   .emotion-group-error { /* Error message specific to emotion group */
        margin-bottom: 10px;
    }
-
-
+   
+   
    /* ==========================================================================
       3. Landing & About Page Styles
       ========================================================================== */
-
+   
+   /* --- Shared Background and Text --- */
    body.landing-specific-background,
    body.about-page-background {
        background: url('/static/resources/landing.png') no-repeat center center fixed;
        background-size: cover;
-       color: #f0f0f0;
+       color: #f0f0f0; /* Light text for landing/about */
    }
-   .landing-specific-header { display: flex; justify-content: flex-start; align-items: center; padding: 20px 50px; width: 100%; position: relative; z-index: 10; }
-   .landing-specific-logo { margin-right: 40px; }
-   .landing-specific-logo img { height: 180px; width: auto; }
-   .landing-specific-nav ul { display: flex; gap: 30px; align-items: center; }
-   .landing-specific-nav a { text-decoration: none; color: #e0e0ff; font-weight: 500; font-size: 1.2rem; transition: color 0.3s ease; }
-   .landing-specific-nav a:hover { color: #e6d29e; }
-   .landing-specific-nav .signup-button { font-size: 0.9rem; padding: 8px 25px; }
-   .landing-specific-nav .signup-button:hover { background-color: #e6d29e; color: #fff; }
-   .landing-main-content { display: flex; flex-direction: column; justify-content: center; align-items: flex-start; padding: 0 80px; flex-grow: 1; position: relative; z-index: 5; }
-   .landing-content-wrapper { max-width: 650px; text-align: left; }
-   .landing-content-wrapper h1 { color: #ffffff; font-size: 3.5rem; text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3); text-align: left; }
-   .landing-content-wrapper p { color: #d8d8e0; font-size: 1.1rem; line-height: 1.7; margin-bottom: 30px; text-align: left; }
-   .read-more-button { display: inline-block; }
-   .read-more-button:hover { background-color: #e6d29e; }
-   body.about-page-background { color: #333; }
-   .about-main-content { display: flex; justify-content: center; align-items: flex-start; padding: 40px 20px; flex-grow: 1; width: 100%; }
-   .about-content-wrapper { background-color: rgba(255, 255, 255, 0.85); backdrop-filter: blur(8px); padding: 35px 45px; border-radius: 10px; box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15); max-width: 850px; width: 100%; text-align: left; margin-top: 20px; border: 1px solid rgba(255, 255, 255, 0.1); }
-   .about-content-wrapper h1 { color: #4a0e6c; border-bottom: 2px solid #d8c1e3; padding-bottom: 10px; font-size: 2.4rem; text-align: left; }
-   .about-content-wrapper p { color: #444; font-size: 1rem; line-height: 1.8; text-align: left; }
+   
+   /* --- Header Shared by Landing/About --- */
+   .landing-specific-header {
+       display: flex;
+       align-items: center;
+       padding: 1.5rem 5%;
+       width: 100%;
+       position: relative;
+       z-index: 10;
+   }
+   
+   .landing-specific-logo {
+       display: flex;
+       align-items: center;
+   }
+   
+   .landing-specific-logo img {
+       height: 180px; /* Kept larger logo */
+       width: auto;
+       margin-top: 10px; /* Adjust as needed */
+   }
+   
+   .landing-specific-nav {
+       display: flex;
+       align-items: center;
+   }
+   
+   .landing-specific-nav ul {
+       display: flex;
+       list-style: none;
+       gap: 2.2rem; /* Spacing between nav items */
+       align-items: center;
+   }
+   
+   .landing-specific-nav a {
+       color: #fff; /* White nav links */
+       text-decoration: none;
+       font-size: 1.4rem;
+       font-weight: 500;
+       transition: all 0.3s ease;
+   }
+   
+   .landing-specific-nav a:hover {
+       color: #e6d29e; /* Light yellow hover */
+       text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+   }
+   
+   .landing-specific-nav .signup-button { /* Style specific sign up button */
+       background-color: #a074b5; /* Solid purple */
+       border: 1px solid rgba(255, 255, 255, 0.3);
+       border-radius: 25px;
+       padding: 0.6rem 1.8rem;
+       font-weight: 600;
+       font-size: 0.9rem; /* Match previous */
+       letter-spacing: 0.5px; /* Match previous */
+       text-transform: uppercase; /* Match previous */
+       box-shadow: 0 0 15px rgba(177, 156, 217, 0.5);
+       transition: all 0.3s ease;
+   }
+   
+   .landing-specific-nav .signup-button:hover {
+       background-color: #e6d29e; /* Yellow hover */
+       color: #fff; /* Keep text white */
+       transform: translateY(-2px);
+       box-shadow: 0 0 20px rgba(177, 156, 217, 0.7);
+   }
+   
+   /* --- Landing Page Specific Content --- */
+   .landing-main-content {
+    display: flex;
+    flex-direction: column;
+    /* justify-content: center; */  /* --- REMOVE or change to flex-start --- */
+    justify-content: flex-start; /* --- ADD: Align content towards the top --- */
+    align-items: flex-start;     /* --- CHANGE: Align content block left --- */
+    padding: 5vh 8%;             /* --- ADJUST: Use vh for top padding, % for sides --- */
+    flex-grow: 1;                /* Keep */
+    position: relative;          /* Keep */
+    z-index: 5;                  /* Keep */
+    /* Add minimum height if needed to prevent footer overlap on short content */
+    min-height: calc(100vh - 150px); /* Adjust 150px based on actual header height */
+}
 
+   
+.landing-content-wrapper {
+    max-width: 600px; /* Adjust max width if needed */
+    text-align: center; /* --- ENSURE: Text inside aligns left --- */
+    margin-left: 0;   /* --- ENSURE: No forced centering margin --- */
+    margin-right: auto; /* Keep right margin auto */
+    /* Remove background/padding if you added it before */
+}
+   
+.landing-content-wrapper h1 {
+    /* Inherits base H1 styles */
+    color: #ffffff;
+    font-size: 3.2rem; /* Slightly smaller maybe? */
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+    text-align: center; /* --- ENSURE: Left alignment --- */
+    margin-bottom: 1rem; /* Adjust spacing */
+}
 
+.landing-content-wrapper p {
+    /* Inherits base p styles */
+    color: #d8d8e0;
+    font-size: 1.1rem;
+    line-height: 1.7;
+    margin-bottom: 2.5rem; /* Space before button */
+    text-align: center; /* --- ENSURE: Left alignment --- */
+    max-width: 550px; /* Limit paragraph width */
+}
+   
+   .read-more-button {
+    /* Use base .btn styles for consistency, then override */
+    display: inline-flex;     /* Good practice for aligning text/icons if any */
+    align-items: center;
+    justify-content: center;
+    padding: 0.8rem 2.2rem;     /* Adjust padding as needed */
+    background-color: #A074B5; /* --- CHANGE: Solid Purple Background --- */
+    color: #FFFFFF;           /* --- CHANGE: Explicit White Text --- */
+    font-weight: 500;         /* Keep or adjust font weight */
+    border-radius: 30px;      /* --- ENSURE: Rounded Corners --- */
+    border: none;             /* --- ENSURE: No default border --- */
+    text-transform: uppercase;
+    font-size: 0.9rem;
+    letter-spacing: 0.5px;
+    text-decoration: none;    /* Ensure no underline */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Optional subtle shadow */
+    transition: all 0.3s ease; /* Keep transition */
+}
+   
+   .read-more-button:hover {
+       background-color: #e6d29e; /* Yellow hover */
+       transform: translateY(-2px);
+       box-shadow: 0 0 15px rgba(177, 156, 217, 0.5);
+       color: #ffffff;
+   }
+   
+   /* --- About Page Specific Content --- */
+   /* body.about-page-background color set above */
+   .about-main-content {
+       display: flex;
+       justify-content: center;
+       align-items: flex-start;
+       padding: 40px 20px;
+       flex-grow: 1;
+       width: 100%;
+   }
+   
+   .about-content-wrapper { /* Container for about text */
+       background-color: rgba(255, 255, 255, 0.85); /* Light background */
+       backdrop-filter: blur(8px);
+       padding: 35px 45px;
+       border-radius: 10px;
+       box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+       max-width: 850px;
+       width: 100%;
+       text-align: center;
+       margin-top: 20px;
+       border: 1px solid rgba(255, 255, 255, 0.1);
+   }
+   
+   .about-content-wrapper h1 { /* About page H1 */
+       color: #4a0e6c; /* Dark purple */
+       border-bottom: 2px solid #d8c1e3;
+       padding-bottom: 10px;
+       font-size: 2.4rem;
+       text-align: left;
+   }
+   
+   .about-content-wrapper p { /* About page P */
+       color: #444; /* Dark text */
+       font-size: 1rem;
+       line-height: 1.8;
+       text-align: left;
+   }
+   
+   
    /* ==========================================================================
       4. Dashboard Page Styles (/dashboard)
       ========================================================================== */
    .dashboard-container {
        display: flex;
-       width: 92%; /* Slightly wider */
-       max-width: 1500px; /* Increase max width */
-       margin: 0 auto; /* Center the container */
+       width: 92%;
+       max-width: 1500px;
+       margin: 0 auto;
        min-height: 100vh;
        padding: 20px;
-       gap: 30px; /* Increase gap slightly */
+       gap: 30px;
        position: relative;
        z-index: 2;
    }
-
+   
+   /* --- Dashboard Sidebar --- */
    .dashboard-sidebar {
        width: 80px;
        height: fit-content;
@@ -328,32 +476,117 @@
        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
        border: 1px solid rgba(255, 255, 255, 0.1);
        margin: auto 0;
-       align-self: flex-start;
+       align-self: center; /* Changed from flex-start */
        position: sticky;
        top: 40px;
        z-index: 5;
    }
-
-   /* Sidebar Nav (No changes needed) */
-   .sidebar-nav ul { width: 100%; display: flex; flex-direction: column; gap: 15px; align-items: center; }
-   .sidebar-nav li { width: 100%; position: relative; display: flex; justify-content: center; }
-   .sidebar-nav a { display: flex; align-items: center; justify-content: center; width: 50px; height: 50px; color: #bdc1c6; text-decoration: none; transition: all 0.3s ease; border-radius: 50%; background-color: rgba(255, 255, 255, 0.08); position: relative; }
-   .sidebar-nav a:hover, .sidebar-nav a.active { background-color: rgba(255, 255, 255, 0.2); color: #ffffff; transform: scale(1.1); box-shadow: 0 0 15px rgba(160, 116, 181, 0.5); }
-   .sidebar-nav a::after { content: attr(data-title); position: absolute; left: 110%; top: 50%; transform: translateY(-50%); background-color: rgba(50, 52, 64, 0.95); color: white; padding: 6px 12px; border-radius: 6px; font-size: 0.85rem; white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity 0.3s ease, left 0.3s ease; z-index: 10; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3); visibility: hidden; }
-   .sidebar-nav a:hover::after { opacity: 1; visibility: visible; left: 120%; }
-   .nav-icon { font-size: 22px; line-height: 1; color: inherit; transition: all 0.3s ease; }
-   .sidebar-nav a:hover .nav-icon { transform: scale(1.1); }
-   .nav-separator { width: 60%; height: 1px; background-color: rgba(255, 255, 255, 0.15); margin: 10px auto; }
-   .sidebar-nav a.disabled-link { opacity: 0.4; pointer-events: none; cursor: default; }
-   .sidebar-nav a.disabled-link:hover { background-color: rgba(255, 255, 255, 0.08); transform: none; box-shadow: none; color: #bdc1c6; }
-   .sidebar-nav a.disabled-link:hover::after { opacity: 0; visibility: hidden; }
-
-
-   /* Dashboard Main Area */
+   
+   .sidebar-nav ul {
+       width: 100%;
+       display: flex;
+       flex-direction: column;
+       gap: 15px;
+       align-items: center;
+   }
+   
+   .sidebar-nav li {
+       width: 100%;
+       position: relative;
+       display: flex;
+       justify-content: center;
+   }
+   
+   .sidebar-nav a { /* Sidebar icon links */
+       display: flex;
+       align-items: center;
+       justify-content: center;
+       width: 50px;
+       height: 50px;
+       color: #bdc1c6;
+       text-decoration: none;
+       transition: all 0.3s ease;
+       border-radius: 50%;
+       background-color: rgba(255, 255, 255, 0.08);
+       position: relative;
+   }
+   
+   .sidebar-nav a:hover,
+   .sidebar-nav a.active {
+       background-color: rgba(255, 255, 255, 0.2);
+       color: #ffffff;
+       transform: scale(1.1);
+       box-shadow: 0 0 15px rgba(160, 116, 181, 0.5);
+   }
+   
+   .sidebar-nav a::after { /* Tooltip */
+       content: attr(data-title);
+       position: absolute;
+       left: 110%;
+       top: 50%;
+       transform: translateY(-50%);
+       background-color: rgba(50, 52, 64, 0.95);
+       color: white;
+       padding: 6px 12px;
+       border-radius: 6px;
+       font-size: 0.85rem;
+       white-space: nowrap;
+       opacity: 0;
+       pointer-events: none;
+       transition: opacity 0.3s ease, left 0.3s ease;
+       z-index: 10;
+       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+       visibility: hidden;
+   }
+   
+   .sidebar-nav a:hover::after {
+       opacity: 1;
+       visibility: visible;
+       left: 120%;
+   }
+   
+   .nav-icon { /* Bootstrap icons */
+       font-size: 22px;
+       line-height: 1;
+       color: inherit;
+       transition: all 0.3s ease;
+   }
+   
+   .sidebar-nav a:hover .nav-icon {
+       transform: scale(1.1);
+   }
+   
+   .nav-separator { /* Line in sidebar */
+       width: 60%;
+       height: 1px;
+       background-color: rgba(255, 255, 255, 0.15);
+       margin: 10px auto;
+   }
+   
+   .sidebar-nav a.disabled-link { /* Disabled sidebar links */
+       opacity: 0.4;
+       pointer-events: none;
+       cursor: default;
+   }
+   
+   .sidebar-nav a.disabled-link:hover {
+       background-color: rgba(255, 255, 255, 0.08);
+       transform: none;
+       box-shadow: none;
+       color: #bdc1c6;
+   }
+   
+   .sidebar-nav a.disabled-link:hover::after {
+       opacity: 0;
+       visibility: hidden;
+   }
+   
+   /* --- Dashboard Main Area --- */
    .dashboard-main {
        flex-grow: 1;
-       overflow-y: auto;
-       padding: 25px 35px; /* Adjusted padding */
+       max-height: calc(100vh - 40px); /* Limit height */
+       overflow-y: auto; /* Allow scroll */
+       padding: 25px 35px;
        display: flex;
        flex-direction: column;
        background-color: rgba(40, 42, 54, 0.6);
@@ -362,104 +595,219 @@
        border-radius: 20px;
        border: 1px solid rgba(255, 255, 255, 0.1);
        align-self: stretch;
-       /* Removed height limits to allow natural flow */
    }
-
+   
    .dashboard-header {
        margin-bottom: 25px;
        padding-bottom: 15px;
        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
        flex-shrink: 0;
        display: flex;
-       justify-content: center; /* Center items horizontally */
+       justify-content: center;
        align-items: center;
        gap: 15px;
-       width: 100%; /* Ensure it takes full width */
+       width: 100%;
    }
-
-   .dashboard-header h1 {
+   
+   .dashboard-header h1 { /* Welcome message */
        font-size: 2.1rem;
        margin: 0;
-       /* Removed flex-grow, text-align, padding */
    }
-
-   .dashboard-header .htmx-indicator {
+   
+   /* --- Dashboard Filter Bar --- */
+   .dashboard-filter-bar {
+       margin-bottom: 30px;
+       padding: 15px 20px;
+       background-color: rgba(40, 42, 54, 0.75);
+       border-radius: 15px;
+       border: 1px solid rgba(255, 255, 255, 0.1);
+       box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
        flex-shrink: 0;
-       margin-left: 0; /* Reset margin */
-       /* Add positioning if needed */
-       /* position: absolute; right: 35px; */
    }
-
-
-   /* Dashboard Filter Bar (No changes needed) */
-   .dashboard-filter-bar { margin-bottom: 30px; padding: 15px 20px; background-color: rgba(40, 42, 54, 0.75); border-radius: 15px; border: 1px solid rgba(255, 255, 255, 0.1); box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); flex-shrink: 0; }
-   .filter-form { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 15px 20px; justify-content: center; }
-   .filter-group { display: flex; flex-direction: column; align-items: flex-start; gap: 5px; }
-   .text-search-group { flex-grow: 1; min-width: 220px; align-self: stretch; justify-content: flex-end; }
-   .search-input-wrapper { display: flex; width: 100%; background-color: rgba(20, 22, 34, 0.6); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 20px; overflow: hidden; transition: border-color 0.2s, box-shadow 0.2s; }
-   .search-input-wrapper:focus-within { border-color: #a074b5; box-shadow: 0 0 0 2px rgba(160, 116, 181, 0.3); }
-   .search-input-wrapper input[type="search"] { flex-grow: 1; padding: 10px 18px; border: none; background: none; color: #e0e0e0; font-size: 0.95rem; outline: none; font-family: 'Poppins', sans-serif; }
-   .search-input-wrapper input[type="search"]:focus, .search-input-wrapper input[type="search"]:focus-visible { outline: none; }
-   .search-input-wrapper input[type="search"]::placeholder { color: #9aabbc; opacity: 0.8; }
-   .emotion-filter-group, .date-filter-group { align-self: stretch; justify-content: flex-end; }
-   .filter-group label { margin-bottom: 0; color: #bdc1c6; font-size: 0.85rem; font-weight: 400; padding-left: 5px; }
-   .filter-group select, .filter-group input[type="date"] { padding: 9px 12px; background-color: rgba(20, 22, 34, 0.6); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 6px; color: #e0e0e0; font-family: 'Poppins', sans-serif; font-size: 0.9rem; outline: none; transition: border-color 0.2s, box-shadow 0.2s; height: 40px; line-height: normal; width: 160px; }
-   .filter-group select:focus, .filter-group input[type="date"]:focus { border-color: #a074b5; box-shadow: 0 0 0 2px rgba(160, 116, 181, 0.3); }
-   .filter-group select { appearance: none; -webkit-appearance: none; -moz-appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23bdc1c6' viewBox='0 0 16 16'%3E%3Cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 10px center; padding-right: 35px; cursor: pointer; }
-   .filter-group input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(0.8); cursor: pointer; }
-   .filter-button-group { display: flex; gap: 10px; align-self: flex-end; padding-bottom: 1px; }
-   .filter-apply-btn { display: none; }
-   .clear-filters-btn { text-transform: none; padding: 9px 20px; font-size: 0.95rem; height: 40px; }
-
-
-   /* === Dashboard Mood List Section & Grid Layout === */
+   
+   .filter-form {
+       display: flex;
+       flex-wrap: wrap;
+       align-items: flex-end; /* Align items bottom */
+       gap: 15px 20px;
+       justify-content: center;
+   }
+   
+   .filter-group { /* Container for label + input */
+       display: flex;
+       flex-direction: column;
+       align-items: flex-start;
+       gap: 5px;
+   }
+   
+   .text-search-group { /* Allow search box to grow */
+       flex-grow: 1;
+       min-width: 220px;
+       align-self: stretch;
+       justify-content: flex-end;
+   }
+   
+   .search-input-wrapper { /* Wrapper for search input + icon */
+       display: flex;
+       width: 100%;
+       background-color: rgba(20, 22, 34, 0.6);
+       border: 1px solid rgba(255, 255, 255, 0.2);
+       border-radius: 20px; /* Pill shape */
+       overflow: hidden;
+       transition: border-color 0.2s, box-shadow 0.2s;
+   }
+   
+   .search-input-wrapper:focus-within { /* Focus style on wrapper */
+       border-color: #a074b5;
+       box-shadow: 0 0 0 2px rgba(160, 116, 181, 0.3);
+   }
+   
+   .search-input-wrapper input[type="search"] { /* Actual search input */
+       flex-grow: 1;
+       padding: 10px 18px;
+       border: none;
+       background: none;
+       color: #e0e0e0;
+       font-size: 0.95rem;
+       outline: none;
+       font-family: 'Poppins', sans-serif;
+   }
+   .search-input-wrapper input[type="search"]:focus{
+       box-shadow: none; /* Remove inner input focus style */
+   }
+   
+   input[type="search"]::placeholder {
+       color: #9aabbc;
+       opacity: 0.8;
+   }
+   
+   /* Hide default search cancel button */
+   input[type="search"]::-webkit-search-cancel-button,
+   input[type="search"]::-webkit-search-decoration {
+       -webkit-appearance: none;
+       appearance: none;
+   }
+   
+   .emotion-filter-group,
+   .date-filter-group { /* Align dropdowns/date pickers vertically */
+       align-self: stretch;
+       justify-content: flex-end;
+   }
+   
+   .filter-group label { /* Filter labels */
+       margin-bottom: 0;
+       color: #bdc1c6;
+       font-size: 0.85rem;
+       font-weight: 400;
+       padding-left: 5px;
+   }
+   
+   .filter-group select,
+   .filter-group input[type="date"] { /* Dropdown and date inputs */
+       padding: 9px 12px;
+       background-color: rgba(20, 22, 34, 0.6);
+       border: 1px solid rgba(255, 255, 255, 0.2);
+       border-radius: 6px;
+       color: #e0e0e0;
+       font-family: 'Poppins', sans-serif;
+       font-size: 0.9rem;
+       outline: none;
+       transition: border-color 0.2s, box-shadow 0.2s;
+       height: 40px; /* Consistent height */
+       line-height: normal;
+       width: 160px;
+   }
+   
+   .filter-group select:focus,
+   .filter-group input[type="date"]:focus {
+       border-color: #a074b5;
+       box-shadow: 0 0 0 2px rgba(160, 116, 181, 0.3);
+   }
+   
+   .filter-group select { /* Dropdown arrow styling */
+       appearance: none;
+       -webkit-appearance: none;
+       -moz-appearance: none;
+       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23bdc1c6' viewBox='0 0 16 16'%3E%3Cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3E%3C/svg%3E");
+       background-repeat: no-repeat;
+       background-position: right 10px center;
+       padding-right: 35px;
+       cursor: pointer;
+   }
+   
+   .filter-group input[type="date"]::-webkit-calendar-picker-indicator { /* Date picker icon */
+       filter: invert(0.8);
+       cursor: pointer;
+   }
+   
+   .filter-button-group { /* Container for filter/clear buttons */
+       display: flex;
+       gap: 10px;
+       align-self: flex-end;
+       padding-bottom: 1px;
+   }
+   
+   .filter-apply-btn,
+   .clear-filters-btn { /* Filter/Clear buttons */
+       text-transform: none;
+       padding: 9px 20px;
+       font-size: 0.95rem;
+       height: 40px;
+   }
+   /* Clear button uses .btn.cancel-btn styles */
+   
+   /* --- Dashboard Mood List --- */
    .dashboard-mood-list {
        flex-grow: 1;
-       padding-right: 0;
-       margin-right: 0;
+       overflow-y: auto;
+       padding-right: 10px; /* Prevent scrollbar overlap */
+       margin-right: -10px; /* Offset scrollbar */
    }
-
+   
    .dashboard-mood-list .mood-list {
        padding: 0;
        margin: 0;
-       display: grid;
-       grid-template-columns: repeat(2, 1fr);
-       gap: 25px;
+       display: grid; /* Use grid for layout */
+       grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* Responsive columns */
+       gap: 25px; /* Gap between cards */
    }
-
-   /* === Mood Item Card Styling === */
-   .dashboard-main .mood-item {
-       margin-bottom: 0;
-       background-color: rgba(55, 58, 80, 0.75);
+   
+   .dashboard-main .mood-item { /* Individual mood card */
+       width: auto; /* Let grid handle width */
+       margin-bottom: 0; /* Grid gap handles spacing */
+       background-color: rgba(55, 58, 80, 0.7);
        padding: 20px 24px;
        border-radius: 14px;
        border: 1px solid rgba(255, 255, 255, 0.1);
-       border-left: 5px solid; /* Keep colored border */
-       transition: box-shadow 0.3s ease, transform 0.3s ease;
+       border-left-width: 5px;
+       border-left-style: solid;
+       /* border-left-color is set via inline style */
+       transition: box-shadow 0.3s ease, transform 0.3s ease, border-color 0.2s;
        color: #e0e0e0;
-       display: flex;
+       display: flex; /* Use flex to arrange content vertically */
        flex-direction: column;
-       height: 240px; /* Keep fixed height for now */
+       /* height: 240px; REMOVED fixed height */
+       min-height: 200px; /* Set a minimum height */
        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
        text-align: left;
-       position: relative;
-       overflow: hidden; /* Keep hidden for line clamp */
+       position: relative; /* Needed for button positioning */
    }
-
+   
    .dashboard-main .mood-item:hover {
        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
        transform: translateY(-3px);
        border-color: rgba(255, 255, 255, 0.2);
    }
-
-   .dashboard-main .mood-item-content {
+   
+   .dashboard-main .mood-item-content { /* Main content area within card */
        flex-grow: 1;
        margin-right: 0;
-       overflow: hidden;
+       margin-bottom: 15px; /* Space before buttons */
+       overflow: hidden; /* Needed for line clamp */
        display: flex;
        flex-direction: column;
    }
-
+   
    .dashboard-main .mood-item .mood-title {
        font-size: 1.15em;
        margin-bottom: 8px;
@@ -469,44 +817,42 @@
        display: flex;
        align-items: center;
        gap: 10px;
-       flex-shrink: 0;
+       flex-shrink: 0; /* Prevent title from shrinking */
    }
-
+   
    .dashboard-main .mood-item .mood-emoji {
        font-size: 1.3em;
        line-height: 1;
        flex-shrink: 0;
    }
-
-   /* Content area within the card */
-   .dashboard-main .mood-item .quill-rendered-content {
-       flex-grow: 1;
-       overflow: hidden;
-       position: relative;
-       /* max-height: calc(100% - 40px); */ /* Remove max-height for line-clamp */
-       /* Line Clamping */
+   
+   .dashboard-main .mood-item .mood-text { /* Mood description text */
+       flex-grow: 1; /* Allow text to take available space */
+       overflow: hidden; /* Needed for line clamp */
+       font-size: 0.95rem;
+       color: #c8c8d8;
+       margin-bottom: 10px; /* Space below text */
+       line-height: 1.5;
+       font-family: 'Lora', serif;
+       /* Apply line clamping */
        display: -webkit-box;
        -webkit-box-orient: vertical;
-       -webkit-line-clamp: 4; /* Show ~4 lines */
-       line-clamp: 4;         /* Standard property */
-       overflow: hidden;
+       -webkit-line-clamp: 4; /* Adjust number of lines */
+       line-clamp: 4;
        text-overflow: ellipsis;
-       /* Adjust font size */
-       font-size: 0.95rem; /* Slightly larger than before */
-       /* Indentation can be tricky with complex HTML, adjust padding if needed */
-       /* padding-left: 0.5em; */ /* Optional: Add slight indent */
    }
-
-   .dashboard-main .mood-item .mood-meta {
+   
+   .dashboard-main .mood-item .mood-meta { /* Date/Time info */
        font-size: 0.75em;
        opacity: 0.8;
        color: #b0a8b9;
        font-family: 'Poppins', sans-serif;
-       margin-top: 10px;
-       flex-shrink: 0;
+       margin-top: auto; /* Push to bottom if content is short */
+       padding-top: 10px; /* Space above meta */
+       flex-shrink: 0; /* Prevent shrinking */
    }
-
-   /* Centering for "No Entries" Message */
+   
+   /* No results message */
    .dashboard-content-centered {
        display: flex;
        flex-direction: column;
@@ -516,374 +862,521 @@
        padding: 40px 20px;
        flex-grow: 1;
    }
-
+   
    .dashboard-content-centered p {
        font-size: 1.1rem;
        color: #bdc1c6;
        margin-bottom: 25px;
    }
-
-
+   
+   
    /* ==========================================================================
       5. Mood Form Page Styles (/mood/new, /mood/edit/*)
       ========================================================================== */
-   /* ... (Mood form styles remain unchanged) ... */
-    body.mood-form-page { display: flex; justify-content: center; align-items: center; padding: 30px 15px; }
-    .mood-form-page .form-container { width: 90%; max-width: 700px; padding: 35px 45px; background-color: rgba(40, 42, 54, 0.8); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-radius: 15px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2); border: 1px solid rgba(255, 255, 255, 0.1); text-align: left; margin: 0 auto; }
-    .mood-form-page h1 { font-size: 2rem; text-align: center; margin-bottom: 30px; border-bottom: 1px solid rgba(255, 255, 255, 0.1); padding-bottom: 15px; }
-    .emotion-selector { display: flex; flex-wrap: wrap; gap: 10px; padding-top: 5px; }
-    .hidden-radio { position: absolute; opacity: 0; pointer-events: none; width: 0; height: 0; }
-    .emotion-option { display: inline-flex; align-items: center; gap: 8px; padding: 8px 16px; background-color: rgba(255, 255, 255, 0.1); color: #bdc1c6; border-radius: 20px; cursor: pointer; transition: all 0.3s ease; border: 1px solid rgba(255, 255, 255, 0.2); font-size: 0.9rem; user-select: none; }
-    .emotion-option-emoji { font-size: 1.1em; line-height: 1; }
-    .emotion-option:hover { background-color: rgba(255, 255, 255, 0.2); color: #ffffff; border-color: rgba(255, 255, 255, 0.4); transform: translateY(-1px); }
-    .hidden-radio:checked+.emotion-option { background-color: #a074b5; color: #ffffff; border-color: #a074b5; box-shadow: 0 0 10px rgba(160, 116, 181, 0.4); }
-    .hidden-radio:focus+.emotion-option { outline: 2px solid #a074b5; outline-offset: 2px; }
-
-
+   body.mood-form-page {
+       display: flex;
+       justify-content: center;
+       align-items: center;
+       padding: 30px 15px;
+   }
+   
+   .mood-form-page .form-container {
+       width: 90%;
+       max-width: 700px;
+       padding: 35px 45px;
+       background-color: rgba(40, 42, 54, 0.8);
+       backdrop-filter: blur(10px);
+       -webkit-backdrop-filter: blur(10px);
+       border-radius: 15px;
+       box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+       border: 1px solid rgba(255, 255, 255, 0.1);
+       text-align: left;
+       margin: 0 auto;
+   }
+   
+   .mood-form-page h1 {
+       font-size: 2rem;
+       text-align: center;
+       margin-bottom: 30px;
+       border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+       padding-bottom: 15px;
+   }
+   
+   /* Emotion Selector (Pills) */
+   .emotion-selector {
+       display: flex;
+       flex-wrap: wrap;
+       gap: 10px;
+       padding-top: 5px;
+   }
+   
+   .hidden-radio { /* Hide actual radio button */
+       position: absolute;
+       opacity: 0;
+       pointer-events: none;
+       width: 0;
+       height: 0;
+   }
+   
+   .emotion-option { /* Style the label like a button */
+       display: inline-flex;
+       align-items: center;
+       gap: 8px;
+       padding: 8px 16px;
+       background-color: rgba(255, 255, 255, 0.1);
+       color: #bdc1c6;
+       border-radius: 20px;
+       cursor: pointer;
+       transition: all 0.3s ease;
+       border: 1px solid rgba(255, 255, 255, 0.2);
+       font-size: 0.9rem;
+       user-select: none; /* Prevent text selection */
+   }
+   
+   .emotion-option-emoji {
+       font-size: 1.1em;
+       line-height: 1;
+   }
+   
+   .emotion-option:hover {
+       background-color: rgba(255, 255, 255, 0.2);
+       color: #ffffff;
+       border-color: rgba(255, 255, 255, 0.4);
+       transform: translateY(-1px);
+   }
+   
+   .hidden-radio:checked+.emotion-option, /* Style when corresponding radio is checked */
+   .emotion-option.other-option.has-custom-value { /* Style 'Other' when it holds a custom value */
+       background-color: #a074b5;
+       color: #ffffff;
+       border-color: #a074b5; /* Default uses purple border */
+       box-shadow: 0 0 10px rgba(160, 116, 181, 0.4);
+   }
+   
+   
+   .emotion-option.other-option.has-custom-value .emotion-option-emoji,
+   .emotion-option.other-option.has-custom-value .emotion-option-name {
+       color: #ffffff !important; /* Ensure text inside is white */
+   }
+   
+   /* Reset 'Other...' if not checked AND doesn't have custom value */
+   .hidden-radio#emotion-other:not(:checked)+label.emotion-option.other-option:not(.has-custom-value) {
+        background-color: rgba(255, 255, 255, 0.1);
+        border-color: rgba(255, 255, 255, 0.2);
+        color: #bdc1c6;
+        box-shadow: none;
+   }
+   .hidden-radio#emotion-other:not(:checked)+label.emotion-option.other-option:not(.has-custom-value) .emotion-option-emoji,
+   .hidden-radio#emotion-other:not(:checked)+label.emotion-option.other-option:not(.has-custom-value) .emotion-option-name {
+        color: #bdc1c6; /* Reset text color */
+   }
+   
+   /* Focus Styling */
+   .hidden-radio:focus+.emotion-option:not(.has-custom-value),
+   .hidden-radio:focus+.emotion-option.other-option.has-custom-value {
+       outline: none;
+       box-shadow: 0 0 0 3px rgba(160, 116, 181, 0.5), /* Standard purple focus glow */
+                    0 0 10px rgba(160, 116, 181, 0.4); /* Keep selected shadow if applicable */
+   }
+   
+   
    /* ==========================================================================
       6. Custom Emotion Modal Styles
       ========================================================================== */
-   /* ... (Modal styles remain unchanged) ... */
-    .modal { position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0, 0, 0, 0.7); display: flex; align-items: center; justify-content: center; opacity: 0; visibility: hidden; transition: opacity 0.3s ease, visibility 0.3s ease; }
-    .modal.is-visible { opacity: 1; visibility: visible; }
-    .modal-content { background-color: #2f3241; margin: auto; padding: 30px 35px; border: 1px solid rgba(255, 255, 255, 0.15); width: 90%; max-width: 480px; border-radius: 12px; box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4); color: #e0e0e0; position: relative; transform: scale(0.95); transition: transform 0.3s ease; }
-    .modal.is-visible .modal-content { transform: scale(1); }
-    .modal-header { padding-bottom: 15px; border-bottom: 1px solid rgba(255, 255, 255, 0.1); margin-bottom: 25px; display: flex; justify-content: space-between; align-items: center; }
-    .modal-header h2 { margin-bottom: 0; color: #fff; font-size: 1.4rem; font-family: 'Playfair Display', serif; }
-    .modal-close { color: #aaa; font-size: 2rem; font-weight: bold; line-height: 1; cursor: pointer; padding: 0 5px; margin: -5px -10px 0 10px; transition: color 0.2s; }
-    .modal-close:hover, .modal-close:focus { color: #fff; text-decoration: none; }
-    .modal .form-group { margin-bottom: 20px; }
-    .modal label { font-size: 0.9rem; color: #bdc1c6; margin-bottom: 8px; display: block; }
-    .modal input[type="text"], .modal input[type="color"] { width: 100%; padding: 12px 15px; background-color: rgba(20, 22, 34, 0.7); border: 1px solid rgba(255, 255, 255, 0.2); color: #e0e0e0; border-radius: 6px; font-family: 'Poppins', sans-serif; font-size: 0.95rem; }
-    .modal input[type="text"]:focus, .modal input[type="color"]:focus { border-color: #a074b5; box-shadow: 0 0 0 2px rgba(160, 116, 181, 0.3); outline: none; }
-    .modal input[type="color"] { padding: 5px; height: 45px; cursor: pointer; width: 100%; }
-    .modal input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
-    .modal input[type="color"]::-webkit-color-swatch { border: none; border-radius: 4px; }
-    .emoji-suggestions { margin-top: 10px; display: flex; flex-wrap: wrap; gap: 8px; }
-    .emoji-suggestion-btn { background-color: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); color: #e0e0e0; padding: 5px 8px; border-radius: 5px; cursor: pointer; font-size: 1.3rem; line-height: 1; transition: background-color 0.2s, transform 0.1s; }
-    .emoji-suggestion-btn:hover { background-color: rgba(255, 255, 255, 0.2); transform: scale(1.1); }
-    .emoji-suggestion-btn:active { transform: scale(1.0); }
-    .modal-footer { justify-content: flex-end; margin-top: 25px; border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: 20px; gap: 10px; display: flex; }
-    .modal .btn { font-size: 0.9rem; padding: 8px 18px; text-transform: none; }
-    .modal .error-message { font-size: 0.85rem; margin-top: 4px; }
-
-
-   /* ==========================================================================
-      7. Quill Editor Specific Styles
-      ========================================================================== */
-   /* ... (Quill styles remain unchanged) ... */
-    #editor-container { min-height: 150px; border-radius: 8px; background-color: transparent; color: #e0e0e0; margin-bottom: 5px; position: relative; }
-    .ql-toolbar.ql-snow { background-color: rgba(40, 42, 54, 0.85); border: 1px solid rgba(255, 255, 255, 0.2); border-top-left-radius: 8px; border-top-right-radius: 8px; border-bottom: none; padding: 8px 12px; box-shadow: none; position: relative; z-index: 2; }
-    .ql-container.ql-snow { background-color: rgba(20, 22, 34, 0.5); border: 1px solid rgba(255, 255, 255, 0.2); border-top: none; border-bottom-left-radius: 8px; border-bottom-right-radius: 8px; color: #e0e0e0; font-family: 'Lora', serif; font-size: 1rem; min-height: 150px; box-shadow: none; position: relative; z-index: 1; }
-    .ql-editor { font-family: 'Lora', serif; font-size: 1rem; min-height: 150px; line-height: 1.6; padding: 14px 18px; outline: none; }
-    .ql-editor.ql-blank::before { color: #888dac; font-style: normal; font-family: 'Lora', serif; opacity: 0.8; left: 18px; top: 14px; position: absolute; pointer-events: none; }
-    .ql-snow .ql-stroke { stroke: #bdc1c6 !important; }
-    .ql-snow .ql-fill { fill: #bdc1c6 !important; }
-    .ql-snow .ql-picker-label { color: #bdc1c6 !important; }
-    .ql-snow .ql-formats button:hover, .ql-snow .ql-formats button.ql-active { background-color: rgba(255, 255, 255, 0.1); border-radius: 3px; }
-    .ql-snow .ql-formats button:hover .ql-stroke, .ql-snow .ql-formats button.ql-active .ql-stroke { stroke: #ffffff !important; }
-    .ql-snow .ql-formats button:hover .ql-fill, .ql-snow .ql-formats button.ql-active .ql-fill { fill: #ffffff !important; }
-    .ql-snow .ql-picker-options { background-color: #2f3241; border-color: rgba(255, 255, 255, 0.2) !important; border-radius: 4px; padding: 5px 0; }
-    .ql-snow .ql-picker-item { color: #bdc1c6 !important; }
-    .ql-snow .ql-picker-item:hover, .ql-snow .ql-picker-item.ql-selected { color: #ffffff !important; background-color: rgba(160, 116, 181, 0.5) !important; }
-    .ql-snow .ql-picker.ql-expanded .ql-picker-label { border-color: #a074b5 !important; color: #ffffff !important; }
-    .ql-snow .ql-picker.ql-expanded .ql-picker-label .ql-stroke { stroke: #ffffff !important; }
-    .ql-snow .ql-tooltip { background-color: #2f3241; border: 1px solid rgba(255, 255, 255, 0.2); color: #e0e0e0; box-shadow: 0 4px 10px rgba(0,0,0,0.2); border-radius: 6px; padding: 8px 12px; }
-    .ql-snow .ql-tooltip input[type=text] { border: 1px solid rgba(255, 255, 255, 0.2); background-color: rgba(20, 22, 34, 0.5); color: #e0e0e0; padding: 6px 10px; border-radius: 4px; }
-    .ql-snow .ql-tooltip a.ql-action::before { background-color: #A074B5; color: white; padding: 4px 8px; border-radius: 4px; font-size: 0.9em; content: 'Save'; }
-    .ql-snow .ql-tooltip a.ql-remove::before { content: 'Remove'; background-color: #DC143C; }
-    #editor-container:focus-within .ql-toolbar.ql-snow, #editor-container:focus-within .ql-container.ql-snow { border-color: #a074b5; box-shadow: 0 0 0 3px rgba(160, 116, 181, 0.3); z-index: 3; }
-    #editor-container:focus-within .ql-toolbar.ql-snow { border-bottom-color: transparent; }
-    #editor-container:focus-within .ql-container.ql-snow { border-top-color: transparent; }
-    .invalid-editor .ql-toolbar.ql-snow { border-color: #e74c3c !important; border-bottom: none; box-shadow: none; }
-    .invalid-editor .ql-container.ql-snow { border-color: #e74c3c !important; border-top: none; box-shadow: none; }
-    .ql-editor span[style*="background-color"] { color: #111 !important; padding: 0.1em 0; }
-    .ql-editor span[style*="background-color: rgb(255, 255, 0)"], .ql-editor span[style*="background-color: rgb(135, 206, 250)"], .ql-editor span[style*="background-color: rgb(250, 128, 114)"] { color: #111 !important; }
-    .ql-editor span[style*="background-color: rgb(0, 0, 139)"], .ql-editor span[style*="background-color: rgb(139, 0, 0)"] { color: #f0f0f0 !important; }
-
-
-   /* ==========================================================================
-      8. Styling for Rendered Quill Content on Dashboard
-      ========================================================================== */
-
-   .quill-rendered-content {
-       font-family: 'Lora', serif;
-       font-size: 0.95rem; /* Increased font size */
-       color: #c8c8d8;
-       line-height: 1.5;
-       word-wrap: break-word;
-       white-space: pre-wrap;
-       /* padding-left: 0.5em; */ /* Optional indentation */
+   .modal {
+       display: none;
+       position: fixed;
+       z-index: 1000;
+       left: 0;
+       top: 0;
+       width: 100%;
+       height: 100%;
+       overflow: auto;
+       background-color: rgba(0, 0, 0, 0.7);
+       align-items: center;
+       justify-content: center;
+       /* Added transitions for modal visibility */
+       opacity: 0;
+       visibility: hidden;
+       transition: opacity 0.3s ease, visibility 0s linear 0.3s;
    }
-   .quill-rendered-content h1, .quill-rendered-content h2, .quill-rendered-content h3 { font-family: 'Playfair Display', serif; color: #ffffff; margin-top: 0.8em; margin-bottom: 0.4em; line-height: 1.3; font-weight: 600; }
-   .quill-rendered-content h1 { font-size: 1.5em; }
-   .quill-rendered-content h2 { font-size: 1.3em; }
-   .quill-rendered-content h3 { font-size: 1.15em; }
-   .quill-rendered-content p { margin-bottom: 0.5em; }
-   .quill-rendered-content p:last-child { margin-bottom: 0; }
-   .quill-rendered-content ul, .quill-rendered-content ol { padding-left: 1.5em; margin-bottom: 0.5em; }
-   .quill-rendered-content ul { list-style: disc outside; }
-   .quill-rendered-content ol { list-style: decimal outside; }
-   .quill-rendered-content li { margin-bottom: 0.3em; padding-left: 0.5em; }
-   .quill-rendered-content strong { font-weight: bold; }
-   .quill-rendered-content em { font-style: italic; }
-   .quill-rendered-content u { text-decoration: underline; }
-   .quill-rendered-content pre { background-color: rgba(0, 0, 0, 0.2); padding: 10px; border-radius: 4px; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word; font-family: monospace; font-size: 0.85em; margin: 0.5em 0; }
-   .quill-rendered-content span[style*="background-color"] { color: #111 !important; padding: 0.1em 0.2em; border-radius: 3px; }
-   .quill-rendered-content span[style*="background-color: rgb(255, 255, 0)"], .quill-rendered-content span[style*="background-color: rgb(135, 206, 250)"], .quill-rendered-content span[style*="background-color: rgb(250, 128, 114)"] { color: #111 !important; }
-   .quill-rendered-content span[style*="background-color: rgb(0, 0, 139)"], .quill-rendered-content span[style*="background-color: rgb(139, 0, 0)"] { color: #f0f0f0 !important; }
-
-
-   /* ==========================================================================
-   9. HTMX Indicator Styles
-   ========================================================================== */
-   /* ... (HTMX indicator styles remain unchanged) ... */
-    .htmx-indicator { display: inline-block; opacity: 0; transition: opacity 200ms ease-in; margin-left: 15px; vertical-align: middle; width: 20px; height: 20px; border: 3px solid rgba(160, 116, 181, 0.3); border-radius: 50%; border-top-color: #A074B5; animation: spin 1s ease-in-out infinite; -webkit-animation: spin 1s ease-in-out infinite; }
-    @keyframes spin { to { -webkit-transform: rotate(360deg); } }
-    @-webkit-keyframes spin { to { -webkit-transform: rotate(360deg); } }
-    .htmx-indicator span { display: none; }
-    body.htmx-request .htmx-indicator, .htmx-request .htmx-indicator { opacity: 1; }
-    body.htmx-request.htmx-indicator { opacity: 1; }
-    .htmx-swapping { opacity: 0.5; transition: opacity 300ms ease-out; }
-
-
-   /* ==========================================================================
-      10. Utility Classes
-      ========================================================================== */
-   .visually-hidden { position: absolute !important; height: 1px; width: 1px; overflow: hidden; clip: rect(1px, 1px, 1px, 1px); white-space: nowrap; }
-
-   /* ==========================================================================
-      11. Responsive Adjustments
-      ========================================================================== */
-
-   @media (max-width: 992px) {
-       .dashboard-mood-list .mood-list { grid-template-columns: 1fr; gap: 20px; }
-       .dashboard-main .mood-item { height: auto; min-height: 180px; }
-       .dashboard-container { width: 95%; gap: 15px; }
-       .dashboard-main { padding: 20px; }
+   
+   .modal.is-visible { /* Class added by JS to show modal */
+       opacity: 1;
+       visibility: visible;
+       transition-delay: 0s;
    }
-
-   @media (max-width: 768px) {
-        .dashboard-container { flex-direction: column; padding: 10px; width: 100%; gap: 15px; }
-        .dashboard-sidebar { position: static; width: 100%; max-height: none; flex-direction: row; justify-content: center; padding: 10px 0; border-radius: 15px; margin-bottom: 15px; }
-        .sidebar-nav ul { flex-direction: row; gap: 10px; flex-wrap: wrap; justify-content: center; }
-        .sidebar-nav a::after { display: none; }
-        .dashboard-main { padding: 15px; max-height: none; }
-        .filter-form { gap: 10px; }
-        .text-search-group { min-width: 180px; }
-        .filter-group select, .filter-group input[type="date"] { width: 130px; }
+   
+   .modal-content {
+       background-color: #2f3241;
+       margin: auto;
+       padding: 30px 35px;
+       border: 1px solid rgba(255, 255, 255, 0.15);
+       width: 90%;
+       max-width: 480px;
+       border-radius: 12px;
+       box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+       color: #e0e0e0;
+       position: relative;
+       /* Added scale transition */
+       transform: scale(0.95);
+       transition: transform 0.3s ease;
    }
-
+   
+   .modal.is-visible .modal-content { /* Scale up when visible */
+       transform: scale(1);
+   }
+   
+   .modal-header {
+       padding-bottom: 15px;
+       border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+       margin-bottom: 25px;
+       display: flex;
+       justify-content: space-between;
+       align-items: center;
+   }
+   
+   .modal-header h2 {
+       margin-bottom: 0;
+       color: #fff;
+       font-size: 1.4rem;
+       font-family: 'Playfair Display', serif;
+   }
+   
+   .modal-close {
+       color: #aaa;
+       font-size: 2rem;
+       font-weight: bold;
+       line-height: 1;
+       cursor: pointer;
+       padding: 0 5px;
+       margin: -5px -10px 0 10px;
+       transition: color 0.2s;
+   }
+   
+   .modal-close:hover,
+   .modal-close:focus {
+       color: #fff;
+       text-decoration: none;
+   }
+   
+   .modal .form-group { /* Spacing inside modal */
+       margin-bottom: 20px;
+   }
+   
+   .modal label { /* Labels inside modal */
+       font-size: 0.9rem;
+       color: #bdc1c6;
+       margin-bottom: 8px;
+       display: block;
+   }
+   
+   .modal input[type="text"],
+   .modal input[type="color"] { /* Inputs inside modal */
+       width: 100%;
+       padding: 12px 15px;
+       background-color: rgba(20, 22, 34, 0.7);
+       border: 1px solid rgba(255, 255, 255, 0.2);
+       color: #e0e0e0;
+       border-radius: 6px;
+       font-family: 'Poppins', sans-serif;
+       font-size: 0.95rem;
+   }
+   
+   .modal input[type="text"]:focus,
+   .modal input[type="color"]:focus {
+       border-color: #a074b5;
+       box-shadow: 0 0 0 2px rgba(160, 116, 181, 0.3);
+       outline: none;
+   }
+   
+   .modal input[type="color"] { /* Color picker specific */
+       padding: 5px;
+       height: 45px;
+       cursor: pointer;
+       width: 100%;
+   }
+   
+   .modal input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
+   .modal input[type="color"]::-webkit-color-swatch { border: none; border-radius: 4px; }
+   
+   /* Emoji Suggestions */
+   .emoji-suggestions {
+       margin-top: 10px;
+       display: flex;
+       flex-wrap: wrap;
+       gap: 8px;
+   }
+   
+   .emoji-suggestion-btn {
+       background-color: rgba(255, 255, 255, 0.1);
+       border: 1px solid rgba(255, 255, 255, 0.2);
+       color: #e0e0e0;
+       padding: 5px 8px;
+       border-radius: 5px;
+       cursor: pointer;
+       font-size: 1.3rem;
+       line-height: 1;
+       transition: background-color 0.2s, transform 0.1s;
+   }
+   
+   .emoji-suggestion-btn:hover {
+       background-color: rgba(255, 255, 255, 0.2);
+       transform: scale(1.1);
+   }
+   
+   .emoji-suggestion-btn:active {
+       transform: scale(1.0);
+   }
+   
+   /* Modal Footer */
+   .modal-footer { /* Uses .button-group class */
+       justify-content: flex-end; /* Align buttons right */
+       margin-top: 25px;
+       border-top: 1px solid rgba(255, 255, 255, 0.1);
+       padding-top: 20px;
+       gap: 10px;
+   }
+   
+   .modal .btn { /* Buttons inside modal */
+       font-size: 0.9rem;
+       padding: 8px 18px;
+       text-transform: none;
+   }
+   
+   .modal .error-message { /* Errors inside modal */
+       font-size: 0.85rem;
+       margin-top: 4px;
+   }
+   
+   
    /* ==========================================================================
-   12. Pagination Styles
-   ========================================================================== */
-
-.pagination {
-    margin-top: 30px; /* Space above pagination */
-    padding-top: 20px; /* Space below list */
-    border-top: 1px solid rgba(255, 255, 255, 0.1); /* Separator line */
-    display: flex;
-    justify-content: center; /* Center the pagination block */
-    align-items: center;
-    width: 100%;
-}
-
-.pagination ul {
-    display: flex;
-    align-items: center;
-    gap: 10px; /* Space between items */
-    padding: 0;
-    margin: 0;
-    list-style: none;
-}
-
-.pagination li {
-    margin: 0;
-}
-
-.pagination span,
-.pagination a {
-    display: inline-block;
-    padding: 8px 16px;
-    color: #bdc1c6;
-    text-decoration: none;
-    border-radius: 6px; /* Slightly rounded */
-    transition: background-color 0.2s, color 0.2s;
-    font-size: 0.9rem;
-}
-
-.pagination a {
-    background-color: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.pagination a:hover {
-    background-color: rgba(160, 116, 181, 0.5); /* Use theme color */
-    color: #ffffff;
-    border-color: rgba(160, 116, 181, 0.7);
-}
-
-.pagination li.disabled span {
-    color: rgba(189, 193, 198, 0.4); /* Faded text */
-    cursor: default;
-    background-color: transparent;
-    border: 1px solid transparent;
-}
-
-/* Style the current page info */
-.pagination li span:not([class]) { /* Target span without disabled/active class */
-     background-color: transparent;
-     border: none;
-     color: #e0e0e0; /* Brighter text */
-     font-weight: 500;
-}
-/* mood/ui/static/styles.css */
-
-/* Find this rule (near the end of section 7 or start of 12) */
-.emotion-option.other-option.has-custom-value {
-    /* --- ADD THIS LINE --- */
-    background-color: #a074b5; /* Same background as selected default */
-    /* --- END ADD --- */
-    color: #ffffff;            /* Same text color */
-    /* border-color is already set by JS based on custom color */
-    box-shadow: 0 0 10px rgba(160, 116, 181, 0.4); /* Same shadow */
-}
-
-/* Also ensure the hover state uses the darker purple */
-.emotion-option.other-option.has-custom-value:hover {
-     background-color: #8a6aaf; /* Darker purple on hover */
-     /* Keep custom border color */
-     box-shadow: 0 0 12px rgba(160, 116, 181, 0.6);
-}
-
-/* Optional: Ensure the '+' sign is hidden when custom value is active */
-/* .emotion-option.other-option.has-custom-value .emotion-option-emoji { */
-    /* If you want to ONLY show the custom emoji, hide the '+' */
-    /* display: inline-block; /* or whatever your emoji span uses */
-/* } */
-/* .emotion-option.other-option .emotion-option-emoji:first-child { */
-     /* Might need to specifically hide the '+' if it's always there */
-     /* display: none; */
-/* } */
-
-/* --- Keep existing rules --- */
-.hidden-radio:checked+.emotion-option {
-    background-color: #a074b5;
-    color: #ffffff;
-    border-color: #a074b5;
-    box-shadow: 0 0 10px rgba(160, 116, 181, 0.4);
-}
-/* Reset other button if not checked */
-.hidden-radio#emotion-other:not(:checked)+label.emotion-option.other-option {
-     background-color: rgba(255, 255, 255, 0.1);
-     border-color: rgba(255, 255, 255, 0.2); /* Added default border reset */
-     box-shadow: none;
-}
-.hidden-radio#emotion-other:not(:checked)+label.emotion-option.other-option.has-custom-value {
-     /* This case shouldn't happen if JS is correct, but just in case */
-      background-color: rgba(255, 255, 255, 0.1);
-       border-color: rgba(255, 255, 255, 0.2);
-       box-shadow: none;
-}
-
-
-/* mood/ui/static/styles.css */
-
-/* ... other styles ... */
-
-/* === Mood Form Page Styles === */
-
-/* Style for the 'Other...' label when it holds a custom value */
-.emotion-option.other-option.has-custom-value {
-    background-color: #a074b5 !important; /* Force purple background */
-    color: #ffffff !important;            /* Force white text */
-    /* border-color is set inline by JS */
-    box-shadow: 0 0 10px rgba(160, 116, 181, 0.4); /* Add selected shadow */
-}
-
-/* Ensure custom emoji/text inside look right */
-.emotion-option.other-option.has-custom-value .emotion-option-emoji,
-.emotion-option.other-option.has-custom-value .emotion-option-name {
-    color: #ffffff !important; /* Force white text */
-}
-
-/* Hover effect for the custom-value state */
-.emotion-option.other-option.has-custom-value:hover {
-     background-color: #8a6aaf !important; /* Darker purple on hover */
-     /* border-color will be the custom color */
-     box-shadow: 0 0 12px rgba(160, 116, 181, 0.6);
-}
-
-/* Default selected style for comparison */
-.hidden-radio:checked+.emotion-option {
-    background-color: #a074b5;
-    color: #ffffff;
-    border-color: #a074b5;
-    box-shadow: 0 0 10px rgba(160, 116, 181, 0.4);
-}
-/* Reset 'Other...' if not checked */
-.hidden-radio#emotion-other:not(:checked)+label.emotion-option.other-option {
-     background-color: rgba(255, 255, 255, 0.1);
-     border-color: rgba(255, 255, 255, 0.2);
-     color: #bdc1c6; /* Reset text color */
-     box-shadow: none;
-}
-.hidden-radio#emotion-other:not(:checked)+label.emotion-option.other-option .emotion-option-emoji,
-.hidden-radio#emotion-other:not(:checked)+label.emotion-option.other-option .emotion-option-name {
-     color: #bdc1c6; /* Reset text color */
-}
-
-
-/* ... rest of styles.css ... */
-
-/* Style for the 'Other...' label when it holds a custom value */
-.emotion-option.other-option.has-custom-value {
-    background-color: #a074b5; /* Standard purple background */
-    color: #ffffff;            /* White text */
-    /* Keep border-color set by JS inline style */
-    box-shadow: 0 0 10px rgba(160, 116, 181, 0.4); /* Standard selected shadow */
-}
-
-.emotion-option.other-option.has-custom-value .emotion-option-emoji,
-.emotion-option.other-option.has-custom-value .emotion-option-name {
-    color: #ffffff !important;
-}
-
-/* Default selected style (no change needed here) */
-.hidden-radio:checked+.emotion-option {
-    background-color: #a074b5;
-    color: #ffffff;
-    border-color: #a074b5; /* Default uses purple border */
-    box-shadow: 0 0 10px rgba(160, 116, 181, 0.4);
-}
-
-/* Reset 'Other...' if not checked AND doesn't have custom value */
-.hidden-radio#emotion-other:not(:checked)+label.emotion-option.other-option:not(.has-custom-value) {
-     background-color: rgba(255, 255, 255, 0.1);
-     border-color: rgba(255, 255, 255, 0.2);
-     color: #bdc1c6;
-     box-shadow: none;
-}
-.hidden-radio#emotion-other:not(:checked)+label.emotion-option.other-option:not(.has-custom-value) .emotion-option-emoji,
-.hidden-radio#emotion-other:not(:checked)+label.emotion-option.other-option:not(.has-custom-value) .emotion-option-name {
-     color: #bdc1c6;
-}
-
-
-/* --- Focus Styling --- */
-/* Standard focus for default options */
-.hidden-radio:focus+.emotion-option {
-    outline: none; /* Remove default browser outline */
-    box-shadow: 0 0 0 3px rgba(160, 116, 181, 0.5); /* Use box-shadow for focus */
-    /* Let border be controlled by :checked state */
-}
-
-/* Specific focus style for the 'Other...' button WHEN it has a custom value */
-/* Ensure it ALSO gets the standard purple focus glow */
-.hidden-radio#emotion-other:focus+label.emotion-option.other-option.has-custom-value {
-     outline: none;
-     box-shadow: 0 0 0 3px rgba(160, 116, 181, 0.5), /* Standard purple focus glow */
-                 0 0 10px rgba(160, 116, 181, 0.4); /* Keep the selected shadow */
-     /* border-color remains the custom color set by JS */
-}
-
+      7. HTMX Indicator Styles
+      ========================================================================== */
+   .htmx-indicator {
+       display: inline-block;
+       opacity: 0;
+       transition: opacity 200ms ease-in;
+       margin-left: 15px;
+       vertical-align: middle;
+       width: 18px; /* Slightly smaller */
+       height: 18px;
+       border: 2px solid rgba(160, 116, 181, 0.3); /* Lighter border */
+       border-radius: 50%;
+       border-top-color: #A074B5; /* Theme color for spinner */
+       animation: spin 0.8s ease-in-out infinite; /* Faster spin */
+       -webkit-animation: spin 0.8s ease-in-out infinite;
+   }
+   /* Hide the text "Loading..." */
+   .htmx-indicator span { display: none; }
+   
+   @keyframes spin { to { transform: rotate(360deg); } }
+   @-webkit-keyframes spin { to { -webkit-transform: rotate(360deg); } }
+   
+   body.htmx-request .htmx-indicator,
+   .htmx-request .htmx-indicator {
+       opacity: 1;
+   }
+   
+   body.htmx-request.htmx-indicator {
+       opacity: 1;
+   }
+   
+   .htmx-swapping {
+       opacity: 0.6; /* Slightly less transparent */
+       transition: opacity 250ms ease-out;
+   }
+   
+   
+   /* ==========================================================================
+      8. Utility Classes
+      ========================================================================== */
+   .visually-hidden {
+       position: absolute !important;
+       height: 1px;
+       width: 1px;
+       overflow: hidden;
+       clip: rect(1px, 1px, 1px, 1px);
+       white-space: nowrap;
+   }
+   
+   /* ==========================================================================
+      9. Responsive Adjustments (Grouped)
+      ========================================================================== */
+   
+   @media (max-width: 992px) { /* Medium screens / Tablets */
+       .dashboard-mood-list .mood-list {
+           grid-template-columns: 1fr; /* Single column */
+           gap: 20px;
+       }
+       .dashboard-main .mood-item {
+           height: auto; /* Auto height for single column */
+           min-height: 180px;
+       }
+       .dashboard-container {
+           width: 95%;
+           gap: 15px;
+       }
+       .dashboard-main {
+           padding: 20px;
+           max-height: none; /* Remove max-height on smaller screens */
+       }
+       .filter-form {
+           gap: 10px 15px; /* Reduce gap */
+       }
+       .text-search-group {
+           min-width: 200px; /* Adjust min-width */
+       }
+       .filter-group select, .filter-group input[type="date"] {
+           width: 140px; /* Adjust width */
+       }
+   }
+   
+   @media (max-width: 768px) { /* Small screens / Large Phones */
+       .dashboard-container {
+           flex-direction: column;
+           padding: 10px;
+           width: 100%;
+           gap: 15px;
+       }
+       .dashboard-sidebar {
+           position: static; /* Sidebar no longer sticky */
+           width: 100%;
+           max-height: none;
+           flex-direction: row; /* Arrange icons horizontally */
+           justify-content: center;
+           padding: 10px 0;
+           border-radius: 15px;
+           margin-bottom: 15px;
+           overflow-x: auto; /* Allow horizontal scroll if needed */
+       }
+       .sidebar-nav ul {
+           flex-direction: row;
+           gap: 10px;
+           flex-wrap: nowrap; /* Prevent wrapping */
+           width: auto; /* Allow natural width */
+       }
+       .sidebar-nav a::after {
+           display: none; /* Hide tooltips */
+       }
+       .dashboard-main {
+           padding: 15px;
+       }
+       .filter-form {
+           gap: 10px; /* Further reduce gap */
+       }
+        /* Allow filter groups to take more width */
+       .text-search-group,
+       .emotion-filter-group,
+       .date-filter-group {
+            flex-basis: 45%; /* Roughly two per line */
+            flex-grow: 1;
+       }
+       .filter-button-group {
+            flex-basis: 100%; /* Buttons take full width */
+            justify-content: center; /* Center buttons */
+       }
+       .filter-group select, .filter-group input[type="date"] {
+           width: 100%; /* Make inputs full width of their group */
+       }
+       .landing-specific-header { /* Adjust landing header */
+           padding: 1rem 5%;
+           flex-direction: column;
+           gap: 1.5rem;
+       }
+       .landing-specific-logo img { height: 60px; }
+       .landing-main-content { padding: 1.5rem 5%; }
+       .landing-content-wrapper h1 { font-size: 2.8rem; }
+   }
+   
+   @media (max-width: 576px) { /* Small Phones */
+       .landing-specific-logo img { height: 50px; }
+       .landing-specific-nav ul { gap: 1rem; }
+       .landing-content-wrapper h1 { font-size: 2.3rem; }
+       .landing-content-wrapper p { font-size: 1rem; }
+       .btn, .signup-button, .read-more-button { /* Adjust base button padding */
+           padding: 0.6rem 1.5rem;
+           font-size: 0.9rem;
+       }
+       .edit-delete-buttons .btn { padding: 5px 12px; font-size: 0.8rem; }
+       .dashboard-main { padding: 10px; }
+       .dashboard-header h1 { font-size: 1.8rem; }
+       .filter-bar { padding: 10px; }
+        /* Ensure single column layout for filters */
+        .text-search-group,
+        .emotion-filter-group,
+        .date-filter-group,
+        .filter-button-group {
+             flex-basis: 100%;
+        }
+       .filter-button-group { justify-content: space-around; } /* Space out buttons */
+       .modal-content { padding: 20px; }
+       .modal-header h2 { font-size: 1.2rem; }
+       .emoji-suggestion-btn { font-size: 1.1rem; }
+   }
+   
+   
+   /* ==========================================================================
+      10. Pagination Styles (Placeholder)
+      ========================================================================== */
+   
+   .pagination {
+       margin-top: 30px;
+       padding-top: 20px;
+       border-top: 1px solid rgba(255, 255, 255, 0.1);
+       display: flex;
+       justify-content: center;
+       align-items: center;
+       width: 100%;
+   }
+   
+   .pagination ul {
+       display: flex;
+       align-items: center;
+       gap: 10px;
+   }
+   
+   .pagination li {
+       margin: 0;
+   }
+   
+   .pagination span,
+   .pagination a {
+       display: inline-block;
+       padding: 8px 16px;
+       color: #bdc1c6;
+       text-decoration: none;
+       border-radius: 6px;
+       transition: background-color 0.2s, color 0.2s;
+       font-size: 0.9rem;
+   }
+   
+   .pagination a {
+       background-color: rgba(255, 255, 255, 0.1);
+       border: 1px solid rgba(255, 255, 255, 0.2);
+   }
+   
+   .pagination a:hover {
+       background-color: rgba(160, 116, 181, 0.5);
+       color: #ffffff;
+       border-color: rgba(160, 116, 181, 0.7);
+   }
+   
+   .pagination li.disabled span {
+       color: rgba(189, 193, 198, 0.4);
+       cursor: default;
+       background-color: transparent;
+       border: 1px solid transparent;
+   }
+   
+   .pagination li span:not([class]) { /* Current page number */
+        background-color: transparent;
+        border: none;
+        color: #e0e0e0;
+        font-weight: 500;
+   }
+   
+   
+   /* ==========================================================================
+      End of Styles
+      ========================================================================== */
