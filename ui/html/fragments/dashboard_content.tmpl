@@ -1,26 +1,34 @@
 <!-- ui/html/fragments/dashboard_content.tmpl -->
-{{define "dashboard-content"}} {{/* Define block for wrapper content */}}
+{{define "dashboard-content"}}
 
     <!-- Combined Search and Filter Bar -->
     <section class="dashboard-filter-bar">
-         <form action="/dashboard" method="GET" class="filter-form"
-               hx-get="/dashboard"
-               hx-target="#dashboard-content-area"
-               hx-swap="innerHTML"
-               hx-indicator=".htmx-indicator"
-               hx-push-url="true">
-
+         <form action="/dashboard" method="GET" class="filter-form">
             <!-- Text Search Input -->
             <div class="filter-group text-search-group">
                  <label for="query" class="visually-hidden">Search Term</label>
                  <div class="search-input-wrapper">
-                    <input type="search" id="query" name="query" placeholder="Search entries..." value="{{.SearchQuery}}">
+                    <input type="search" id="query" name="query" placeholder="Search entries..." value="{{.SearchQuery}}"
+                           hx-get="/dashboard"
+                           hx-trigger="keyup changed delay:500ms"
+                           hx-target="#dashboard-content-area"
+                           hx-swap="innerHTML"
+                           hx-indicator=".htmx-indicator"
+                           hx-include="closest form"
+                           hx-push-url="true">
                  </div>
             </div>
             <!-- Emotion Filter Dropdown -->
             <div class="filter-group emotion-filter-group">
                  <label for="emotion">Emotion:</label>
-                 <select id="emotion" name="emotion">
+                 <select id="emotion" name="emotion"
+                         hx-get="/dashboard"
+                         hx-trigger="change"
+                         hx-target="#dashboard-content-area"
+                         hx-swap="innerHTML"
+                         hx-indicator=".htmx-indicator"
+                         hx-include="closest form"
+                         hx-push-url="true">
                      <option value="">All Emotions</option>
                      {{range .AvailableEmotions}}
                          {{ $optionValue := printf "%s::%s" .Name .Emoji }}
@@ -33,15 +41,28 @@
             <!-- Date Filter Inputs -->
             <div class="filter-group date-filter-group">
                 <label for="start_date">From:</label>
-                <input type="date" id="start_date" name="start_date" value="{{.FilterStartDate}}">
+                <input type="date" id="start_date" name="start_date" value="{{.FilterStartDate}}"
+                       hx-get="/dashboard"
+                       hx-trigger="change"
+                       hx-target="#dashboard-content-area"
+                       hx-swap="innerHTML"
+                       hx-indicator=".htmx-indicator"
+                       hx-include="closest form"
+                       hx-push-url="true">
             </div>
              <div class="filter-group date-filter-group">
                 <label for="end_date">To:</label>
-                <input type="date" id="end_date" name="end_date" value="{{.FilterEndDate}}">
+                <input type="date" id="end_date" name="end_date" value="{{.FilterEndDate}}"
+                       hx-get="/dashboard"
+                       hx-trigger="change"
+                       hx-target="#dashboard-content-area"
+                       hx-swap="innerHTML"
+                       hx-indicator=".htmx-indicator"
+                       hx-include="closest form"
+                       hx-push-url="true">
             </div>
              <!-- Buttons -->
              <div class="filter-group filter-button-group">
-                <button type="submit" class="btn filter-apply-btn">Filter / Search</button>
                 {{if or .SearchQuery .FilterEmotion .FilterStartDate .FilterEndDate}}
                    <a href="/dashboard" class="btn cancel-btn clear-filters-btn"
                       hx-get="/dashboard"
@@ -56,16 +77,17 @@
 
     <!-- Mood List Section -->
     <section class="dashboard-mood-list">
-        {{if .Moods}}
-            <ul class="mood-list">
-                {{range .Moods}}
-                    <li class="mood-item" style="border-left-color: {{.Color}};">
+        {{if .DisplayMoods}}
+            <ul class="mood-list"> <!-- Grid layout applied via CSS -->
+                {{range .DisplayMoods}}
+                    {{/* Add ID to the list item for targeting */}}
+                    <li class="mood-item" style="border-left-color: {{.Color}};" id="mood-item-{{.ID}}">
                          <div class="mood-item-content">
                             <div class="mood-title">
                                  <span class="mood-emoji">{{.Emoji}}</span>
                                  <strong>{{.Title | html}}</strong>
                             </div>
-                            <p class="mood-text">{{.Content | html}}</p>
+                            <div class="quill-rendered-content">{{.Content}}</div>
                             <div class="mood-meta">
                                 <time datetime="{{.CreatedAt.Format "2006-01-02T15:04:05Z"}}">Logged: {{ .CreatedAt | HumanDate }}</time>
                                 {{ $updatedThreshold := AddMinutes .CreatedAt 1 }}
@@ -74,16 +96,73 @@
                                 {{end}}
                             </div>
                         </div>
+                        <!-- === Buttons Section === -->
                         <div class="edit-delete-buttons">
+                            {{/* Edit link remains a standard link for now */}}
                             <a href="/mood/edit/{{.ID}}" class="btn edit-btn">Edit</a>
-                            <form action="/mood/delete/{{.ID}}" method="POST" style="display: inline;"><button type="submit" class="btn delete-btn" onclick="return confirm('Are you sure?');">Delete</button></form>
+                            {{/* --- MODIFIED Delete Form --- */}}
+                            <form hx-post="/mood/delete/{{.ID}}"
+                                  hx-target="closest li"        {{/* Target the parent li */}}
+                                  hx-swap="outerHTML"         {{/* Replace the li (effectively deleting) */}}
+                                  hx-confirm="Are you sure you want to delete this entry?"
+                                  style="display: inline;">
+                                <button type="submit" class="btn delete-btn">Delete</button>
+                            </form>
+                             {{/* --- END MODIFIED Delete Form --- */}}
                         </div>
                     </li>
                 {{end}}
             </ul>
+
+            <!-- === PAGINATION SECTION === -->
+            {{with .Metadata}}
+                {{if gt .LastPage 1}}
+                <nav class="pagination" aria-label="Pagination">
+                    <ul>
+                        {{if eq .CurrentPage .FirstPage}}
+                            <li class="disabled"><span>< Previous</span></li>
+                        {{else}}
+                            <li>
+                                <a href="#"
+                                   hx-get="/dashboard"
+                                   hx-target="#dashboard-content-area"
+                                   hx-swap="innerHTML"
+                                   hx-indicator=".htmx-indicator"
+                                   hx-include=".filter-form"
+                                   hx-vals='{"page": "{{(sub .CurrentPage 1)}}"}'
+                                   hx-push-url="true"
+                                >< Previous</a>
+                            </li>
+                        {{end}}
+
+                        <li>
+                            <span>Page {{.CurrentPage}} of {{.LastPage}}</span>
+                        </li>
+
+                        {{if eq .CurrentPage .LastPage}}
+                             <li class="disabled"><span>Next ></span></li>
+                        {{else}}
+                            <li>
+                                 <a href="#"
+                                   hx-get="/dashboard"
+                                   hx-target="#dashboard-content-area"
+                                   hx-swap="innerHTML"
+                                   hx-indicator=".htmx-indicator"
+                                   hx-include=".filter-form"
+                                   hx-vals='{"page": "{{(add .CurrentPage 1)}}"}'
+                                   hx-push-url="true"
+                                 >Next ></a>
+                            </li>
+                        {{end}}
+                    </ul>
+                </nav>
+                {{end}}
+            {{end}}
+            <!-- === END PAGINATION SECTION === -->
+
         {{else}}
             <div class="dashboard-content-centered">
-               {{if or .SearchQuery .FilterEmotion .FilterStartDate .FilterEndDate}}
+               {{if or $.SearchQuery $.FilterEmotion $.FilterStartDate $.FilterEndDate}}
                    <p>No mood entries found matching your filters.</p>
                    <a href="/dashboard" class="btn cancel-btn clear-filters-btn"
                       hx-get="/dashboard"

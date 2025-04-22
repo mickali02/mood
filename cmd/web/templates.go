@@ -1,34 +1,41 @@
 // mood/cmd/web/templates.go
+
 package main
 
 import (
 	"html/template"
 	"path/filepath"
 	"time"
+	// "strings" // May need if using string funcs
 )
 
-// Define template helper functions
 var functions = template.FuncMap{
-	// Function to get emotion details within the template
+	// ... (Existing functions like HumanDate, AddMinutes, GetEmotionDetails) ...
 	"GetEmotionDetails": func(emotionName string) EmotionDetails {
+		// ... (implementation) ...
 		if details, ok := EmotionMap[emotionName]; ok {
 			return details
 		}
-		// Return a default/unknown value if not found in map
 		return EmotionDetails{Name: emotionName, Emoji: "❓", Color: "emotion-unknown"}
 	},
-	// Example time formatting function (if needed directly in template)
 	"HumanDate": func(t time.Time) string {
+		// ... (implementation) ...
 		if t.IsZero() {
 			return ""
 		}
-		// Format time like "Jan 02, 2006 at 3:04 PM"
 		return t.Format("Jan 02, 2006 at 15:04")
 	},
-	// Function needed for time comparison in moods.tmpl
-	// It's generally better to do comparisons in the handler, but this works
 	"AddMinutes": func(t time.Time, minutes int) time.Time {
+		// ... (implementation) ...
 		return t.Add(time.Duration(minutes) * time.Minute)
+	},
+
+	// --- NEW Pagination Helper Functions ---
+	"add": func(a, b int) int {
+		return a + b
+	},
+	"sub": func(a, b int) int {
+		return a - b
 	},
 }
 

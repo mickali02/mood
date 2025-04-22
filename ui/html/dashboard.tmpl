@@ -13,13 +13,15 @@
 <body class="dashboard-page">
 
     <div class="dashboard-container">
-        <!-- Sidebar - RESTORED -->
+        <!-- Sidebar -->
          <aside class="dashboard-sidebar">
             <nav class="sidebar-nav">
                  <ul>
                     <li><a href="/dashboard" data-title="Dashboard" class="active"><i class="bi bi-grid-1x2-fill nav-icon"></i></a></li>
                     <li><a href="/mood/new" data-title="Add New Entry"><i class="bi bi-plus-circle-fill nav-icon"></i></a></li>
-                    <li><a href="#" data-title="Mood Stats" class="{{if not .Moods}}disabled-link{{end}}"><i class="bi bi-bar-chart-fill nav-icon"></i></a></li>
+                    <!-- === CORRECTED LINE 22 === -->
+                    <li><a href="#" data-title="Mood Stats" class="{{if not .DisplayMoods}}disabled-link{{end}}"><i class="bi bi-bar-chart-fill nav-icon"></i></a></li>
+                    <!-- === END CORRECTION === -->
                     <li class="nav-separator"></li>
                     <li><a href="#" data-title="Profile"><i class="bi bi-person-circle nav-icon"></i></a></li>
                     <li><a href="#" data-title="Logout"><i class="bi bi-box-arrow-right nav-icon"></i></a></li>
@@ -31,113 +33,16 @@
         <main class="dashboard-main">
             <header class="dashboard-header">
                 <h1>Hi welcome back Mickali!</h1>
-                <span class="htmx-indicator"> Loading...</span>
+                <!-- Wrap the text if you want to hide/style it separately -->
+                <div class="htmx-indicator"><span>Loading...</span></div>
             </header>
 
             <!-- Wrapper for HTMX swapping -->
+            <!-- This div is populated by the "dashboard-content" block on initial load and HTMX swaps -->
             <div id="dashboard-content-area">
-                 {{block "dashboard-content" .}} {{/* Define block for wrapper */}}
-
-                    <!-- Combined Search and Filter Bar -->
-                    <section class="dashboard-filter-bar">
-                         <form action="/dashboard" method="GET" class="filter-form"
-                               hx-get="/dashboard"
-                               hx-target="#dashboard-content-area" {{/* Target WRAPPER */}}
-                               hx-swap="innerHTML"               {{/* Swap WRAPPER's content */}}
-                               hx-indicator=".htmx-indicator"
-                               hx-push-url="true">
-
-                            <!-- Text Search Input - RESTORED -->
-                            <div class="filter-group text-search-group">
-                                 <label for="query" class="visually-hidden">Search Term</label>
-                                 <div class="search-input-wrapper">
-                                    <input type="search" id="query" name="query" placeholder="Search entries..." value="{{.SearchQuery}}">
-                                 </div>
-                            </div>
-                            <!-- Emotion Filter Dropdown - RESTORED -->
-                            <div class="filter-group emotion-filter-group">
-                                 <label for="emotion">Emotion:</label>
-                                 <select id="emotion" name="emotion">
-                                     <option value="">All Emotions</option>
-                                     {{range .AvailableEmotions}}
-                                         {{ $optionValue := printf "%s::%s" .Name .Emoji }}
-                                         <option value="{{ $optionValue }}" {{if eq $.FilterEmotion $optionValue}}selected{{end}}>
-                                             {{.Emoji}} {{.Name}}
-                                         </option>
-                                     {{end}}
-                                 </select>
-                            </div>
-                            <!-- Date Filter Inputs - RESTORED -->
-                            <div class="filter-group date-filter-group">
-                                <label for="start_date">From:</label>
-                                <input type="date" id="start_date" name="start_date" value="{{.FilterStartDate}}">
-                            </div>
-                             <div class="filter-group date-filter-group">
-                                <label for="end_date">To:</label>
-                                <input type="date" id="end_date" name="end_date" value="{{.FilterEndDate}}">
-                            </div>
-                            <!-- Buttons - RESTORED -->
-                             <div class="filter-group filter-button-group">
-                                <button type="submit" class="btn filter-apply-btn">Filter / Search</button>
-                                {{if or .SearchQuery .FilterEmotion .FilterStartDate .FilterEndDate}}
-                                   <a href="/dashboard" class="btn cancel-btn clear-filters-btn"
-                                      hx-get="/dashboard"
-                                      hx-target="#dashboard-content-area"
-                                      hx-swap="innerHTML"
-                                      hx-indicator=".htmx-indicator"
-                                      hx-push-url="true">Clear All</a>
-                                {{end}}
-                            </div>
-                        </form>
-                    </section>
-
-                    <!-- Mood List Section -->
-                    <section class="dashboard-mood-list">
-                        {{if .Moods}}
-                            <ul class="mood-list"> {{/* No ID needed here */}}
-                                {{range .Moods}}
-                                    <li class="mood-item" style="border-left-color: {{.Color}};">
-                                        {{/* Mood item details - RESTORED */}}
-                                        <div class="mood-item-content">
-                                            <div class="mood-title">
-                                                 <span class="mood-emoji">{{.Emoji}}</span>
-                                                 <strong>{{.Title | html}}</strong>
-                                            </div>
-                                            <p class="mood-text">{{.Content | html}}</p>
-                                            <div class="mood-meta">
-                                                <time datetime="{{.CreatedAt.Format "2006-01-02T15:04:05Z"}}">Logged: {{ .CreatedAt | HumanDate }}</time>
-                                                {{ $updatedThreshold := AddMinutes .CreatedAt 1 }}
-                                                {{if .UpdatedAt.After $updatedThreshold }}
-                                                <time datetime="{{.UpdatedAt.Format "2006-01-02T15:04:05Z"}}"> | Updated: {{ .UpdatedAt | HumanDate }}</time>
-                                                {{end}}
-                                            </div>
-                                        </div>
-                                        <div class="edit-delete-buttons">
-                                            <a href="/mood/edit/{{.ID}}" class="btn edit-btn">Edit</a>
-                                            <form action="/mood/delete/{{.ID}}" method="POST" style="display: inline;"><button type="submit" class="btn delete-btn" onclick="return confirm('Are you sure?');">Delete</button></form>
-                                        </div>
-                                    </li>
-                                {{end}}
-                            </ul>
-                        {{else}}
-                            <div class="dashboard-content-centered"> {{/* No ID needed here */}}
-                               {{if or .SearchQuery .FilterEmotion .FilterStartDate .FilterEndDate}}
-                                   <p>No mood entries found matching your filters.</p>
-                                   <a href="/dashboard" class="btn cancel-btn clear-filters-btn"
-                                      hx-get="/dashboard"
-                                      hx-target="#dashboard-content-area"
-                                      hx-swap="innerHTML"
-                                      hx-indicator=".htmx-indicator"
-                                      hx-push-url="true">Clear Filters</a>
-                               {{else}}
-                                   <p>You haven't logged any moods yet!</p>
-                                   <a href="/mood/new" class="btn dashboard-add-btn">ADD YOUR FIRST MOOD ENTRY</a>
-                               {{end}}
-                            </div>
-                        {{end}}
-                    </section>
-
-                 {{end}} {{/* End block "dashboard-content" */}}
+                 {{ block "dashboard-content" . }} {{/* Execute the fragment block here */}}
+                    <!-- The content from fragments/dashboard_content.tmpl will be rendered here -->
+                 {{ end }}
             </div> <!-- === END WRAPPER === -->
 
         </main>

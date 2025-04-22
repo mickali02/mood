@@ -6,75 +6,82 @@
     <title>{{.Title}}</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css">
-    <link rel="stylesheet" href="/static/styles.css"> <!-- Ensure path points to your main CSS file -->
-     <!-- Removed the inline <style> block -->
+
+    <!-- === QUILL STYLESHEET === -->
+    <link href="https://cdn.jsdelivr.net/npm/quill@2.0.0-rc.2/dist/quill.snow.css" rel="stylesheet">
+    <!-- === END QUILL === -->
+
+    <link rel="stylesheet" href="/static/styles.css"> <!-- Your main CSS -->
   </head>
   <body class="mood-form-page">
 
     <div class="form-container">
-      <h1>{{.HeaderText}}</h1>
-            <!-- Form submits via POST to /mood/new -->
-      <form action="/mood/new" method="POST" novalidate id="mood-entry-form">
+      {{ block "mood-form-content" . }} {{/* --- START BLOCK --- */}}
+        <h1>{{.HeaderText}}</h1>
+        <!-- === ADDED HTMX Attributes to Form === -->
+        <form action="/mood/new" method="POST" novalidate id="mood-entry-form"
+              hx-post="/mood/new"
+              hx-target="closest .form-container"
+              hx-swap="outerHTML">
 
-        <!-- === MOVED: Emotion Selector First === -->
-        <div class="form-group">
-          <label>How are you feeling?</label>
-          {{with index .FormErrors "emotion"}} <span class="error-message emotion-group-error">{{.}}</span> {{end}}
-          {{with index .FormErrors "emoji"}} <span class="error-message emotion-group-error">{{.}}</span> {{end}}
-          {{with index .FormErrors "color"}} <span class="error-message emotion-group-error">{{.}}</span> {{end}}
-
-          <div class="emotion-selector {{if or (index .FormErrors "emotion") (index .FormErrors "emoji") (index .FormErrors "color")}}has-error{{end}}" id="emotion-options-container">
-              {{range .DefaultEmotions}}
+          <!-- === Emotion Selector === -->
+          <div class="form-group">
+            <label>How are you feeling?</label>
+            {{with index .FormErrors "emotion"}} <span class="error-message emotion-group-error">{{.}}</span> {{end}}
+            {{with index .FormErrors "emoji"}} <span class="error-message emotion-group-error">{{.}}</span> {{end}}
+            {{with index .FormErrors "color"}} <span class="error-message emotion-group-error">{{.}}</span> {{end}}
+            <div class="emotion-selector {{if or (index .FormErrors "emotion") (index .FormErrors "emoji") (index .FormErrors "color")}}has-error{{end}}" id="emotion-options-container">
+                {{range .DefaultEmotions}}
+                  <div class="emotion-option-wrapper">
+                      <input type="radio" id="emotion-{{.Name}}" name="emotion_choice" value="{{.Name}}" data-emoji="{{.Emoji}}" data-color="{{.Color}}" class="hidden-radio default-emotion-radio">
+                      <label for="emotion-{{.Name}}" class="emotion-option">
+                          <span class="emotion-option-emoji">{{.Emoji}}</span>
+                          <span class="emotion-option-name">{{.Name}}</span>
+                      </label>
+                  </div>
+                {{end}}
                 <div class="emotion-option-wrapper">
-                    <input type="radio" id="emotion-{{.Name}}" name="emotion_choice" value="{{.Name}}" data-emoji="{{.Emoji}}" data-color="{{.Color}}" class="hidden-radio default-emotion-radio">
-                    <label for="emotion-{{.Name}}" class="emotion-option">
-                        <span class="emotion-option-emoji">{{.Emoji}}</span>
-                        <span class="emotion-option-name">{{.Name}}</span>
+                    <input type="radio" id="emotion-other" name="emotion_choice" value="other" class="hidden-radio other-emotion-radio">
+                    <label for="emotion-other" class="emotion-option other-option">
+                        <span class="emotion-option-emoji">➕</span>
+                        <span class="emotion-option-name">Other...</span>
                     </label>
                 </div>
-              {{end}}
-              <!-- "Other" Option -->
-              <div class="emotion-option-wrapper">
-                  <input type="radio" id="emotion-other" name="emotion_choice" value="other" class="hidden-radio other-emotion-radio">
-                  <label for="emotion-other" class="emotion-option other-option">
-                      <span class="emotion-option-emoji">➕</span>
-                      <span class="emotion-option-name">Other...</span>
-                  </label>
-              </div>
+            </div>
           </div>
-        </div>
-        <!-- === END MOVED === -->
 
-         <!-- Title Field Second -->
-        <div class="form-group">
-          <label for="title">Title:</label>
-          <input type="text" id="title" name="title" value="{{index .FormData "title"}}" required class="{{if index .FormErrors "title"}}invalid{{end}}" placeholder="Give your entry a title...">
-          {{with index .FormErrors "title"}} <span class="error-message">{{.}}</span> {{end}}
-        </div>
+           <!-- === Title Field === -->
+          <div class="form-group">
+            <label for="title">Title:</label>
+            <input type="text" id="title" name="title" value="{{index .FormData "title"}}" required class="{{if index .FormErrors "title"}}invalid{{end}}" placeholder="Give your entry a title...">
+            {{with index .FormErrors "title"}} <span class="error-message">{{.}}</span> {{end}}
+          </div>
 
-         <!-- Content Field Third -->
-        <div class="form-group">
-          <label for="content">Details:</label>
-          <textarea id="content" name="content" required class="{{if index .FormErrors "content"}}invalid{{end}}" placeholder="Describe how you're feeling...">{{index .FormData "content"}}</textarea>
-          {{with index .FormErrors "content"}} <span class="error-message">{{.}}</span> {{end}}
-        </div>
+           <!-- === Quill Editor === -->
+          <div class="form-group">
+            <label for="editor-container">Details:</label>
+            <div id="editor-container" class="{{if index .FormErrors "content"}}invalid-editor{{end}}"></div>
+            <input type="hidden" id="content" name="content" value="{{index .FormData "content"}}">
+            {{with index .FormErrors "content"}} <span class="error-message">{{.}}</span> {{end}}
+          </div>
 
-        <!-- Hidden fields (Order doesn't matter here) -->
-        <input type="hidden" name="emotion" id="final_emotion_name" value="{{index .FormData "emotion"}}">
-        <input type="hidden" name="emoji" id="final_emotion_emoji" value="{{index .FormData "emoji"}}">
-        <input type="hidden" name="color" id="final_emotion_color" value="{{index .FormData "color"}}">
+          <!-- === Hidden Fields === -->
+          <input type="hidden" name="emotion" id="final_emotion_name" value="{{index .FormData "emotion"}}">
+          <input type="hidden" name="emoji" id="final_emotion_emoji" value="{{index .FormData "emoji"}}">
+          <input type="hidden" name="color" id="final_emotion_color" value="{{index .FormData "color"}}">
 
-        <!-- Buttons (Remain last) -->
-        <div class="button-group">
-          <button type="submit" class="btn dashboard-add-btn">Save Mood</button>
-          <a href="/dashboard" class="btn cancel-btn">Cancel</a>
-        </div>
-      </form>
+          <!-- === Buttons === -->
+          <div class="button-group">
+            <button type="submit" class="btn dashboard-add-btn">Save Mood</button>
+            <a href="/dashboard" class="btn cancel-btn">Cancel</a>
+          </div>
+        </form>
+      {{ end }} {{/* --- END BLOCK --- */}}
     </div>
 
     <!-- Custom Emotion Modal -->
     <div id="custom-emotion-modal" class="modal">
-      <div class="modal-content">
+       <div class="modal-content">
         <div class="modal-header">
           <span class="modal-close" id="modal-close-button">×</span>
           <h2>Define Custom Emotion</h2>
@@ -87,17 +94,16 @@
             </div>
              <div class="form-group">
                 <label for="custom_emotion_emoji">Emoji:</label>
-                <input type="text" id="custom_emotion_emoji" placeholder="Click a suggestion or type/paste" maxlength="5">
+                {{/* --- Added readonly attribute --- */}}
+                <input type="text" id="custom_emotion_emoji" placeholder="Click a suggestion or paste" maxlength="5" readonly>
                  <span class="error-message" id="custom-emoji-error"></span>
-                 <!-- Emoji Suggestions Grid -->
                  <div class="emoji-suggestions">
                     <button type="button" class="emoji-suggestion-btn">😊</button> <button type="button" class="emoji-suggestion-btn">😄</button> <button type="button" class="emoji-suggestion-btn">😂</button> <button type="button" class="emoji-suggestion-btn">😍</button> <button type="button" class="emoji-suggestion-btn">🤩</button> <button type="button" class="emoji-suggestion-btn">😘</button> <button type="button" class="emoji-suggestion-btn">😉</button> <button type="button" class="emoji-suggestion-btn">😌</button> <button type="button" class="emoji-suggestion-btn">😢</button> <button type="button" class="emoji-suggestion-btn">😭</button> <button type="button" class="emoji-suggestion-btn">😠</button> <button type="button" class="emoji-suggestion-btn">😡</button> <button type="button" class="emoji-suggestion-btn">😟</button> <button type="button" class="emoji-suggestion-btn">😴</button> <button type="button" class="emoji-suggestion-btn">🤔</button> <button type="button" class="emoji-suggestion-btn">😐</button> <button type="button" class="emoji-suggestion-btn">🤐</button> <button type="button" class="emoji-suggestion-btn">🥳</button> <button type="button" class="emoji-suggestion-btn">😎</button> <button type="button" class="emoji-suggestion-btn">🤢</button> <button type="button" class="emoji-suggestion-btn">🤯</button> <button type="button" class="emoji-suggestion-btn">🥺</button> <button type="button" class="emoji-suggestion-btn">🥶</button> <button type="button" class="emoji-suggestion-btn">😇</button>
                  </div>
-                 <!-- End Emoji Suggestions -->
             </div>
              <div class="form-group">
                 <label for="custom_emotion_color">Color:</label>
-                <input type="color" id="custom_emotion_color" value="#cccccc"> <!-- Default color -->
+                <input type="color" id="custom_emotion_color" value="#cccccc">
                  <span class="error-message" id="custom-color-error"></span>
             </div>
         </div>
@@ -108,8 +114,16 @@
       </div>
     </div>
 
-    <!-- Load the JavaScript file -->
+    <!-- Load the mood_form.js for modal logic -->
     <script src="/static/js/mood_form.js"></script>
+
+    <!-- === QUILL SCRIPT === -->
+    <script src="https://cdn.jsdelivr.net/npm/quill@2.0.0-rc.2/dist/quill.js"></script>
+    <!-- === END QUILL === -->
+
+    <!-- === LOAD OUR EDITOR INITIALIZATION SCRIPT === -->
+    <script src="/static/js/rich_editor.js"></script>
+    <!-- === END LOAD SCRIPT === -->
 
   </body>
 </html>

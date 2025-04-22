@@ -1,266 +1,185 @@
-// ui/static/js/mood_form.js
+// mood/ui/static/js/mood_form.js
 
 document.addEventListener('DOMContentLoaded', () => {
-    // --- Get DOM Elements ---
-    const form = document.getElementById('mood-entry-form');
-    const emotionOptionsContainer = document.getElementById('emotion-options-container');
-    const defaultEmotionRadios = document.querySelectorAll('.default-emotion-radio');
-    const otherEmotionRadio = document.getElementById('emotion-other');
-    const otherOptionLabel = document.querySelector('label[for="emotion-other"]'); // Label for 'Other'
+    console.log("Mood Form JS Loaded v4 - Modal Focus");
 
-    // Hidden fields that actually get submitted
+    // --- Element Selection ---
+    const emotionOptionsContainer = document.getElementById('emotion-options-container');
     const finalEmotionNameInput = document.getElementById('final_emotion_name');
     const finalEmotionEmojiInput = document.getElementById('final_emotion_emoji');
     const finalEmotionColorInput = document.getElementById('final_emotion_color');
-
-    // Modal elements
     const modal = document.getElementById('custom-emotion-modal');
     const modalCloseButton = document.getElementById('modal-close-button');
     const modalCancelButton = document.getElementById('modal-cancel-button');
     const modalSaveButton = document.getElementById('modal-save-button');
-    const customNameInput = document.getElementById('custom_emotion_name');
-    const customEmojiInput = document.getElementById('custom_emotion_emoji');
-    const customColorInput = document.getElementById('custom_emotion_color');
-
-    // Modal error spans
+    const customEmotionNameInput = document.getElementById('custom_emotion_name');
+    const customEmotionEmojiInput = document.getElementById('custom_emotion_emoji');
+    const customEmotionColorInput = document.getElementById('custom_emotion_color');
+    const emojiSuggestionButtons = document.querySelectorAll('.emoji-suggestion-btn');
     const customNameError = document.getElementById('custom-name-error');
     const customEmojiError = document.getElementById('custom-emoji-error');
-    const customColorError = document.getElementById('custom-color-error'); // If needed for client-side validation
-
-    // --- Get Emoji Suggestion Buttons (Inside Modal) ---
-    const emojiSuggestionButtons = document.querySelectorAll('.emoji-suggestion-btn');
-
-    let isCustomEmotionSaved = false; // Flag to track if custom values are set
-    let alertShown = false; // Flag to prevent spamming alerts on submit validation
+    const customColorError = document.getElementById('custom-color-error');
+    const moodForm = document.getElementById('mood-entry-form');
+    const otherOptionRadio = document.getElementById('emotion-other');
+    const otherOptionLabel = document.querySelector('label[for="emotion-other"]');
+    const otherOptionEmojiSpan = otherOptionLabel?.querySelector('.emotion-option-emoji');
+    const otherOptionNameSpan = otherOptionLabel?.querySelector('.emotion-option-name');
 
     // --- Helper Functions ---
-    function openModal() {
-        if (modal) {
-            clearModalErrors();
-            // Optional: You could pre-fill modal from hidden fields if custom was previously saved
-            // if (isCustomEmotionSaved) {
-            //     customNameInput.value = finalEmotionNameInput.value;
-            //     customEmojiInput.value = finalEmotionEmojiInput.value;
-            //     customColorInput.value = finalEmotionColorInput.value;
-            // }
-            modal.style.display = 'flex'; // Use flex to enable align/justify
-        }
-    }
-
-    function closeModal() {
-        if (modal) {
-            modal.style.display = 'none';
-            clearModalErrors();
-        }
-    }
-
-    function clearModalErrors() {
-        if(customNameError) customNameError.textContent = '';
-        if(customEmojiError) customEmojiError.textContent = '';
-        if(customColorError) customColorError.textContent = '';
-    }
-
-    function updateHiddenFields(name, emoji, color) {
-        finalEmotionNameInput.value = name;
-        finalEmotionEmojiInput.value = emoji;
-        finalEmotionColorInput.value = color;
-        console.log("Hidden fields updated:", { name, emoji, color }); // For debugging
-    }
-
-    // Basic validation for modal inputs
-    function validateModalInputs() {
+    function showModal() {
+        if (!modal) { console.error("Modal element not found!"); return; }
+        console.log(">>> showModal called"); // Focus log
+        modal.style.display = 'flex';
+        setTimeout(() => modal.classList.add('is-visible'), 10);
         clearModalErrors();
-        let isValid = true;
-        const name = customNameInput.value.trim();
-        const emoji = customEmojiInput.value.trim();
-        // Basic Unicode check for something likely an emoji. Doesn't cover all edge cases (like sequences).
-        const emojiRegex = /\p{Emoji_Presentation}/u;
 
-        if (name === '') {
-            customNameError.textContent = 'Emotion name cannot be blank.';
-            isValid = false;
+        if (otherOptionRadio?.hasAttribute('data-custom-name')) {
+            console.log("   Pre-filling modal with stored custom data.");
+            customEmotionNameInput.value = otherOptionRadio.dataset.customName || '';
+            customEmotionEmojiInput.value = otherOptionRadio.dataset.customEmoji || '';
+            customEmotionColorInput.value = otherOptionRadio.dataset.customColor || '#cccccc';
+        } else {
+            console.log("   Resetting modal fields on open.");
+            resetModalFields();
         }
-        if (emoji === '') {
-             customEmojiError.textContent = 'Emoji cannot be blank.';
-             isValid = false;
-        // } else if (!emojiRegex.test(emoji)) { // This regex might be too strict, let's rely on backend/user for now
-        //      customEmojiError.textContent = 'Please enter a valid emoji character.';
-        //      isValid = false;
-        } else if (emoji.length > 5) { // Basic length check as fallback
-             customEmojiError.textContent = 'Emoji seems too long.';
-             isValid = false;
-        }
-        // Hex color input usually self-validates format
-
-        return isValid;
     }
+
+    function closeModal(isCancelAction = false) {
+        if (!modal) return;
+        console.log(`>>> closeModal called (isCancelAction: ${isCancelAction})`);
+        modal.classList.remove('is-visible');
+        setTimeout(() => { modal.style.display = 'none'; }, 300);
+        clearModalErrors();
+
+        if (isCancelAction) {
+             console.log("   Handling cancel action...");
+            const previouslyChecked = document.querySelector('input[name="emotion_choice"].was-checked');
+            if (previouslyChecked) {
+                console.log("   Re-selecting previous:", previouslyChecked.value);
+                previouslyChecked.checked = true;
+                updateFinalFields(previouslyChecked);
+                resetOtherButtonAppearance();
+            } else {
+                console.log("   Unchecking 'Other', no previous selection.");
+                if(otherOptionRadio) otherOptionRadio.checked = false;
+                if (!otherOptionRadio?.hasAttribute('data-custom-name')) { clearFinalFields(); }
+                resetOtherButtonAppearance();
+            }
+             document.querySelectorAll('input[name="emotion_choice"].was-checked').forEach(el => el.classList.remove('was-checked'));
+        } else {
+             console.log("   Closing after save, no changes to selection/fields needed here.");
+        }
+    }
+
+    function resetModalFields() { /* ... unchanged ... */
+         if(customEmotionNameInput) customEmotionNameInput.value = '';
+         if(customEmotionEmojiInput) customEmotionEmojiInput.value = '';
+         if(customEmotionColorInput) customEmotionColorInput.value = '#cccccc';
+    }
+    function clearModalErrors() { /* ... unchanged ... */
+        if(customNameError) customNameError.textContent = ''; if(customEmojiError) customEmojiError.textContent = ''; if(customColorError) customColorError.textContent = '';
+        if(customEmotionNameInput) customEmotionNameInput.classList.remove('invalid'); if(customEmotionEmojiInput) customEmotionEmojiInput.classList.remove('invalid'); if(customEmotionColorInput) customEmotionColorInput.classList.remove('invalid');
+    }
+    function validateModal() { /* ... unchanged ... */
+        console.log("Validating modal..."); clearModalErrors(); let isValid = true;
+        const name = customEmotionNameInput?.value?.trim() || ''; if (!name) { console.log("Modal validation failed: Name missing."); if(customNameError) customNameError.textContent = 'Name must be provided.'; customEmotionNameInput?.classList.add('invalid'); isValid = false; } else if (name.length > 50) { console.log("Modal validation failed: Name too long."); if(customNameError) customNameError.textContent = 'Name must not be more than 50 characters.'; customEmotionNameInput?.classList.add('invalid'); isValid = false; } const emoji = customEmotionEmojiInput?.value?.trim() || ''; if (!emoji) { console.log("Modal validation failed: Emoji missing."); if(customEmojiError) customEmojiError.textContent = 'Emoji must be provided.'; customEmotionEmojiInput?.classList.add('invalid'); isValid = false; } else if (emoji.length === 0 || emoji.length > 5) { console.log("Modal validation failed: Emoji length invalid."); if(customEmojiError) customEmojiError.textContent = 'Please enter a valid emoji (1-5 characters).'; customEmotionEmojiInput?.classList.add('invalid'); isValid = false; } const color = customEmotionColorInput?.value || ''; const hexColorRegex = /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/i; if (!hexColorRegex.test(color)) { console.log("Modal validation failed: Color format invalid."); if(customColorError) customColorError.textContent = 'Invalid color format (#RRGGBB or #RGB).'; customEmotionColorInput?.classList.add('invalid'); isValid = false; } console.log("Modal validation result:", isValid); return isValid;
+     }
+    function updateFinalFields(selectedRadio) { /* ... unchanged ... */
+        if (!finalEmotionNameInput || !finalEmotionEmojiInput || !finalEmotionColorInput) { console.error("Cannot update final fields: one or more hidden inputs not found."); return; } if (selectedRadio && selectedRadio.id === 'emotion-other') { if (selectedRadio.hasAttribute('data-custom-name')) { console.log("Updating final fields from 'Other' radio's custom data."); finalEmotionNameInput.value = selectedRadio.dataset.customName; finalEmotionEmojiInput.value = selectedRadio.dataset.customEmoji; finalEmotionColorInput.value = selectedRadio.dataset.customColor; } else { console.log("Updating final fields: 'Other' selected but no custom data found, clearing."); clearFinalFields(); } } else if (selectedRadio) { console.log("Updating final fields from default radio:", selectedRadio.value); finalEmotionNameInput.value = selectedRadio.value; finalEmotionEmojiInput.value = selectedRadio.dataset.emoji || '❓'; finalEmotionColorInput.value = selectedRadio.dataset.color || '#cccccc'; } else { console.log("No radio selected, clearing final fields."); clearFinalFields(); } console.log(" --> Final Fields Set To:", finalEmotionNameInput.value, finalEmotionEmojiInput.value, finalEmotionColorInput.value);
+     }
+    function clearFinalFields() { /* ... unchanged ... */
+        if (!finalEmotionNameInput || !finalEmotionEmojiInput || !finalEmotionColorInput) return; console.log("Clearing final fields."); finalEmotionNameInput.value = ''; finalEmotionEmojiInput.value = ''; finalEmotionColorInput.value = '';
+     }
+    function getSelectedEmotionChoice() { /* ... unchanged ... */
+         const checkedRadio = document.querySelector('input[name="emotion_choice"]:checked'); return checkedRadio ? checkedRadio.value : null;
+     }
+     function resetOtherButtonAppearance() { /* ... unchanged ... */
+        if (otherOptionLabel && otherOptionEmojiSpan && otherOptionNameSpan && otherOptionRadio) { console.log("Resetting 'Other...' button appearance and data."); otherOptionEmojiSpan.textContent = '➕'; otherOptionNameSpan.textContent = 'Other...'; otherOptionLabel.style.borderColor = ''; otherOptionLabel.style.backgroundColor = ''; otherOptionLabel.classList.remove('has-custom-value'); otherOptionRadio.removeAttribute('data-custom-name'); otherOptionRadio.removeAttribute('data-custom-emoji'); otherOptionRadio.removeAttribute('data-custom-color'); }
+     }
+     function updateOtherButtonAppearance(name, emoji, color) { /* ... unchanged ... */
+          if (otherOptionLabel && otherOptionEmojiSpan && otherOptionNameSpan) { console.log("Updating 'Other...' button appearance."); otherOptionEmojiSpan.textContent = emoji || '❓'; otherOptionNameSpan.textContent = name; otherOptionLabel.style.borderColor = color; otherOptionLabel.classList.add('has-custom-value'); } else { console.warn("'Other...' label or its spans not found. Cannot update appearance."); }
+     }
 
     // --- Event Listeners ---
 
-    // Add Event Listeners for Emoji Buttons (must be after buttons are selected)
-    emojiSuggestionButtons.forEach(button => {
-        button.addEventListener('click', () => {
-            if (customEmojiInput) {
-                customEmojiInput.value = button.textContent; // Set input value to clicked emoji
-                if(customEmojiError) customEmojiError.textContent = ''; // Clear error on selection
-            }
-        });
-    });
-
-    // 1. Listen to changes on the radio button group
     if (emotionOptionsContainer) {
-        emotionOptionsContainer.addEventListener('change', (event) => {
-            const selectedRadio = event.target;
+        // *** SIMPLIFIED/CORRECTED Click Listener ***
+        emotionOptionsContainer.addEventListener('click', (event) => {
+            const label = event.target.closest('label.emotion-option');
+            if (!label) return; // Ignore clicks not on a label
 
-            if (selectedRadio.classList.contains('default-emotion-radio')) {
-                // Default emotion selected
-                isCustomEmotionSaved = false; // Reset custom flag
-                const name = selectedRadio.value;
-                const emoji = selectedRadio.dataset.emoji || '❓';
-                const color = selectedRadio.dataset.color || '#cccccc';
-                updateHiddenFields(name, emoji, color);
-                // Reset "Other" label text if it was customized
-                if(otherOptionLabel) {
-                     otherOptionLabel.querySelector('.emotion-option-emoji').textContent = '➕';
-                     otherOptionLabel.querySelector('.emotion-option-name').textContent = 'Other...';
+            const radioId = label.getAttribute('for');
+            const radio = document.getElementById(radioId);
+
+            if (radio && radio.name === 'emotion_choice') {
+                console.log(`Click detected on label for: ${radioId}`);
+
+                // Get the currently checked radio *before* this click potentially changes it
+                 const currentlyCheckedRadio = document.querySelector('input[name="emotion_choice"]:checked');
+
+                 // Mark the currently checked one IF it's a default one and different from the clicked one
+                 if (currentlyCheckedRadio && currentlyCheckedRadio !== radio && currentlyCheckedRadio.id !== 'emotion-other') {
+                      console.log("Marking previously checked:", currentlyCheckedRadio.id);
+                      document.querySelectorAll('input[name="emotion_choice"].was-checked').forEach(el => el.classList.remove('was-checked')); // Clear previous marks
+                      currentlyCheckedRadio.classList.add('was-checked');
+                 }
+
+
+                if (radio.id === 'emotion-other') {
+                    // Clicked on "Other..." label
+                    console.log("'Other...' label clicked.");
+                    // Check the radio (might already be checked if re-clicked)
+                    if(!radio.checked) radio.checked = true;
+                    // Always open the modal when "Other..." is clicked
+                    showModal();
+                     // If it already has custom data, update hidden fields now
+                     if (otherOptionRadio?.hasAttribute('data-custom-name')) {
+                         updateFinalFields(otherOptionRadio);
+                     }
+
+                } else {
+                    // Clicked on a DEFAULT emotion label
+                    console.log("Default emotion label clicked:", radio.value);
+                    if (!radio.checked) {
+                        radio.checked = true; // Ensure it gets checked
+                        updateFinalFields(radio); // Update hidden fields
+                        resetOtherButtonAppearance(); // Reset the "Other..." button visuals
+                    } else {
+                        // Clicking already selected default - do nothing extra
+                        console.log("Re-clicked already selected default.");
+                    }
                 }
-                closeModal(); // Close modal if it was open
-            } else if (selectedRadio.id === 'emotion-other') {
-                // "Other" selected - open modal
-                openModal();
-                // Clear hidden fields only if custom wasn't already set and saved
-                 if (!isCustomEmotionSaved) {
-                    updateHiddenFields('', '', '');
-                 }
             }
         });
+        // --- End Simplified Listener ---
+
+    } else {
+         console.error("CRITICAL: Emotion options container ('#emotion-options-container') not found.");
     }
 
+    // Modal close/cancel buttons - pass true
+    if (modalCloseButton) modalCloseButton.addEventListener('click', () => closeModal(true));
+    if (modalCancelButton) modalCancelButton.addEventListener('click', () => closeModal(true));
 
-    // 2. Modal Buttons
-    if (modalCloseButton) {
-        modalCloseButton.onclick = () => {
-             if(otherEmotionRadio && otherEmotionRadio.checked && !isCustomEmotionSaved) {
-                otherEmotionRadio.checked = false;
-                updateHiddenFields('', '', '');
-             }
-             closeModal();
-        };
-    }
-    if (modalCancelButton) {
-        modalCancelButton.onclick = () => {
-             if(otherEmotionRadio && otherEmotionRadio.checked && !isCustomEmotionSaved) {
-                otherEmotionRadio.checked = false;
-                updateHiddenFields('', '', '');
-             }
-            closeModal();
-        };
-    }
-    if (modalSaveButton) {
-        modalSaveButton.onclick = () => {
-            if (validateModalInputs()) {
-                const customName = customNameInput.value.trim();
-                const customEmoji = customEmojiInput.value.trim();
-                const customColor = customColorInput.value;
+    // Save custom emotion from modal
+    if (modalSaveButton) { /* ... same save listener as previous correct version ... */
+         modalSaveButton.addEventListener('click', () => { console.log("[Save Custom Clicked]"); if (validateModal()) { console.log("  Modal Validated."); if (finalEmotionNameInput && finalEmotionEmojiInput && finalEmotionColorInput && otherOptionRadio) { const nameVal = customEmotionNameInput.value.trim(); const emojiVal = customEmotionEmojiInput.value.trim(); const colorVal = customEmotionColorInput.value; console.log(`  Values from modal: Name='${nameVal}', Emoji='${emojiVal}', Color='${colorVal}'`); finalEmotionNameInput.value = nameVal; finalEmotionEmojiInput.value = emojiVal; finalEmotionColorInput.value = colorVal; console.log(`  Values in hidden inputs AFTER assignment: Name='${finalEmotionNameInput.value}', Emoji='${finalEmotionEmojiInput.value}', Color='${finalEmotionColorInput.value}'`); otherOptionRadio.dataset.customName = nameVal; otherOptionRadio.dataset.customEmoji = emojiVal; otherOptionRadio.dataset.customColor = colorVal; console.log("  Stored custom data on 'Other' radio attributes."); updateOtherButtonAppearance(nameVal, emojiVal, colorVal); otherOptionRadio.checked = true; console.log("  Ensured 'Other' radio is checked."); } else { console.error("  ERROR: Crucial elements missing during save!"); } document.querySelectorAll('input[name="emotion_choice"].was-checked').forEach(el => el.classList.remove('was-checked')); console.log("  Closing modal after save (not a cancel action)."); closeModal(false); } else { console.log("  Modal validation failed. Not saving or closing."); } });
+     } else { console.error("Modal save button not found!"); }
 
-                updateHiddenFields(customName, customEmoji, customColor);
-                isCustomEmotionSaved = true; // Mark custom as saved
+    // Emoji Suggestions Listener
+    if (emojiSuggestionButtons) { /* ... same listener as previous correct version ... */
+         console.log("Adding emoji suggestion button listeners..."); emojiSuggestionButtons.forEach(button => { button.addEventListener('click', () => { if(customEmotionEmojiInput) { customEmotionEmojiInput.value = button.textContent; console.log("Emoji suggestion clicked, input set to:", button.textContent); } else { console.error("Custom emoji input field not found!"); } if(customEmojiError) { customEmojiError.textContent = ''; } if(customEmotionEmojiInput) { customEmotionEmojiInput.classList.remove('invalid'); } }); });
+     } else { console.warn("Emoji suggestion buttons not found. Listeners not added."); }
 
-                // Update the 'Other' label visually
-                 if(otherOptionLabel) {
-                     otherOptionLabel.querySelector('.emotion-option-emoji').textContent = customEmoji;
-                     otherOptionLabel.querySelector('.emotion-option-name').textContent = customName;
-                 }
+    // Backdrop Click Listener
+    if (modal) { modal.addEventListener('click', (event) => { if (event.target === modal) { console.log("Clicked modal backdrop (cancel action)."); closeModal(true); } }); } else { console.error("Modal element not found for backdrop click listener!"); }
 
-                closeModal();
-            }
-        };
-    }
+     // --- Initial State Logic ---
+     function initializeFormState() { /* ... same initialization logic as previous correct version ... */
+         if (!finalEmotionNameInput || !finalEmotionEmojiInput || !finalEmotionColorInput || !otherOptionRadio) { console.warn("Mood form essential fields not found, skipping initialization."); return; } console.log("Initializing form state..."); const initialHiddenName = finalEmotionNameInput.value; const initialHiddenEmoji = finalEmotionEmojiInput.value; const initialHiddenColor = finalEmotionColorInput.value; let initiallySelectedRadio = document.querySelector('input[name="emotion_choice"]:checked'); let isInitialCustom = false; if (initialHiddenName) { const defaultRadios = document.querySelectorAll('.default-emotion-radio'); isInitialCustom = !Array.from(defaultRadios).some(radio => radio.value === initialHiddenName); } console.log("Initial hidden name:", initialHiddenName || "''"); console.log("Initially selected radio:", initiallySelectedRadio ? initiallySelectedRadio.value : 'None'); console.log("Is initial state custom:", isInitialCustom); if (initiallySelectedRadio) { if (initiallySelectedRadio.value === 'other') { if (isInitialCustom) { console.log("Initializing: 'Other' radio checked, is custom. Setting appearance and data attributes."); otherOptionRadio.dataset.customName = initialHiddenName; otherOptionRadio.dataset.customEmoji = initialHiddenEmoji; otherOptionRadio.dataset.customColor = initialHiddenColor; updateOtherButtonAppearance(initialHiddenName, initialHiddenEmoji, initialHiddenColor); } else { console.log("Initializing: 'Other' radio checked, but no custom data found? Clearing fields/resetting."); clearFinalFields(); resetOtherButtonAppearance(); } } else { console.log("Initializing: Default radio checked:", initiallySelectedRadio.value); updateFinalFields(initiallySelectedRadio); resetOtherButtonAppearance(); } } else if (isInitialCustom) { console.log("Initializing: No radio checked, detected custom emotion. Checking 'Other' and setting state."); otherOptionRadio.checked = true; otherOptionRadio.dataset.customName = initialHiddenName; otherOptionRadio.dataset.customEmoji = initialHiddenEmoji; otherOptionRadio.dataset.customColor = initialHiddenColor; updateOtherButtonAppearance(initialHiddenName, initialHiddenEmoji, initialHiddenColor); updateFinalFields(otherOptionRadio); initiallySelectedRadio = otherOptionRadio; } else if (initialHiddenName) { console.log("Initializing: No radio checked, detected default emotion. Checking its radio."); const matchingRadio = document.getElementById(`emotion-${initialHiddenName}`); if (matchingRadio) { matchingRadio.checked = true; updateFinalFields(matchingRadio); initiallySelectedRadio = matchingRadio;} resetOtherButtonAppearance(); } else { console.log("Initializing: Fresh form. Clearing fields and resetting 'Other' button."); clearFinalFields(); resetOtherButtonAppearance(); if(initiallySelectedRadio) initiallySelectedRadio.checked = false; }
+     }
 
-    // 3. Prevent form submission if "Other" is selected but modal wasn't saved
-    if (form) {
-        form.addEventListener('submit', (event) => {
-            const checkedRadio = form.querySelector('input[name="emotion_choice"]:checked');
-
-            // Check 1: Is "Other" selected but custom details not saved?
-            if (otherEmotionRadio && otherEmotionRadio.checked && !isCustomEmotionSaved) {
-                event.preventDefault();
-                alert("Please define and save your custom emotion using the 'Other...' option, or select a default emotion.");
-                openModal(); // Re-open modal to prompt user
-                return; // Stop further checks
-            }
-
-            // Check 2: Is any radio button selected at all?
-            if (!checkedRadio) {
-                event.preventDefault();
-                 if (!alertShown) {
-                    alert("Please select how you are feeling.");
-                    alertShown = true;
-                    setTimeout(() => { alertShown = false; }, 100);
-                 }
-                return;
-            }
-
-            // Check 3: Are the final hidden fields populated? (Failsafe)
-            if (finalEmotionNameInput.value === '' || finalEmotionEmojiInput.value === '' || finalEmotionColorInput.value === '') {
-                 if (!alertShown) {
-                    event.preventDefault();
-                    alert("An emotion selection is required. Please select a default or define/save a custom one.");
-                    alertShown = true;
-                    setTimeout(() => { alertShown = false; }, 100);
-                 }
-                 return;
-            }
-
-            // If all checks pass, submission proceeds normally
-        });
-    }
-
-
-    // 4. Close modal if clicked outside the content
-    window.onclick = (event) => {
-        if (modal && event.target === modal) {
-             if(otherEmotionRadio && otherEmotionRadio.checked && !isCustomEmotionSaved) {
-                otherEmotionRadio.checked = false;
-                updateHiddenFields('', '', '');
-             }
-            closeModal();
-        }
-    };
-
-    // 5. On page load, check if form data indicates a previous custom selection attempt (e.g., validation error)
-    // This helps pre-fill the modal or update the 'Other' label visually if needed.
-    const initialFormDataEmotion = finalEmotionNameInput.value; // Check hidden field value passed back from server
-    const initialFormDataChoice = form.querySelector('input[name="emotion_choice"]:checked')?.value;
-
-    if(initialFormDataChoice === 'other' || (initialFormDataEmotion && !defaultEmotionRadios.some(radio => radio.value === initialFormDataEmotion))) {
-        // If 'other' radio was checked OR if the emotion name doesn't match any default radio value
-        if (initialFormDataEmotion) { // If there are custom values from server-side validation failure
-            const initialEmoji = finalEmotionEmojiInput.value;
-            const initialColor = finalEmotionColorInput.value;
-
-            // Pre-fill modal inputs
-            customNameInput.value = initialFormDataEmotion;
-            customEmojiInput.value = initialEmoji;
-            customColorInput.value = initialColor;
-
-             // Visually update the 'Other' label
-            if (otherOptionLabel) {
-                otherOptionLabel.querySelector('.emotion-option-emoji').textContent = initialEmoji || '➕';
-                otherOptionLabel.querySelector('.emotion-option-name').textContent = initialFormDataEmotion || 'Other...';
-            }
-             // Mark as saved so submit doesn't fail immediately
-            isCustomEmotionSaved = true;
-             // Ensure the 'Other' radio button is checked visually
-            if(otherEmotionRadio) otherEmotionRadio.checked = true;
-
-        } else if(initialFormDataChoice === 'other') {
-             // If 'other' was checked but no custom data came back (e.g., first load failed validation before modal save)
-             // Ensure 'Other' radio is checked, but don't mark as saved
-              if(otherEmotionRadio) otherEmotionRadio.checked = true;
-              isCustomEmotionSaved = false;
-        }
-    }
-
+     // Run initialization logic
+     initializeFormState();
 
 }); // End DOMContentLoaded
