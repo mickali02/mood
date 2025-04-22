@@ -318,7 +318,6 @@
    
    .landing-specific-nav .signup-button { /* Style specific sign up button */
        background-color: #a074b5; /* Solid purple */
-       border: 1px solid rgba(255, 255, 255, 0.3);
        border-radius: 25px;
        padding: 0.6rem 1.8rem;
        font-weight: 600;
@@ -394,7 +393,7 @@
     font-size: 0.9rem;
     letter-spacing: 0.5px;
     text-decoration: none;    /* Ensure no underline */
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Optional subtle shadow */
+    box-shadow: 0 0 15px rgba(177, 156, 217, 0.5); /* Optional subtle shadow */
     transition: all 0.3s ease; /* Keep transition */
 }
    
