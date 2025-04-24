@@ -90,3 +90,7 @@ func GetEmotionDetails(emotionName string) EmotionDetails {
 	}
 	return EmotionDetails{Name: emotionName, Emoji: "❓", Color: "#cccccc"}
 }
+
+func (app *application) newTemplateData() *TemplateData {
+	return NewTemplateData()
+}
