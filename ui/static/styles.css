@@ -1379,8 +1379,178 @@
         color: #e0e0e0;
         font-weight: 500;
    }
-   
-   
+
+ /* ==========================================================================
+   6. Rich Editor (Quill) Styles (Corrected & Complete with Inner Tint)
+   ========================================================================== */
+
+/* Base Editor container wrapper */
+#editor-container {
+    border-radius: 8px; /* Overall container rounding */
+    transition: box-shadow 0.3s ease, border-color 0.3s ease; /* Smooth transitions */
+    margin-bottom: 5px; /* Match input margin */
+    overflow: hidden; /* Clip child corners */
+    width: 100%; /* Ensure it takes full width */
+    position: relative; /* Context for z-index if needed */
+}
+
+/* Style the Quill Toolbar */
+.mood-form-page .ql-toolbar.ql-snow {
+    background-color: rgba(30, 32, 44, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-bottom: none; /* Connects visually to container below */
+    padding: 8px 10px;
+    font-family: 'Poppins', sans-serif;
+    box-sizing: border-box;
+    transition: border-color 0.3s ease;
+    /* --- Corner Radii for Seamless Look --- */
+    border-top-left-radius: 8px;     /* Rounded top-left */
+    border-top-right-radius: 8px;    /* Rounded top-right */
+    border-bottom-left-radius: 0;    /* Square bottom-left */
+    border-bottom-right-radius: 0;   /* Square bottom-right */
+}
+
+/* Style the Quill Editor Container (below toolbar) */
+.mood-form-page .ql-container.ql-snow {
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-top: none; /* Toolbar handles top border */
+    /* background-color: rgba(20, 22, 34, 0.5); <= Base background is now handled by .ql-editor or invalid state */
+    color: #e0e0e0; /* Match input text color */
+    font-family: 'Lora', serif; /* Match input font family */
+    font-size: 1rem; /* Match input font size */
+    box-sizing: border-box;
+    transition: border-color 0.3s ease, background-color 0.3s ease;
+    /* --- Corner Radii for Seamless Look --- */
+    border-top-left-radius: 0;       /* Square top-left */
+    border-top-right-radius: 0;      /* Square top-right */
+    border-bottom-left-radius: 8px;  /* Rounded bottom-left */
+    border-bottom-right-radius: 8px; /* Rounded bottom-right */
+    /* Ensure container has a default background if editor is transparent */
+    background-color: rgba(20, 22, 34, 0.5); /* Default background if needed */
+}
+
+/* Style the actual editable area within Quill */
+.mood-form-page .ql-editor {
+    padding: 14px 18px; /* Match input padding */
+    min-height: 140px; /* Match textarea min-height */
+    box-sizing: border-box;
+    line-height: 1.6; /* Standard line height */
+    color: #e0e0e0; /* Ensure text color */
+    outline: none; /* Remove default outline on editor area */
+    /* Set default background for the editor area */
+    background-color: rgba(20, 22, 34, 0.5); /* Match container default */
+    transition: background-color 0.3s ease; /* Add transition for background */
+}
+
+/* Style the placeholder text */
+.mood-form-page .ql-editor.ql-blank::before {
+    color: #888dac; /* Match input placeholder color */
+    opacity: 0.8; /* Match input placeholder opacity */
+    font-style: normal; /* Override Quill's default italic */
+    font-family: 'Lora', serif; /* Match editor font */
+    left: 18px; /* Align with padding */
+    right: 18px; /* Align with padding */
+    font-size: 1rem; /* Match editor font size */
+    pointer-events: none; /* Standard for placeholders */
+}
+
+/* --- Focus State Styling --- */
+#editor-container:focus-within .ql-toolbar.ql-snow,
+#editor-container:focus-within .ql-container.ql-snow {
+    border-color: #a074b5; /* Apply focus border color */
+    z-index: 1; /* Ensure borders overlap correctly */
+}
+
+#editor-container:focus-within {
+    box-shadow: 0 0 0 3px rgba(160, 116, 181, 0.3); /* Apply focus shadow to wrapper */
+}
+/* Optional: Slightly change editor background on focus */
+#editor-container:focus-within .ql-editor {
+    background-color: rgba(30, 32, 44, 0.6); /* Slightly different background on focus, like toolbar */
+}
+
+
+/* --- Invalid State Styling (No !important) --- */
+
+/* Outer red glow for the entire component */
+#editor-container.invalid-editor {
+    box-shadow: 0 0 0 2px rgba(231, 76, 60, 0.5); /* Red glow */
+}
+
+/* Increased Specificity for Invalid Internal Styles */
+/* Invalid Toolbar Border */
+body.mood-form-page #editor-container.invalid-editor .ql-toolbar.ql-snow {
+    border-color: #e74c3c; /* Error Red */
+    z-index: 1; /* Ensure border draws cleanly */
+}
+
+/* Invalid Container Border ONLY */
+body.mood-form-page #editor-container.invalid-editor .ql-container.ql-snow {
+    border-color: #e74c3c; /* Error Red */
+    /* Background is now handled by the .ql-editor rule below */
+     background-color: transparent; /* Ensure container itself doesn't interfere */
+}
+
+/* Apply the Reddish Tint DIRECTLY to the editor typing area when invalid */
+body.mood-form-page #editor-container.invalid-editor .ql-editor {
+    background-color: rgba(50, 20, 20, 0.5); /* Reddish Tint, matching input.invalid */
+}
+
+/* --- Optional: Toolbar Icon Styling --- */
+.mood-form-page .ql-snow .ql-stroke {
+    stroke: #bdc1c6; /* Default icon stroke color */
+    transition: stroke 0.2s ease; /* Smooth transition */
+}
+.mood-form-page .ql-snow .ql-fill {
+     fill: #bdc1c6; /* Default icon fill color */
+     transition: fill 0.2s ease; /* Smooth transition */
+}
+.mood-form-page .ql-snow .ql-picker-label {
+    color: #bdc1c6; /* Dropdown label color */
+    transition: color 0.2s ease; /* Smooth transition */
+}
+
+/* Hover/Active states for toolbar buttons & pickers */
+.mood-form-page .ql-snow.ql-toolbar button:hover .ql-stroke,
+.mood-form-page .ql-snow .ql-toolbar button:hover .ql-stroke,
+.mood-form-page .ql-snow.ql-toolbar button:focus .ql-stroke,
+.mood-form-page .ql-snow .ql-toolbar button:focus .ql-stroke,
+.mood-form-page .ql-snow.ql-toolbar button.ql-active .ql-stroke,
+.mood-form-page .ql-snow .ql-toolbar button.ql-active .ql-stroke,
+.mood-form-page .ql-snow.ql-toolbar .ql-picker-label:hover .ql-stroke,
+.mood-form-page .ql-snow .ql-toolbar .ql-picker-label.ql-active .ql-stroke,
+.mood-form-page .ql-snow.ql-toolbar .ql-picker-item:hover .ql-stroke,
+.mood-form-page .ql-snow .ql-toolbar .ql-picker-item.ql-selected .ql-stroke {
+    stroke: #a074b5; /* Use theme color for active/hover icons */
+}
+
+.mood-form-page .ql-snow.ql-toolbar button:hover .ql-fill,
+.mood-form-page .ql-snow .ql-toolbar button:hover .ql-fill,
+.mood-form-page .ql-snow.ql-toolbar button:focus .ql-fill,
+.mood-form-page .ql-snow .ql-toolbar button:focus .ql-fill,
+.mood-form-page .ql-snow.ql-toolbar button.ql-active .ql-fill,
+.mood-form-page .ql-snow .ql-toolbar button.ql-active .ql-fill,
+.mood-form-page .ql-snow.ql-toolbar .ql-picker-label:hover .ql-fill,
+.mood-form-page .ql-snow .ql-toolbar .ql-picker-label.ql-active .ql-fill,
+.mood-form-page .ql-snow.ql-toolbar .ql-picker-item:hover .ql-fill,
+.mood-form-page .ql-snow .ql-toolbar .ql-picker-item.ql-selected .ql-fill {
+    fill: #a074b5; /* Use theme color for active/hover icons */
+}
+
+.mood-form-page .ql-snow.ql-toolbar button:hover,
+.mood-form-page .ql-snow .ql-toolbar button:hover,
+.mood-form-page .ql-snow.ql-toolbar button:focus,
+.mood-form-page .ql-snow .ql-toolbar button:focus,
+.mood-form-page .ql-snow.ql-toolbar button.ql-active,
+.mood-form-page .ql-snow .ql-toolbar button.ql-active,
+.mood-form-page .ql-snow.ql-toolbar .ql-picker-label:hover,
+.mood-form-page .ql-snow.ql-toolbar .ql-picker-label.ql-active,
+.mood-form-page .ql-snow.ql-toolbar .ql-picker-item:hover,
+.mood-form-page .ql-snow.ql-toolbar .ql-picker-item.ql-selected {
+    color: #a074b5; /* Use theme color for active/hover text (like in dropdowns) */
+}
+
+
    /* ==========================================================================
       End of Styles
       ========================================================================== */

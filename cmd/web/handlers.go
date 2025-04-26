@@ -222,7 +222,7 @@ func (app *application) createMood(w http.ResponseWriter, r *http.Request) {
 
 	if !v.ValidData() {
 		templateData := app.newTemplateData()
-		templateData.Title = "New Mood Entry (Error)"
+		templateData.Title = "New Mood Entry"
 		templateData.HeaderText = "Log Your Mood"
 		templateData.FormErrors = v.Errors
 		templateData.FormData = map[string]string{
