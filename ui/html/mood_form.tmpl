@@ -20,30 +20,34 @@
             <!-- === Emotion Selector === -->
             <div class="form-group">
               <label>How are you feeling?</label>
-              {{with index .FormErrors "emotion"}}<span class="error-message emotion-group-error">{{.}}</span>{{end}}
-              {{with index .FormErrors "emoji"}}<span class="error-message emotion-group-error">{{.}}</span>{{end}}
-              {{with index .FormErrors "color"}}<span class="error-message emotion-group-error">{{.}}</span>{{end}}
-
-              <div class="emotion-selector {{if or (index .FormErrors "emotion") (index .FormErrors "emoji") (index .FormErrors "color")}}has-error{{end}}" id="emotion-options-container">
-                {{range .DefaultEmotions}}
-                  <div class="emotion-option-wrapper">
-                    <input type="radio" id="emotion-{{.Name}}" name="emotion_choice" value="{{.Name}}" data-emoji="{{.Emoji}}" data-color="{{.Color}}" class="hidden-radio default-emotion-radio" {{if eq (index $.FormData "emotion_choice") .Name}}checked{{end}}>
-                    <label for="emotion-{{.Name}}" class="emotion-option">
-                      <span class="emotion-option-emoji">{{.Emoji}}</span>
-                      <span class="emotion-option-name">{{.Name}}</span>
-                    </label>
-                  </div>
-                {{end}}
-
+               <div class="emotion-selector {{if or (index .FormErrors "emotion") (index .FormErrors "emoji") (index .FormErrors "color")}}has-error{{end}}" id="emotion-options-container">
+              {{range .DefaultEmotions}}
                 <div class="emotion-option-wrapper">
-                  <input type="radio" id="emotion-other" name="emotion_choice" value="other" class="hidden-radio other-emotion-radio" {{if eq (index $.FormData "emotion_choice") "other"}}checked{{end}}>
-                  <label for="emotion-other" class="emotion-option other-option">
-                    <span class="emotion-option-emoji">➕</span>
-                    <span class="emotion-option-name">Other...</span>
+                  <input type="radio" id="emotion-{{.Name}}" name="emotion_choice" value="{{.Name}}" data-emoji="{{.Emoji}}" data-color="{{.Color}}" class="hidden-radio default-emotion-radio" {{if eq (index $.FormData "emotion_choice") .Name}}checked{{end}}>
+                  <label for="emotion-{{.Name}}" class="emotion-option">
+                    <span class="emotion-option-emoji">{{.Emoji}}</span>
+                    <span class="emotion-option-name">{{.Name}}</span>
                   </label>
                 </div>
+              {{end}}
+
+              <div class="emotion-option-wrapper">
+                <input type="radio" id="emotion-other" name="emotion_choice" value="other" class="hidden-radio other-emotion-radio" {{if eq (index $.FormData "emotion_choice") "other"}}checked{{end}}>
+                <label for="emotion-other" class="emotion-option other-option">
+                  <span class="emotion-option-emoji">➕</span>
+                  <span class="emotion-option-name">Other...</span>
+                </label>
               </div>
             </div>
+
+            <!-- ADD THIS BLOCK - It checks if any of the related errors exist -->
+            {{ if or (index .FormErrors "emotion") (index .FormErrors "emoji") (index .FormErrors "color") }}
+              <!-- Display a single, generic error message for the group -->
+              <span class="error-message emotion-group-error">must be provided</span> 
+            {{ end }}
+            
+          </div>
+          <!-- === End Emotion Selector === -->
 
             <!-- === Title Field === -->
             <div class="form-group">
