@@ -243,12 +243,12 @@ func (app *application) createMood(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// TODO: Save the mood entry, e.g.:
-	// err = app.moods.Insert(mood)
-	// if err != nil {
-	//     app.serverError(w, err)
-	//     return
-	// }
+	// Save the mood entry
+	err = app.moods.Insert(mood)
+	if err != nil {
+		app.serverError(w, r, err) // Correct: Added 'r'
+		return
+	}
 
 	http.Redirect(w, r, "/dashboard", http.StatusSeeOther)
 }

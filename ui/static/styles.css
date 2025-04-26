@@ -1036,8 +1036,9 @@
        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
        margin-bottom: 25px;
        display: flex;
-       justify-content: space-between;
+       justify-content: center;
        align-items: center;
+       position: relative;
    }
    
    .modal-header h2 {
@@ -1056,6 +1057,10 @@
        padding: 0 5px;
        margin: -5px -10px 0 10px;
        transition: color 0.2s;
+       position: absolute; /* Take it out of the flex flow */
+       right: 30px;        /* Position from the right edge (adjust as needed) */
+       top: 50%;           /* Align vertically */
+       transform: translateY(-50%); /* Fine-tune vertical alignment */
    }
    
    .modal-close:hover,
@@ -1135,7 +1140,6 @@
    
    /* Modal Footer */
    .modal-footer { /* Uses .button-group class */
-       justify-content: flex-end; /* Align buttons right */
        margin-top: 25px;
        border-top: 1px solid rgba(255, 255, 255, 0.1);
        padding-top: 20px;
@@ -1415,7 +1419,7 @@
     border: 1px solid rgba(255, 255, 255, 0.2);
     border-top: none; /* Toolbar handles top border */
     /* background-color: rgba(20, 22, 34, 0.5); <= Base background is now handled by .ql-editor or invalid state */
-    color: #e0e0e0; /* Match input text color */
+    color: #FFFFFF; /* Match input text color */
     font-family: 'Lora', serif; /* Match input font family */
     font-size: 1rem; /* Match input font size */
     box-sizing: border-box;
@@ -1435,7 +1439,7 @@
     min-height: 140px; /* Match textarea min-height */
     box-sizing: border-box;
     line-height: 1.6; /* Standard line height */
-    color: #e0e0e0; /* Ensure text color */
+    color: #FFFFFF; /* Ensure text color */
     outline: none; /* Remove default outline on editor area */
     /* Set default background for the editor area */
     background-color: rgba(20, 22, 34, 0.5); /* Match container default */
