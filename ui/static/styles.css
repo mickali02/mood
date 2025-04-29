@@ -1,5 +1,3 @@
-/* mood/ui/static/css/styles.css - Cleaned & Formatted */
-
 /* ==========================================================================
    1. Global Styles & Imports
    ========================================================================== */
@@ -15,11 +13,13 @@
        padding: 0;
    }
    
+   
    /* ==========================================================================
       2. Core Application Styles (Defaults - Theme 2: Dashboard Look)
       ========================================================================== */
    
    /* --- Default Body Styles --- */
+   
    body {
        font-family: 'Poppins', sans-serif;
        background: url('/static/resources/dashboard.png') no-repeat center center fixed;
@@ -27,14 +27,16 @@
        color: #e0e0e0;
        line-height: 1.6;
        height: 100vh;
-     width: 100vw;
+       width: 100vw;
        display: flex;
        flex-direction: column;
        position: relative;
        overflow-x: hidden;
    }
    
+   
    /* --- Base Typography --- */
+   
    h1, h2, h3, h4, h5, h6 { /* Grouped heading styles */
        font-family: 'Playfair Display', serif;
        color: #ffffff;
@@ -65,7 +67,9 @@
        margin: 0;
    }
    
+   
    /* --- Base Button Styles --- */
+   
    .btn {
        font-family: 'Poppins', sans-serif;
        display: inline-block;
@@ -97,7 +101,9 @@
        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
    }
    
+   
    /* --- Button Variants --- */
+   
    .btn.dashboard-add-btn { /* Specific style for Add buttons */
        padding: 12px 30px;
        font-size: 1.05rem;
@@ -125,7 +131,9 @@
        transform: translateY(-2px);
    }
    
+   
    /* Small Edit/Delete buttons */
+   
    .edit-delete-buttons {
        white-space: nowrap;
        flex-shrink: 0;
@@ -170,6 +178,7 @@
    
    
    /* --- Base Form Styling (Dark Theme) --- */
+   
    .form-group {
        margin-bottom: 25px;
    }
@@ -232,7 +241,9 @@
        padding-top: 10px;
    }
    
+   
    /* --- Error Handling --- */
+   
    .error-message {
        color: #f87c7c;
        font-size: 0.9em;
@@ -264,6 +275,7 @@
       ========================================================================== */
    
    /* --- Shared Background and Text --- */
+   
    body.landing-specific-background,
    body.about-page-background {
        background: url('/static/resources/landing.png') no-repeat center center fixed;
@@ -271,7 +283,9 @@
        color: #f0f0f0; /* Light text for landing/about */
    }
    
+   
    /* --- Header Shared by Landing/About --- */
+   
    .landing-specific-header {
        display: flex;
        align-items: center;
@@ -336,67 +350,68 @@
        box-shadow: 0 0 20px rgba(177, 156, 217, 0.7);
    }
    
+   
    /* --- Landing Page Specific Content --- */
+   
    .landing-main-content {
-    display: flex;
-    flex-direction: column;
-    /* justify-content: center; */  /* --- REMOVE or change to flex-start --- */
-    justify-content: flex-start; /* --- ADD: Align content towards the top --- */
-    align-items: flex-start;     /* --- CHANGE: Align content block left --- */
-    padding: 5vh 8%;             /* --- ADJUST: Use vh for top padding, % for sides --- */
-    flex-grow: 1;                /* Keep */
-    position: relative;          /* Keep */
-    z-index: 5;                  /* Keep */
-    /* Add minimum height if needed to prevent footer overlap on short content */
-    min-height: calc(100vh - 150px); /* Adjust 150px based on actual header height */
-}
-
+       display: flex;
+       flex-direction: column;
+       /* justify-content: center; */  /* --- REMOVE or change to flex-start --- */
+       justify-content: flex-start; /* --- ADD: Align content towards the top --- */
+       align-items: flex-start;     /* --- CHANGE: Align content block left --- */
+       padding: 5vh 8%;             /* --- ADJUST: Use vh for top padding, % for sides --- */
+       flex-grow: 1;                /* Keep */
+       position: relative;          /* Keep */
+       z-index: 5;                  /* Keep */
+       /* Add minimum height if needed to prevent footer overlap on short content */
+       min-height: calc(100vh - 150px); /* Adjust 150px based on actual header height */
+   }
    
-.landing-content-wrapper {
-    max-width: 600px; /* Adjust max width if needed */
-    text-align: center; /* --- ENSURE: Text inside aligns left --- */
-    margin-left: 0;   /* --- ENSURE: No forced centering margin --- */
-    margin-right: auto; /* Keep right margin auto */
-    /* Remove background/padding if you added it before */
-}
+   .landing-content-wrapper {
+       max-width: 600px; /* Adjust max width if needed */
+       text-align: center; /* --- ENSURE: Text inside aligns left --- */
+       margin-left: 0;   /* --- ENSURE: No forced centering margin --- */
+       margin-right: auto; /* Keep right margin auto */
+       /* Remove background/padding if you added it before */
+   }
    
-.landing-content-wrapper h1 {
-    /* Inherits base H1 styles */
-    color: #ffffff;
-    font-size: 3.2rem; /* Slightly smaller maybe? */
-    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
-    text-align: center; /* --- ENSURE: Left alignment --- */
-    margin-bottom: 1rem; /* Adjust spacing */
-}
-
-.landing-content-wrapper p {
-    /* Inherits base p styles */
-    color: #d8d8e0;
-    font-size: 1.1rem;
-    line-height: 1.7;
-    margin-bottom: 2.5rem; /* Space before button */
-    text-align: center; /* --- ENSURE: Left alignment --- */
-    max-width: 550px; /* Limit paragraph width */
-}
+   .landing-content-wrapper h1 {
+       /* Inherits base H1 styles */
+       color: #ffffff;
+       font-size: 3.2rem; /* Slightly smaller maybe? */
+       text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+       text-align: center; /* --- ENSURE: Left alignment --- */
+       margin-bottom: 1rem; /* Adjust spacing */
+   }
+   
+   .landing-content-wrapper p {
+       /* Inherits base p styles */
+       color: #d8d8e0;
+       font-size: 1.1rem;
+       line-height: 1.7;
+       margin-bottom: 2.5rem; /* Space before button */
+       text-align: center; /* --- ENSURE: Left alignment --- */
+       max-width: 550px; /* Limit paragraph width */
+   }
    
    .read-more-button {
-    /* Use base .btn styles for consistency, then override */
-    display: inline-flex;     /* Good practice for aligning text/icons if any */
-    align-items: center;
-    justify-content: center;
-    padding: 0.8rem 2.2rem;     /* Adjust padding as needed */
-    background-color: #A074B5; /* --- CHANGE: Solid Purple Background --- */
-    color: #FFFFFF;           /* --- CHANGE: Explicit White Text --- */
-    font-weight: 500;         /* Keep or adjust font weight */
-    border-radius: 30px;      /* --- ENSURE: Rounded Corners --- */
-    border: none;             /* --- ENSURE: No default border --- */
-    text-transform: uppercase;
-    font-size: 0.9rem;
-    letter-spacing: 0.5px;
-    text-decoration: none;    /* Ensure no underline */
-    box-shadow: 0 0 15px rgba(177, 156, 217, 0.5); /* Optional subtle shadow */
-    transition: all 0.3s ease; /* Keep transition */
-}
+       /* Use base .btn styles for consistency, then override */
+       display: inline-flex;     /* Good practice for aligning text/icons if any */
+       align-items: center;
+       justify-content: center;
+       padding: 0.8rem 2.2rem;     /* Adjust padding as needed */
+       background-color: #A074B5; /* --- CHANGE: Solid Purple Background --- */
+       color: #FFFFFF;           /* --- CHANGE: Explicit White Text --- */
+       font-weight: 500;         /* Keep or adjust font weight */
+       border-radius: 30px;      /* --- ENSURE: Rounded Corners --- */
+       border: none;             /* --- ENSURE: No default border --- */
+       text-transform: uppercase;
+       font-size: 0.9rem;
+       letter-spacing: 0.5px;
+       text-decoration: none;    /* Ensure no underline */
+       box-shadow: 0 0 15px rgba(177, 156, 217, 0.5); /* Optional subtle shadow */
+       transition: all 0.3s ease; /* Keep transition */
+   }
    
    .read-more-button:hover {
        background-color: #e6d29e; /* Yellow hover */
@@ -405,7 +420,9 @@
        color: #ffffff;
    }
    
+   
    /* --- About Page Specific Content --- */
+   
    /* body.about-page-background color set above */
    .about-main-content {
        display: flex;
@@ -448,19 +465,23 @@
    /* ==========================================================================
       4. Dashboard Page Styles (/dashboard)
       ========================================================================== */
-   .dashboard-container {
-       display: flex;
-       width: 92%;
-       max-width: 1500px;
-       margin: 170px auto;
-       min-height: 70vh;
-       padding: 20px;
-       gap: 30px;
-       position: relative;
-       z-index: 2;
-   }
+   
+      .dashboard-container {
+        display: flex;
+        width: 92%;
+        max-width: 1500px;
+        /* margin: 170px auto; */ /* Commented out original */
+        margin: 120px auto 50px auto; /* <<< ADJUSTED: Reduced top margin, kept auto side margins, added bottom margin */
+        min-height: 70vh; /* Keep min-height */
+        padding: 20px;
+        gap: 30px;
+        position: relative;
+        z-index: 2;
+    }
+   
    
    /* --- Dashboard Sidebar --- */
+   
    .dashboard-sidebar {
        width: 80px;
        height: fit-content;
@@ -581,11 +602,13 @@
        visibility: hidden;
    }
    
+   
    /* --- Dashboard Main Area --- */
+   
    .dashboard-main {
        flex-grow: 1;
-       max-height: calc(100vh - 40px); /* Limit height */
-       overflow-y: auto; /* Allow scroll */
+       /*max-height: calc(100vh - 40px); /* Limit height */
+       /*overflow-y: auto; /* Allow scroll */
        padding: 25px 35px;
        display: flex;
        flex-direction: column;
@@ -614,7 +637,9 @@
        margin: 0;
    }
    
+   
    /* --- Dashboard Filter Bar --- */
+   
    .dashboard-filter-bar {
        margin-bottom: 30px;
        padding: 15px 20px;
@@ -672,6 +697,7 @@
        outline: none;
        font-family: 'Poppins', sans-serif;
    }
+   
    .search-input-wrapper input[type="search"]:focus{
        box-shadow: none; /* Remove inner input focus style */
    }
@@ -756,7 +782,9 @@
    }
    /* Clear button uses .btn.cancel-btn styles */
    
+   
    /* --- Dashboard Mood List --- */
+   
    .dashboard-mood-list {
        flex-grow: 1;
        overflow-y: auto;
@@ -773,25 +801,29 @@
    }
    
    .dashboard-main .mood-item { /* Individual mood card */
-       width: auto; /* Let grid handle width */
-       margin-bottom: 0; /* Grid gap handles spacing */
-       background-color: rgba(55, 58, 80, 0.7);
-       padding: 20px 24px;
-       border-radius: 14px;
-       border: 1px solid rgba(255, 255, 255, 0.1);
-       border-left-width: 5px;
-       border-left-style: solid;
-       /* border-left-color is set via inline style */
-       transition: box-shadow 0.3s ease, transform 0.3s ease, border-color 0.2s;
-       color: #e0e0e0;
-       display: flex; /* Use flex to arrange content vertically */
-       flex-direction: column;
-       /* height: 240px; REMOVED fixed height */
-       min-height: 200px; /* Set a minimum height */
-       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-       text-align: left;
-       position: relative; /* Needed for button positioning */
-   }
+    width: auto; /* Let grid handle width */
+    margin-bottom: 0; /* Grid gap handles spacing */
+    background-color: rgba(55, 58, 80, 0.7);
+    padding: 20px 24px;
+    border-radius: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-left-width: 5px;
+    border-left-style: solid;
+    /* border-left-color is set via inline style */
+    transition: box-shadow 0.3s ease, transform 0.3s ease, border-color 0.2s;
+    color: #e0e0e0;
+    display: flex; /* Keep flex for vertical layout */
+    flex-direction: column; /* Keep flex direction */
+
+    /* --- The Core Fix --- */
+    height: 250px;       /* <<< ADD: Set a fixed height (Adjust 250px if needed) */
+    overflow: hidden;    /* <<< ADD: Clip any potential internal overflow */
+    /* --- End Core Fix --- */
+
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    text-align: left;
+    position: relative; /* Keep this */
+}
    
    .dashboard-main .mood-item:hover {
        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
@@ -851,7 +883,7 @@
        padding-top: 10px; /* Space above meta */
        flex-shrink: 0; /* Prevent shrinking */
    }
-
+   
    /* No results message */
    .dashboard-content-centered {
        display: flex;
@@ -863,8 +895,6 @@
        flex-grow: 1;
    }
    
-  
-
    .dashboard-content-centered p {
        font-size: 1.1rem;
        color: #bdc1c6;
@@ -875,6 +905,7 @@
    /* ==========================================================================
       5. Mood Form Page Styles (/mood/new, /mood/edit/*)
       ========================================================================== */
+   
    body.mood-form-page {
        display: flex;
        justify-content: center;
@@ -952,7 +983,7 @@
        transform: translateY(-1px);
    }
    
-   .hidden-radio:checked+.emotion-option, /* Style when corresponding radio is checked */
+   .hidden-radio:checked + .emotion-option, /* Style when corresponding radio is checked */
    .emotion-option.other-option.has-custom-value { /* Style 'Other' when it holds a custom value */
        background-color: #a074b5;
        color: #ffffff;
@@ -960,27 +991,26 @@
        box-shadow: 0 0 10px rgba(160, 116, 181, 0.4);
    }
    
-   
    .emotion-option.other-option.has-custom-value .emotion-option-emoji,
    .emotion-option.other-option.has-custom-value .emotion-option-name {
        color: #ffffff !important; /* Ensure text inside is white */
    }
    
    /* Reset 'Other...' if not checked AND doesn't have custom value */
-   .hidden-radio#emotion-other:not(:checked)+label.emotion-option.other-option:not(.has-custom-value) {
-        background-color: rgba(255, 255, 255, 0.1);
-        border-color: rgba(255, 255, 255, 0.2);
-        color: #bdc1c6;
-        box-shadow: none;
+   .hidden-radio#emotion-other:not(:checked) + label.emotion-option.other-option:not(.has-custom-value) {
+       background-color: rgba(255, 255, 255, 0.1);
+       border-color: rgba(255, 255, 255, 0.2);
+       color: #bdc1c6;
+       box-shadow: none;
    }
-   .hidden-radio#emotion-other:not(:checked)+label.emotion-option.other-option:not(.has-custom-value) .emotion-option-emoji,
-   .hidden-radio#emotion-other:not(:checked)+label.emotion-option.other-option:not(.has-custom-value) .emotion-option-name {
-        color: #bdc1c6; /* Reset text color */
+   .hidden-radio#emotion-other:not(:checked) + label.emotion-option.other-option:not(.has-custom-value) .emotion-option-emoji,
+   .hidden-radio#emotion-other:not(:checked) + label.emotion-option.other-option:not(.has-custom-value) .emotion-option-name {
+       color: #bdc1c6; /* Reset text color */
    }
    
    /* Focus Styling */
-   .hidden-radio:focus+.emotion-option:not(.has-custom-value),
-   .hidden-radio:focus+.emotion-option.other-option.has-custom-value {
+   .hidden-radio:focus + .emotion-option:not(.has-custom-value),
+   .hidden-radio:focus + .emotion-option.other-option.has-custom-value {
        outline: none;
        box-shadow: 0 0 0 3px rgba(160, 116, 181, 0.5), /* Standard purple focus glow */
                     0 0 10px rgba(160, 116, 181, 0.4); /* Keep selected shadow if applicable */
@@ -990,6 +1020,7 @@
    /* ==========================================================================
       6. Custom Emotion Modal Styles
       ========================================================================== */
+   
    .modal {
        display: none;
        position: fixed;
@@ -1164,6 +1195,7 @@
    /* ==========================================================================
       7. HTMX Indicator Styles
       ========================================================================== */
+   
    .htmx-indicator {
        display: inline-block;
        opacity: 0;
@@ -1178,6 +1210,7 @@
        animation: spin 0.8s ease-in-out infinite; /* Faster spin */
        -webkit-animation: spin 0.8s ease-in-out infinite;
    }
+   
    /* Hide the text "Loading..." */
    .htmx-indicator span { display: none; }
    
@@ -1202,6 +1235,7 @@
    /* ==========================================================================
       8. Utility Classes
       ========================================================================== */
+   
    .visually-hidden {
        position: absolute !important;
        height: 1px;
@@ -1211,45 +1245,57 @@
        white-space: nowrap;
    }
    
+   
    /* ==========================================================================
       9. Responsive Adjustments (Grouped)
       ========================================================================== */
    
    @media (max-width: 992px) { /* Medium screens / Tablets */
+   
        .dashboard-mood-list .mood-list {
            grid-template-columns: 1fr; /* Single column */
            gap: 20px;
        }
+   
        .dashboard-main .mood-item {
            height: auto; /* Auto height for single column */
            min-height: 180px;
        }
+   
        .dashboard-container {
            width: 95%;
            gap: 15px;
        }
+   
        .dashboard-main {
            padding: 20px;
            max-height: none; /* Remove max-height on smaller screens */
        }
+   
        .filter-form {
            gap: 10px 15px; /* Reduce gap */
        }
+   
        .text-search-group {
            min-width: 200px; /* Adjust min-width */
        }
+   
        .filter-group select, .filter-group input[type="date"] {
            width: 140px; /* Adjust width */
        }
+   
    }
    
+   
    @media (max-width: 768px) { /* Small screens / Large Phones */
+   
        .dashboard-container {
            flex-direction: column;
            padding: 10px;
            width: 100%;
            gap: 15px;
        }
+   
        .dashboard-sidebar {
            position: static; /* Sidebar no longer sticky */
            width: 100%;
@@ -1261,74 +1307,102 @@
            margin-bottom: 15px;
            overflow-x: auto; /* Allow horizontal scroll if needed */
        }
+   
        .sidebar-nav ul {
            flex-direction: row;
            gap: 10px;
            flex-wrap: nowrap; /* Prevent wrapping */
            width: auto; /* Allow natural width */
        }
+   
        .sidebar-nav a::after {
            display: none; /* Hide tooltips */
        }
+   
        .dashboard-main {
            padding: 15px;
        }
+   
        .filter-form {
            gap: 10px; /* Further reduce gap */
        }
-        /* Allow filter groups to take more width */
+   
+       /* Allow filter groups to take more width */
        .text-search-group,
        .emotion-filter-group,
        .date-filter-group {
-            flex-basis: 45%; /* Roughly two per line */
-            flex-grow: 1;
+           flex-basis: 45%; /* Roughly two per line */
+           flex-grow: 1;
        }
+   
        .filter-button-group {
-            flex-basis: 100%; /* Buttons take full width */
-            justify-content: center; /* Center buttons */
+           flex-basis: 100%; /* Buttons take full width */
+           justify-content: center; /* Center buttons */
        }
+   
        .filter-group select, .filter-group input[type="date"] {
            width: 100%; /* Make inputs full width of their group */
        }
+   
        .landing-specific-header { /* Adjust landing header */
            padding: 1rem 5%;
            flex-direction: column;
            gap: 1.5rem;
        }
+   
        .landing-specific-logo img { height: 60px; }
+   
        .landing-main-content { padding: 1.5rem 5%; }
+   
        .landing-content-wrapper h1 { font-size: 2.8rem; }
+   
    }
    
+   
    @media (max-width: 576px) { /* Small Phones */
+   
        .landing-specific-logo img { height: 50px; }
+   
        .landing-specific-nav ul { gap: 1rem; }
+   
        .landing-content-wrapper h1 { font-size: 2.3rem; }
+   
        .landing-content-wrapper p { font-size: 1rem; }
+   
        .btn, .signup-button, .read-more-button { /* Adjust base button padding */
            padding: 0.6rem 1.5rem;
            font-size: 0.9rem;
        }
+   
        .edit-delete-buttons .btn { padding: 5px 12px; font-size: 0.8rem; }
+   
        .dashboard-main { padding: 10px; }
+   
        .dashboard-header h1 { font-size: 1.8rem; }
+   
        .filter-bar { padding: 10px; }
-        /* Ensure single column layout for filters */
-        .text-search-group,
-        .emotion-filter-group,
-        .date-filter-group,
-        .filter-button-group {
-             flex-basis: 100%;
-        }
+   
+       /* Ensure single column layout for filters */
+       .text-search-group,
+       .emotion-filter-group,
+       .date-filter-group,
+       .filter-button-group {
+            flex-basis: 100%;
+       }
+   
        .filter-button-group { justify-content: space-around; } /* Space out buttons */
+   
        .modal-content { padding: 20px; }
+   
        .modal-header h2 { font-size: 1.2rem; }
+   
        .emoji-suggestion-btn { font-size: 1.1rem; }
+   
    }
    
    
    /* ==========================================================================
-      10. Pagination Styles (Placeholder)
+      10. Pagination Styles
       ========================================================================== */
    
    .pagination {
@@ -1386,178 +1460,182 @@
         color: #e0e0e0;
         font-weight: 500;
    }
-
- /* ==========================================================================
-   6. Rich Editor (Quill) Styles (Corrected & Complete with Inner Tint)
-   ========================================================================== */
-
-/* Base Editor container wrapper */
-#editor-container {
-    border-radius: 8px; /* Overall container rounding */
-    transition: box-shadow 0.3s ease, border-color 0.3s ease; /* Smooth transitions */
-    margin-bottom: 5px; /* Match input margin */
-    overflow: hidden; /* Clip child corners */
-    width: 100%; /* Ensure it takes full width */
-    position: relative; /* Context for z-index if needed */
-}
-
-/* Style the Quill Toolbar */
-.mood-form-page .ql-toolbar.ql-snow {
-    background-color: rgba(30, 32, 44, 0.6);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-bottom: none; /* Connects visually to container below */
-    padding: 8px 10px;
-    font-family: 'Poppins', sans-serif;
-    box-sizing: border-box;
-    transition: border-color 0.3s ease;
-    /* --- Corner Radii for Seamless Look --- */
-    border-top-left-radius: 8px;     /* Rounded top-left */
-    border-top-right-radius: 8px;    /* Rounded top-right */
-    border-bottom-left-radius: 0;    /* Square bottom-left */
-    border-bottom-right-radius: 0;   /* Square bottom-right */
-}
-
-/* Style the Quill Editor Container (below toolbar) */
-.mood-form-page .ql-container.ql-snow {
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-top: none; /* Toolbar handles top border */
-    /* background-color: rgba(20, 22, 34, 0.5); <= Base background is now handled by .ql-editor or invalid state */
-    color: #FFFFFF; /* Match input text color */
-    font-family: 'Lora', serif; /* Match input font family */
-    font-size: 1rem; /* Match input font size */
-    box-sizing: border-box;
-    transition: border-color 0.3s ease, background-color 0.3s ease;
-    /* --- Corner Radii for Seamless Look --- */
-    border-top-left-radius: 0;       /* Square top-left */
-    border-top-right-radius: 0;      /* Square top-right */
-    border-bottom-left-radius: 8px;  /* Rounded bottom-left */
-    border-bottom-right-radius: 8px; /* Rounded bottom-right */
-    /* Ensure container has a default background if editor is transparent */
-    background-color: rgba(20, 22, 34, 0.5); /* Default background if needed */
-}
-
-/* Style the actual editable area within Quill */
-.mood-form-page .ql-editor {
-    padding: 14px 18px; /* Match input padding */
-    min-height: 140px; /* Match textarea min-height */
-    box-sizing: border-box;
-    line-height: 1.6; /* Standard line height */
-    color: #FFFFFF; /* Ensure text color */
-    outline: none; /* Remove default outline on editor area */
-    /* Set default background for the editor area */
-    background-color: rgba(20, 22, 34, 0.5); /* Match container default */
-    transition: background-color 0.3s ease; /* Add transition for background */
-}
-
-/* Style the placeholder text */
-.mood-form-page .ql-editor.ql-blank::before {
-    color: #888dac; /* Match input placeholder color */
-    opacity: 0.8; /* Match input placeholder opacity */
-    font-style: normal; /* Override Quill's default italic */
-    font-family: 'Lora', serif; /* Match editor font */
-    left: 18px; /* Align with padding */
-    right: 18px; /* Align with padding */
-    font-size: 1rem; /* Match editor font size */
-    pointer-events: none; /* Standard for placeholders */
-}
-
-/* --- Focus State Styling --- */
-#editor-container:focus-within .ql-toolbar.ql-snow,
-#editor-container:focus-within .ql-container.ql-snow {
-    border-color: #a074b5; /* Apply focus border color */
-    z-index: 1; /* Ensure borders overlap correctly */
-}
-
-#editor-container:focus-within {
-    box-shadow: 0 0 0 3px rgba(160, 116, 181, 0.3); /* Apply focus shadow to wrapper */
-}
-/* Optional: Slightly change editor background on focus */
-#editor-container:focus-within .ql-editor {
-    background-color: rgba(30, 32, 44, 0.6); /* Slightly different background on focus, like toolbar */
-}
-
-
-/* --- Invalid State Styling (No !important) --- */
-
-/* Outer red glow for the entire component */
-#editor-container.invalid-editor {
-    box-shadow: 0 0 0 2px rgba(231, 76, 60, 0.5); /* Red glow */
-}
-
-/* Increased Specificity for Invalid Internal Styles */
-/* Invalid Toolbar Border */
-body.mood-form-page #editor-container.invalid-editor .ql-toolbar.ql-snow {
-    border-color: #e74c3c; /* Error Red */
-    z-index: 1; /* Ensure border draws cleanly */
-}
-
-/* Invalid Container Border ONLY */
-body.mood-form-page #editor-container.invalid-editor .ql-container.ql-snow {
-    border-color: #e74c3c; /* Error Red */
-    /* Background is now handled by the .ql-editor rule below */
-     background-color: transparent; /* Ensure container itself doesn't interfere */
-}
-
-/* Apply the Reddish Tint DIRECTLY to the editor typing area when invalid */
-body.mood-form-page #editor-container.invalid-editor .ql-editor {
-    background-color: rgba(50, 20, 20, 0.5); /* Reddish Tint, matching input.invalid */
-}
-
-/* --- Optional: Toolbar Icon Styling --- */
-.mood-form-page .ql-snow .ql-stroke {
-    stroke: #bdc1c6; /* Default icon stroke color */
-    transition: stroke 0.2s ease; /* Smooth transition */
-}
-.mood-form-page .ql-snow .ql-fill {
-     fill: #bdc1c6; /* Default icon fill color */
-     transition: fill 0.2s ease; /* Smooth transition */
-}
-.mood-form-page .ql-snow .ql-picker-label {
-    color: #bdc1c6; /* Dropdown label color */
-    transition: color 0.2s ease; /* Smooth transition */
-}
-
-/* Hover/Active states for toolbar buttons & pickers */
-.mood-form-page .ql-snow.ql-toolbar button:hover .ql-stroke,
-.mood-form-page .ql-snow .ql-toolbar button:hover .ql-stroke,
-.mood-form-page .ql-snow.ql-toolbar button:focus .ql-stroke,
-.mood-form-page .ql-snow .ql-toolbar button:focus .ql-stroke,
-.mood-form-page .ql-snow.ql-toolbar button.ql-active .ql-stroke,
-.mood-form-page .ql-snow .ql-toolbar button.ql-active .ql-stroke,
-.mood-form-page .ql-snow.ql-toolbar .ql-picker-label:hover .ql-stroke,
-.mood-form-page .ql-snow .ql-toolbar .ql-picker-label.ql-active .ql-stroke,
-.mood-form-page .ql-snow.ql-toolbar .ql-picker-item:hover .ql-stroke,
-.mood-form-page .ql-snow .ql-toolbar .ql-picker-item.ql-selected .ql-stroke {
-    stroke: #a074b5; /* Use theme color for active/hover icons */
-}
-
-.mood-form-page .ql-snow.ql-toolbar button:hover .ql-fill,
-.mood-form-page .ql-snow .ql-toolbar button:hover .ql-fill,
-.mood-form-page .ql-snow.ql-toolbar button:focus .ql-fill,
-.mood-form-page .ql-snow .ql-toolbar button:focus .ql-fill,
-.mood-form-page .ql-snow.ql-toolbar button.ql-active .ql-fill,
-.mood-form-page .ql-snow .ql-toolbar button.ql-active .ql-fill,
-.mood-form-page .ql-snow.ql-toolbar .ql-picker-label:hover .ql-fill,
-.mood-form-page .ql-snow .ql-toolbar .ql-picker-label.ql-active .ql-fill,
-.mood-form-page .ql-snow.ql-toolbar .ql-picker-item:hover .ql-fill,
-.mood-form-page .ql-snow .ql-toolbar .ql-picker-item.ql-selected .ql-fill {
-    fill: #a074b5; /* Use theme color for active/hover icons */
-}
-
-.mood-form-page .ql-snow.ql-toolbar button:hover,
-.mood-form-page .ql-snow .ql-toolbar button:hover,
-.mood-form-page .ql-snow.ql-toolbar button:focus,
-.mood-form-page .ql-snow .ql-toolbar button:focus,
-.mood-form-page .ql-snow.ql-toolbar button.ql-active,
-.mood-form-page .ql-snow .ql-toolbar button.ql-active,
-.mood-form-page .ql-snow.ql-toolbar .ql-picker-label:hover,
-.mood-form-page .ql-snow.ql-toolbar .ql-picker-label.ql-active,
-.mood-form-page .ql-snow.ql-toolbar .ql-picker-item:hover,
-.mood-form-page .ql-snow.ql-toolbar .ql-picker-item.ql-selected {
-    color: #a074b5; /* Use theme color for active/hover text (like in dropdowns) */
-}
-
-
+   
+   
+   /* ==========================================================================
+      11. Rich Editor (Quill) Styles (Corrected & Complete with Inner Tint)
+      NOTE: Changed section number from 6 to 11 for correct sequencing.
+      ========================================================================== */
+   
+   /* Base Editor container wrapper */
+   #editor-container {
+       border-radius: 8px; /* Overall container rounding */
+       transition: box-shadow 0.3s ease, border-color 0.3s ease; /* Smooth transitions */
+       margin-bottom: 5px; /* Match input margin */
+       overflow: hidden; /* Clip child corners */
+       width: 100%; /* Ensure it takes full width */
+       position: relative; /* Context for z-index if needed */
+   }
+   
+   /* Style the Quill Toolbar */
+   .mood-form-page .ql-toolbar.ql-snow {
+       background-color: rgba(30, 32, 44, 0.6);
+       border: 1px solid rgba(255, 255, 255, 0.2);
+       border-bottom: none; /* Connects visually to container below */
+       padding: 8px 10px;
+       font-family: 'Poppins', sans-serif;
+       box-sizing: border-box;
+       transition: border-color 0.3s ease;
+       /* --- Corner Radii for Seamless Look --- */
+       border-top-left-radius: 8px;     /* Rounded top-left */
+       border-top-right-radius: 8px;    /* Rounded top-right */
+       border-bottom-left-radius: 0;    /* Square bottom-left */
+       border-bottom-right-radius: 0;   /* Square bottom-right */
+   }
+   
+   /* Style the Quill Editor Container (below toolbar) */
+   .mood-form-page .ql-container.ql-snow {
+       border: 1px solid rgba(255, 255, 255, 0.2);
+       border-top: none; /* Toolbar handles top border */
+       /* background-color: rgba(20, 22, 34, 0.5); <= Base background is now handled by .ql-editor or invalid state */
+       color: #FFFFFF; /* Match input text color */
+       font-family: 'Lora', serif; /* Match input font family */
+       font-size: 1rem; /* Match input font size */
+       box-sizing: border-box;
+       transition: border-color 0.3s ease, background-color 0.3s ease;
+       /* --- Corner Radii for Seamless Look --- */
+       border-top-left-radius: 0;       /* Square top-left */
+       border-top-right-radius: 0;      /* Square top-right */
+       border-bottom-left-radius: 8px;  /* Rounded bottom-left */
+       border-bottom-right-radius: 8px; /* Rounded bottom-right */
+       /* Ensure container has a default background if editor is transparent */
+       background-color: rgba(20, 22, 34, 0.5); /* Default background if needed */
+   }
+   
+   /* Style the actual editable area within Quill */
+   .mood-form-page .ql-editor {
+       padding: 14px 18px; /* Match input padding */
+       min-height: 140px; /* Match textarea min-height */
+       box-sizing: border-box;
+       line-height: 1.6; /* Standard line height */
+       color: #FFFFFF; /* Ensure text color */
+       outline: none; /* Remove default outline on editor area */
+       /* Set default background for the editor area */
+       background-color: rgba(20, 22, 34, 0.5); /* Match container default */
+       transition: background-color 0.3s ease; /* Add transition for background */
+   }
+   
+   /* Style the placeholder text */
+   .mood-form-page .ql-editor.ql-blank::before {
+       color: #888dac; /* Match input placeholder color */
+       opacity: 0.8; /* Match input placeholder opacity */
+       font-style: normal; /* Override Quill's default italic */
+       font-family: 'Lora', serif; /* Match editor font */
+       left: 18px; /* Align with padding */
+       right: 18px; /* Align with padding */
+       font-size: 1rem; /* Match editor font size */
+       pointer-events: none; /* Standard for placeholders */
+   }
+   
+   /* --- Focus State Styling --- */
+   #editor-container:focus-within .ql-toolbar.ql-snow,
+   #editor-container:focus-within .ql-container.ql-snow {
+       border-color: #a074b5; /* Apply focus border color */
+       z-index: 1; /* Ensure borders overlap correctly */
+   }
+   
+   #editor-container:focus-within {
+       box-shadow: 0 0 0 3px rgba(160, 116, 181, 0.3); /* Apply focus shadow to wrapper */
+   }
+   
+   /* Optional: Slightly change editor background on focus */
+   #editor-container:focus-within .ql-editor {
+       background-color: rgba(30, 32, 44, 0.6); /* Slightly different background on focus, like toolbar */
+   }
+   
+   
+   /* --- Invalid State Styling (No !important) --- */
+   
+   /* Outer red glow for the entire component */
+   #editor-container.invalid-editor {
+       box-shadow: 0 0 0 2px rgba(231, 76, 60, 0.5); /* Red glow */
+   }
+   
+   /* Increased Specificity for Invalid Internal Styles */
+   /* Invalid Toolbar Border */
+   body.mood-form-page #editor-container.invalid-editor .ql-toolbar.ql-snow {
+       border-color: #e74c3c; /* Error Red */
+       z-index: 1; /* Ensure border draws cleanly */
+   }
+   
+   /* Invalid Container Border ONLY */
+   body.mood-form-page #editor-container.invalid-editor .ql-container.ql-snow {
+       border-color: #e74c3c; /* Error Red */
+       /* Background is now handled by the .ql-editor rule below */
+        background-color: transparent; /* Ensure container itself doesn't interfere */
+   }
+   
+   /* Apply the Reddish Tint DIRECTLY to the editor typing area when invalid */
+   body.mood-form-page #editor-container.invalid-editor .ql-editor {
+       background-color: rgba(50, 20, 20, 0.5); /* Reddish Tint, matching input.invalid */
+   }
+   
+   
+   /* --- Optional: Toolbar Icon Styling --- */
+   .mood-form-page .ql-snow .ql-stroke {
+       stroke: #bdc1c6; /* Default icon stroke color */
+       transition: stroke 0.2s ease; /* Smooth transition */
+   }
+   .mood-form-page .ql-snow .ql-fill {
+        fill: #bdc1c6; /* Default icon fill color */
+        transition: fill 0.2s ease; /* Smooth transition */
+   }
+   .mood-form-page .ql-snow .ql-picker-label {
+       color: #bdc1c6; /* Dropdown label color */
+       transition: color 0.2s ease; /* Smooth transition */
+   }
+   
+   /* Hover/Active states for toolbar buttons & pickers */
+   .mood-form-page .ql-snow.ql-toolbar button:hover .ql-stroke,
+   .mood-form-page .ql-snow .ql-toolbar button:hover .ql-stroke,
+   .mood-form-page .ql-snow.ql-toolbar button:focus .ql-stroke,
+   .mood-form-page .ql-snow .ql-toolbar button:focus .ql-stroke,
+   .mood-form-page .ql-snow.ql-toolbar button.ql-active .ql-stroke,
+   .mood-form-page .ql-snow .ql-toolbar button.ql-active .ql-stroke,
+   .mood-form-page .ql-snow.ql-toolbar .ql-picker-label:hover .ql-stroke,
+   .mood-form-page .ql-snow .ql-toolbar .ql-picker-label.ql-active .ql-stroke,
+   .mood-form-page .ql-snow.ql-toolbar .ql-picker-item:hover .ql-stroke,
+   .mood-form-page .ql-snow .ql-toolbar .ql-picker-item.ql-selected .ql-stroke {
+       stroke: #a074b5; /* Use theme color for active/hover icons */
+   }
+   
+   .mood-form-page .ql-snow.ql-toolbar button:hover .ql-fill,
+   .mood-form-page .ql-snow .ql-toolbar button:hover .ql-fill,
+   .mood-form-page .ql-snow.ql-toolbar button:focus .ql-fill,
+   .mood-form-page .ql-snow .ql-toolbar button:focus .ql-fill,
+   .mood-form-page .ql-snow.ql-toolbar button.ql-active .ql-fill,
+   .mood-form-page .ql-snow .ql-toolbar button.ql-active .ql-fill,
+   .mood-form-page .ql-snow.ql-toolbar .ql-picker-label:hover .ql-fill,
+   .mood-form-page .ql-snow .ql-toolbar .ql-picker-label.ql-active .ql-fill,
+   .mood-form-page .ql-snow.ql-toolbar .ql-picker-item:hover .ql-fill,
+   .mood-form-page .ql-snow .ql-toolbar .ql-picker-item.ql-selected .ql-fill {
+       fill: #a074b5; /* Use theme color for active/hover icons */
+   }
+   
+   .mood-form-page .ql-snow.ql-toolbar button:hover,
+   .mood-form-page .ql-snow .ql-toolbar button:hover,
+   .mood-form-page .ql-snow.ql-toolbar button:focus,
+   .mood-form-page .ql-snow .ql-toolbar button:focus,
+   .mood-form-page .ql-snow.ql-toolbar button.ql-active,
+   .mood-form-page .ql-snow .ql-toolbar button.ql-active,
+   .mood-form-page .ql-snow.ql-toolbar .ql-picker-label:hover,
+   .mood-form-page .ql-snow.ql-toolbar .ql-picker-label.ql-active,
+   .mood-form-page .ql-snow.ql-toolbar .ql-picker-item:hover,
+   .mood-form-page .ql-snow.ql-toolbar .ql-picker-item.ql-selected {
+       color: #a074b5; /* Use theme color for active/hover text (like in dropdowns) */
+   }
+   
+   
    /* ==========================================================================
       End of Styles
       ========================================================================== */
