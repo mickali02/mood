@@ -4,7 +4,7 @@
 
    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Poppins:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,700;1,400&display=swap');
    @import url('https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css');
-   
+
    *,
    *::before,
    *::after {
@@ -12,31 +12,31 @@
        margin: 0;
        padding: 0;
    }
-   
-   
+
+
    /* ==========================================================================
       2. Core Application Styles (Defaults - Theme 2: Dashboard Look)
       ========================================================================== */
-   
+
    /* --- Default Body Styles --- */
-   
+
    body {
        font-family: 'Poppins', sans-serif;
        background: url('/static/resources/dashboard.png') no-repeat center center fixed;
        background-size: cover;
        color: #e0e0e0;
        line-height: 1.6;
-       height: 100vh;
+       min-height: 100vh; /* Use min-height instead of height */
        width: 100vw;
        display: flex;
        flex-direction: column;
        position: relative;
        overflow-x: hidden;
    }
-   
-   
+
+
    /* --- Base Typography --- */
-   
+
    h1, h2, h3, h4, h5, h6 { /* Grouped heading styles */
        font-family: 'Playfair Display', serif;
        color: #ffffff;
@@ -44,32 +44,32 @@
        line-height: 1.3;
        font-weight: 600;
    }
-   
+
    p {
        font-family: 'Poppins', sans-serif;
        margin-bottom: 1em;
        color: #d0d0e0;
    }
-   
+
    a {
        color: #c8a2c8;
        text-decoration: none;
        transition: color 0.3s ease;
    }
-   
+
    a:hover {
        color: #e6d29e;
    }
-   
+
    ul {
        list-style: none;
        padding: 0;
        margin: 0;
    }
-   
-   
+
+
    /* --- Base Button Styles --- */
-   
+
    .btn {
        font-family: 'Poppins', sans-serif;
        display: inline-block;
@@ -89,34 +89,34 @@
        letter-spacing: 0.5px;
        box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
    }
-   
+
    .btn:hover {
        background-color: #8a6aaf; /* Darker purple */
        transform: translateY(-2px);
        box-shadow: 0 5px 12px rgba(0, 0, 0, 0.25);
    }
-   
+
    .btn:active {
        transform: translateY(0px);
        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
    }
-   
-   
+
+
    /* --- Button Variants --- */
-   
+
    .btn.dashboard-add-btn { /* Specific style for Add buttons */
        padding: 12px 30px;
        font-size: 1.05rem;
        background-color: rgba(160, 116, 181, 0.9);
        box-shadow: 0 5px 15px rgba(160, 116, 181, 0.3);
    }
-   
+
    .btn.dashboard-add-btn:hover {
        background-color: rgba(160, 116, 181, 1);
        transform: translateY(-3px);
        box-shadow: 0 8px 20px rgba(160, 116, 181, 0.5);
    }
-   
+
    .btn.cancel-btn { /* Cancel/Clear buttons */
        background-color: rgba(255, 255, 255, 0.15);
        color: #bdc1c6;
@@ -124,22 +124,16 @@
        font-weight: 400;
        text-transform: none;
    }
-   
+
    .btn.cancel-btn:hover {
        background-color: rgba(255, 255, 255, 0.25);
        color: #ffffff;
        transform: translateY(-2px);
    }
-   
-   
-   /* Small Edit/Delete buttons */
-   
-   .edit-delete-buttons {
-       white-space: nowrap;
-       flex-shrink: 0;
-       /* Alignment handled by parent flex container (.mood-item) */
-   }
-   
+
+
+   /* Small Edit/Delete buttons - Positioned via .edit-delete-buttons rule later */
+
    .edit-delete-buttons .btn { /* Base style for small buttons */
        margin-left: 8px;
        padding: 6px 15px;
@@ -150,39 +144,39 @@
        border-radius: 15px;
        box-shadow: none;
    }
-   
+
    .edit-delete-buttons form { /* Ensure form doesn't add extra space */
        display: inline-block;
        margin: 0;
        padding: 0;
        vertical-align: middle;
    }
-   
+
    .edit-delete-buttons .btn.edit-btn { /* Edit button color */
        background-color: rgba(100, 149, 237, 0.7);
        color: #fff;
    }
-   
+
    .edit-delete-buttons .btn.edit-btn:hover {
        background-color: rgba(100, 149, 237, 0.9);
    }
-   
+
    .edit-delete-buttons .btn.delete-btn { /* Delete button color */
        background-color: rgba(220, 20, 60, 0.7);
        color: #fff;
    }
-   
+
    .edit-delete-buttons .btn.delete-btn:hover {
        background-color: rgba(220, 20, 60, 0.9);
    }
-   
-   
+
+
    /* --- Base Form Styling (Dark Theme) --- */
-   
+
    .form-group {
        margin-bottom: 25px;
    }
-   
+
    label {
        display: block;
        margin-bottom: 10px;
@@ -191,7 +185,7 @@
        font-weight: 500;
        font-size: 1rem;
    }
-   
+
    /* Group common input/textarea styles */
    input[type="text"],
    input[type="email"],
@@ -210,14 +204,14 @@
        transition: border-color 0.3s, background-color 0.3s, box-shadow 0.3s;
        outline: none; /* Added to remove default outline */
    }
-   
+
    input[type="text"]::placeholder,
    input[type="search"]::placeholder,
    textarea::placeholder {
        color: #888dac;
        opacity: 0.8;
    }
-   
+
    /* General input focus (excluding specific search wrapper) */
    input[type="text"]:focus,
    input[type="email"]:focus,
@@ -226,12 +220,12 @@
        background-color: rgba(30, 32, 44, 0.6);
        box-shadow: 0 0 0 3px rgba(160, 116, 181, 0.3);
    }
-   
+
    textarea {
        min-height: 140px;
        resize: vertical;
    }
-   
+
    /* Button layout group */
    .button-group {
        display: flex;
@@ -240,10 +234,10 @@
        margin-top: 30px;
        padding-top: 10px;
    }
-   
-   
+
+
    /* --- Error Handling --- */
-   
+
    .error-message {
        color: #f87c7c;
        font-size: 0.9em;
@@ -251,41 +245,41 @@
        margin-top: 6px;
        font-weight: 400;
    }
-   
+
    input.invalid,
    textarea.invalid {
        border-color: #e74c3c !important;
        background-color: rgba(50, 20, 20, 0.5) !important;
    }
-   
+
    .emotion-selector.has-error { /* Border around emotion pills if invalid */
        border: 1px solid #e74c3c;
        padding: 10px;
        margin: -5px;
        border-radius: 8px;
    }
-   
+
    .emotion-group-error { /* Error message specific to emotion group */
        margin-bottom: 10px;
    }
-   
-   
+
+
    /* ==========================================================================
       3. Landing & About Page Styles
       ========================================================================== */
-   
+
    /* --- Shared Background and Text --- */
-   
+
    body.landing-specific-background,
    body.about-page-background {
        background: url('/static/resources/landing.png') no-repeat center center fixed;
        background-size: cover;
        color: #f0f0f0; /* Light text for landing/about */
    }
-   
-   
+
+
    /* --- Header Shared by Landing/About --- */
-   
+
    .landing-specific-header {
        display: flex;
        align-items: center;
@@ -294,30 +288,30 @@
        position: relative;
        z-index: 10;
    }
-   
+
    .landing-specific-logo {
        display: flex;
        align-items: center;
    }
-   
+
    .landing-specific-logo img {
        height: 180px; /* Kept larger logo */
        width: auto;
        margin-top: 10px; /* Adjust as needed */
    }
-   
+
    .landing-specific-nav {
        display: flex;
        align-items: center;
    }
-   
+
    .landing-specific-nav ul {
        display: flex;
        list-style: none;
        gap: 2.2rem; /* Spacing between nav items */
        align-items: center;
    }
-   
+
    .landing-specific-nav a {
        color: #fff; /* White nav links */
        text-decoration: none;
@@ -325,12 +319,12 @@
        font-weight: 500;
        transition: all 0.3s ease;
    }
-   
+
    .landing-specific-nav a:hover {
        color: #e6d29e; /* Light yellow hover */
        text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
    }
-   
+
    .landing-specific-nav .signup-button { /* Style specific sign up button */
        background-color: #a074b5; /* Solid purple */
        border-radius: 25px;
@@ -342,88 +336,81 @@
        box-shadow: 0 0 15px rgba(177, 156, 217, 0.5);
        transition: all 0.3s ease;
    }
-   
+
    .landing-specific-nav .signup-button:hover {
        background-color: #e6d29e; /* Yellow hover */
        color: #fff; /* Keep text white */
        transform: translateY(-2px);
        box-shadow: 0 0 20px rgba(177, 156, 217, 0.7);
    }
-   
-   
+
+
    /* --- Landing Page Specific Content --- */
-   
+
    .landing-main-content {
        display: flex;
        flex-direction: column;
-       /* justify-content: center; */  /* --- REMOVE or change to flex-start --- */
-       justify-content: flex-start; /* --- ADD: Align content towards the top --- */
-       align-items: flex-start;     /* --- CHANGE: Align content block left --- */
-       padding: 5vh 8%;             /* --- ADJUST: Use vh for top padding, % for sides --- */
-       flex-grow: 1;                /* Keep */
-       position: relative;          /* Keep */
-       z-index: 5;                  /* Keep */
-       /* Add minimum height if needed to prevent footer overlap on short content */
+       justify-content: flex-start;
+       align-items: flex-start;
+       padding: 5vh 8%;
+       flex-grow: 1;
+       position: relative;
+       z-index: 5;
        min-height: calc(100vh - 150px); /* Adjust 150px based on actual header height */
    }
-   
+
    .landing-content-wrapper {
-       max-width: 600px; /* Adjust max width if needed */
-       text-align: center; /* --- ENSURE: Text inside aligns left --- */
-       margin-left: 0;   /* --- ENSURE: No forced centering margin --- */
-       margin-right: auto; /* Keep right margin auto */
-       /* Remove background/padding if you added it before */
+       max-width: 600px;
+       text-align: center;
+       margin-left: 0;
+       margin-right: auto;
    }
-   
+
    .landing-content-wrapper h1 {
-       /* Inherits base H1 styles */
        color: #ffffff;
-       font-size: 3.2rem; /* Slightly smaller maybe? */
+       font-size: 3.2rem;
        text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
-       text-align: center; /* --- ENSURE: Left alignment --- */
-       margin-bottom: 1rem; /* Adjust spacing */
+       text-align: center;
+       margin-bottom: 1rem;
    }
-   
+
    .landing-content-wrapper p {
-       /* Inherits base p styles */
        color: #d8d8e0;
        font-size: 1.1rem;
        line-height: 1.7;
-       margin-bottom: 2.5rem; /* Space before button */
-       text-align: center; /* --- ENSURE: Left alignment --- */
-       max-width: 550px; /* Limit paragraph width */
+       margin-bottom: 2.5rem;
+       text-align: center;
+       max-width: 550px;
    }
-   
+
    .read-more-button {
-       /* Use base .btn styles for consistency, then override */
-       display: inline-flex;     /* Good practice for aligning text/icons if any */
+       display: inline-flex;
        align-items: center;
        justify-content: center;
-       padding: 0.8rem 2.2rem;     /* Adjust padding as needed */
-       background-color: #A074B5; /* --- CHANGE: Solid Purple Background --- */
-       color: #FFFFFF;           /* --- CHANGE: Explicit White Text --- */
-       font-weight: 500;         /* Keep or adjust font weight */
-       border-radius: 30px;      /* --- ENSURE: Rounded Corners --- */
-       border: none;             /* --- ENSURE: No default border --- */
+       padding: 0.8rem 2.2rem;
+       background-color: #A074B5;
+       color: #FFFFFF;
+       font-weight: 500;
+       border-radius: 30px;
+       border: none;
        text-transform: uppercase;
        font-size: 0.9rem;
        letter-spacing: 0.5px;
-       text-decoration: none;    /* Ensure no underline */
-       box-shadow: 0 0 15px rgba(177, 156, 217, 0.5); /* Optional subtle shadow */
-       transition: all 0.3s ease; /* Keep transition */
+       text-decoration: none;
+       box-shadow: 0 0 15px rgba(177, 156, 217, 0.5);
+       transition: all 0.3s ease;
    }
-   
+
    .read-more-button:hover {
-       background-color: #e6d29e; /* Yellow hover */
+       background-color: #e6d29e;
        transform: translateY(-2px);
        box-shadow: 0 0 15px rgba(177, 156, 217, 0.5);
        color: #ffffff;
    }
-   
-   
+
+
    /* --- About Page Specific Content --- */
-   
-   /* body.about-page-background color set above */
+
    .about-main-content {
        display: flex;
        justify-content: center;
@@ -432,9 +419,9 @@
        flex-grow: 1;
        width: 100%;
    }
-   
-   .about-content-wrapper { /* Container for about text */
-       background-color: rgba(255, 255, 255, 0.85); /* Light background */
+
+   .about-content-wrapper {
+       background-color: rgba(255, 255, 255, 0.85);
        backdrop-filter: blur(8px);
        padding: 35px 45px;
        border-radius: 10px;
@@ -445,47 +432,46 @@
        margin-top: 20px;
        border: 1px solid rgba(255, 255, 255, 0.1);
    }
-   
-   .about-content-wrapper h1 { /* About page H1 */
-       color: #4a0e6c; /* Dark purple */
+
+   .about-content-wrapper h1 {
+       color: #4a0e6c;
        border-bottom: 2px solid #d8c1e3;
        padding-bottom: 10px;
        font-size: 2.4rem;
        text-align: left;
    }
-   
-   .about-content-wrapper p { /* About page P */
-       color: #444; /* Dark text */
+
+   .about-content-wrapper p {
+       color: #444;
        font-size: 1rem;
        line-height: 1.8;
        text-align: left;
    }
-   
-   
+
+
    /* ==========================================================================
       4. Dashboard Page Styles (/dashboard)
       ========================================================================== */
-   
-      .dashboard-container {
-        display: flex;
-        width: 92%;
-        max-width: 1500px;
-        /* margin: 170px auto; */ /* Commented out original */
-        margin: 120px auto 50px auto; /* <<< ADJUSTED: Reduced top margin, kept auto side margins, added bottom margin */
-        min-height: 70vh; /* Keep min-height */
-        padding: 20px;
-        gap: 30px;
-        position: relative;
-        z-index: 2;
-    }
-   
-   
+
+   .dashboard-container {
+       display: flex;
+       width: 92%;
+       max-width: 1500px;
+       margin: 120px auto 50px auto; /* <<< ADJUSTED MARGIN */
+       min-height: 70vh;
+       padding: 20px;
+       gap: 30px;
+       position: relative;
+       z-index: 2;
+   }
+
+
    /* --- Dashboard Sidebar --- */
-   
+
    .dashboard-sidebar {
        width: 80px;
        height: fit-content;
-       max-height: calc(100vh - 80px);
+       max-height: calc(100vh - 80px); /* Keeps sidebar scroll if needed */
        background-color: rgba(40, 42, 54, 0.7);
        backdrop-filter: blur(12px);
        -webkit-backdrop-filter: blur(12px);
@@ -497,118 +483,32 @@
        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
        border: 1px solid rgba(255, 255, 255, 0.1);
        margin: auto 0;
-       align-self: center; /* Changed from flex-start */
+       align-self: center;
        position: sticky;
        top: 40px;
        z-index: 5;
    }
-   
-   .sidebar-nav ul {
-       width: 100%;
-       display: flex;
-       flex-direction: column;
-       gap: 15px;
-       align-items: center;
-   }
-   
-   .sidebar-nav li {
-       width: 100%;
-       position: relative;
-       display: flex;
-       justify-content: center;
-   }
-   
-   .sidebar-nav a { /* Sidebar icon links */
-       display: flex;
-       align-items: center;
-       justify-content: center;
-       width: 50px;
-       height: 50px;
-       color: #bdc1c6;
-       text-decoration: none;
-       transition: all 0.3s ease;
-       border-radius: 50%;
-       background-color: rgba(255, 255, 255, 0.08);
-       position: relative;
-   }
-   
-   .sidebar-nav a:hover,
-   .sidebar-nav a.active {
-       background-color: rgba(255, 255, 255, 0.2);
-       color: #ffffff;
-       transform: scale(1.1);
-       box-shadow: 0 0 15px rgba(160, 116, 181, 0.5);
-   }
-   
-   .sidebar-nav a::after { /* Tooltip */
-       content: attr(data-title);
-       position: absolute;
-       left: 110%;
-       top: 50%;
-       transform: translateY(-50%);
-       background-color: rgba(50, 52, 64, 0.95);
-       color: white;
-       padding: 6px 12px;
-       border-radius: 6px;
-       font-size: 0.85rem;
-       white-space: nowrap;
-       opacity: 0;
-       pointer-events: none;
-       transition: opacity 0.3s ease, left 0.3s ease;
-       z-index: 10;
-       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-       visibility: hidden;
-   }
-   
-   .sidebar-nav a:hover::after {
-       opacity: 1;
-       visibility: visible;
-       left: 120%;
-   }
-   
-   .nav-icon { /* Bootstrap icons */
-       font-size: 22px;
-       line-height: 1;
-       color: inherit;
-       transition: all 0.3s ease;
-   }
-   
-   .sidebar-nav a:hover .nav-icon {
-       transform: scale(1.1);
-   }
-   
-   .nav-separator { /* Line in sidebar */
-       width: 60%;
-       height: 1px;
-       background-color: rgba(255, 255, 255, 0.15);
-       margin: 10px auto;
-   }
-   
-   .sidebar-nav a.disabled-link { /* Disabled sidebar links */
-       opacity: 0.4;
-       pointer-events: none;
-       cursor: default;
-   }
-   
-   .sidebar-nav a.disabled-link:hover {
-       background-color: rgba(255, 255, 255, 0.08);
-       transform: none;
-       box-shadow: none;
-       color: #bdc1c6;
-   }
-   
-   .sidebar-nav a.disabled-link:hover::after {
-       opacity: 0;
-       visibility: hidden;
-   }
-   
-   
+
+   /* ... Sidebar Nav Styles (Unchanged) ... */
+   .sidebar-nav ul { width: 100%; display: flex; flex-direction: column; gap: 15px; align-items: center; }
+   .sidebar-nav li { width: 100%; position: relative; display: flex; justify-content: center; }
+   .sidebar-nav a { display: flex; align-items: center; justify-content: center; width: 50px; height: 50px; color: #bdc1c6; text-decoration: none; transition: all 0.3s ease; border-radius: 50%; background-color: rgba(255, 255, 255, 0.08); position: relative; }
+   .sidebar-nav a:hover, .sidebar-nav a.active { background-color: rgba(255, 255, 255, 0.2); color: #ffffff; transform: scale(1.1); box-shadow: 0 0 15px rgba(160, 116, 181, 0.5); }
+   .sidebar-nav a::after { content: attr(data-title); position: absolute; left: 110%; top: 50%; transform: translateY(-50%); background-color: rgba(50, 52, 64, 0.95); color: white; padding: 6px 12px; border-radius: 6px; font-size: 0.85rem; white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity 0.3s ease, left 0.3s ease; z-index: 10; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3); visibility: hidden; }
+   .sidebar-nav a:hover::after { opacity: 1; visibility: visible; left: 120%; }
+   .nav-icon { font-size: 22px; line-height: 1; color: inherit; transition: all 0.3s ease; }
+   .sidebar-nav a:hover .nav-icon { transform: scale(1.1); }
+   .nav-separator { width: 60%; height: 1px; background-color: rgba(255, 255, 255, 0.15); margin: 10px auto; }
+   .sidebar-nav a.disabled-link { opacity: 0.4; pointer-events: none; cursor: default; }
+   .sidebar-nav a.disabled-link:hover { background-color: rgba(255, 255, 255, 0.08); transform: none; box-shadow: none; color: #bdc1c6; }
+   .sidebar-nav a.disabled-link:hover::after { opacity: 0; visibility: hidden; }
+
+
    /* --- Dashboard Main Area --- */
-   
+
    .dashboard-main {
        flex-grow: 1;
-       /*max-height: calc(100vh - 40px); /* Limit height */
-       /*overflow-y: auto; /* Allow scroll */
+       /* REMOVED max-height and overflow-y */
        padding: 25px 35px;
        display: flex;
        flex-direction: column;
@@ -617,9 +517,9 @@
        -webkit-backdrop-filter: blur(10px);
        border-radius: 20px;
        border: 1px solid rgba(255, 255, 255, 0.1);
-       align-self: stretch;
+       align-self: stretch; /* Let it stretch vertically */
    }
-   
+
    .dashboard-header {
        margin-bottom: 25px;
        padding-bottom: 15px;
@@ -631,260 +531,146 @@
        gap: 15px;
        width: 100%;
    }
-   
-   .dashboard-header h1 { /* Welcome message */
+
+   .dashboard-header h1 {
        font-size: 2.1rem;
        margin: 0;
    }
-   
-   
+
+
    /* --- Dashboard Filter Bar --- */
-   
-   .dashboard-filter-bar {
-       margin-bottom: 30px;
-       padding: 15px 20px;
-       background-color: rgba(40, 42, 54, 0.75);
-       border-radius: 15px;
-       border: 1px solid rgba(255, 255, 255, 0.1);
-       box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-       flex-shrink: 0;
-   }
-   
-   .filter-form {
-       display: flex;
-       flex-wrap: wrap;
-       align-items: flex-end; /* Align items bottom */
-       gap: 15px 20px;
-       justify-content: center;
-   }
-   
-   .filter-group { /* Container for label + input */
-       display: flex;
-       flex-direction: column;
-       align-items: flex-start;
-       gap: 5px;
-   }
-   
-   .text-search-group { /* Allow search box to grow */
-       flex-grow: 1;
-       min-width: 220px;
-       align-self: stretch;
-       justify-content: flex-end;
-   }
-   
-   .search-input-wrapper { /* Wrapper for search input + icon */
-       display: flex;
-       width: 100%;
-       background-color: rgba(20, 22, 34, 0.6);
-       border: 1px solid rgba(255, 255, 255, 0.2);
-       border-radius: 20px; /* Pill shape */
-       overflow: hidden;
-       transition: border-color 0.2s, box-shadow 0.2s;
-   }
-   
-   .search-input-wrapper:focus-within { /* Focus style on wrapper */
-       border-color: #a074b5;
-       box-shadow: 0 0 0 2px rgba(160, 116, 181, 0.3);
-   }
-   
-   .search-input-wrapper input[type="search"] { /* Actual search input */
-       flex-grow: 1;
-       padding: 10px 18px;
-       border: none;
-       background: none;
-       color: #e0e0e0;
-       font-size: 0.95rem;
-       outline: none;
-       font-family: 'Poppins', sans-serif;
-   }
-   
-   .search-input-wrapper input[type="search"]:focus{
-       box-shadow: none; /* Remove inner input focus style */
-   }
-   
-   input[type="search"]::placeholder {
-       color: #9aabbc;
-       opacity: 0.8;
-   }
-   
-   /* Hide default search cancel button */
-   input[type="search"]::-webkit-search-cancel-button,
-   input[type="search"]::-webkit-search-decoration {
-       -webkit-appearance: none;
-       appearance: none;
-   }
-   
-   .emotion-filter-group,
-   .date-filter-group { /* Align dropdowns/date pickers vertically */
-       align-self: stretch;
-       justify-content: flex-end;
-   }
-   
-   .filter-group label { /* Filter labels */
-       margin-bottom: 0;
-       color: #bdc1c6;
-       font-size: 0.85rem;
-       font-weight: 400;
-       padding-left: 5px;
-   }
-   
-   .filter-group select,
-   .filter-group input[type="date"] { /* Dropdown and date inputs */
-       padding: 9px 12px;
-       background-color: rgba(20, 22, 34, 0.6);
-       border: 1px solid rgba(255, 255, 255, 0.2);
-       border-radius: 6px;
-       color: #e0e0e0;
-       font-family: 'Poppins', sans-serif;
-       font-size: 0.9rem;
-       outline: none;
-       transition: border-color 0.2s, box-shadow 0.2s;
-       height: 40px; /* Consistent height */
-       line-height: normal;
-       width: 160px;
-   }
-   
-   .filter-group select:focus,
-   .filter-group input[type="date"]:focus {
-       border-color: #a074b5;
-       box-shadow: 0 0 0 2px rgba(160, 116, 181, 0.3);
-   }
-   
-   .filter-group select { /* Dropdown arrow styling */
-       appearance: none;
-       -webkit-appearance: none;
-       -moz-appearance: none;
-       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23bdc1c6' viewBox='0 0 16 16'%3E%3Cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3E%3C/svg%3E");
-       background-repeat: no-repeat;
-       background-position: right 10px center;
-       padding-right: 35px;
-       cursor: pointer;
-   }
-   
-   .filter-group input[type="date"]::-webkit-calendar-picker-indicator { /* Date picker icon */
-       filter: invert(0.8);
-       cursor: pointer;
-   }
-   
-   .filter-button-group { /* Container for filter/clear buttons */
-       display: flex;
-       gap: 10px;
-       align-self: flex-end;
-       padding-bottom: 1px;
-   }
-   
-   .filter-apply-btn,
-   .clear-filters-btn { /* Filter/Clear buttons */
-       text-transform: none;
-       padding: 9px 20px;
-       font-size: 0.95rem;
-       height: 40px;
-   }
-   /* Clear button uses .btn.cancel-btn styles */
-   
-   
+   /* ... Filter Bar Styles (Unchanged) ... */
+   .dashboard-filter-bar { margin-bottom: 30px; padding: 15px 20px; background-color: rgba(40, 42, 54, 0.75); border-radius: 15px; border: 1px solid rgba(255, 255, 255, 0.1); box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); flex-shrink: 0; }
+   .filter-form { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 15px 20px; justify-content: center; }
+   .filter-group { display: flex; flex-direction: column; align-items: flex-start; gap: 5px; }
+   .text-search-group { flex-grow: 1; min-width: 220px; align-self: stretch; justify-content: flex-end; }
+   .search-input-wrapper { display: flex; width: 100%; background-color: rgba(20, 22, 34, 0.6); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 20px; overflow: hidden; transition: border-color 0.2s, box-shadow 0.2s; }
+   .search-input-wrapper:focus-within { border-color: #a074b5; box-shadow: 0 0 0 2px rgba(160, 116, 181, 0.3); }
+   .search-input-wrapper input[type="search"] { flex-grow: 1; padding: 10px 18px; border: none; background: none; color: #e0e0e0; font-size: 0.95rem; outline: none; font-family: 'Poppins', sans-serif; }
+   .search-input-wrapper input[type="search"]:focus{ box-shadow: none; }
+   input[type="search"]::placeholder { color: #9aabbc; opacity: 0.8; }
+   input[type="search"]::-webkit-search-cancel-button, input[type="search"]::-webkit-search-decoration { -webkit-appearance: none; appearance: none; }
+   .emotion-filter-group, .date-filter-group { align-self: stretch; justify-content: flex-end; }
+   .filter-group label { margin-bottom: 0; color: #bdc1c6; font-size: 0.85rem; font-weight: 400; padding-left: 5px; }
+   .filter-group select, .filter-group input[type="date"] { padding: 9px 12px; background-color: rgba(20, 22, 34, 0.6); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 6px; color: #e0e0e0; font-family: 'Poppins', sans-serif; font-size: 0.9rem; outline: none; transition: border-color 0.2s, box-shadow 0.2s; height: 40px; line-height: normal; width: 160px; }
+   .filter-group select:focus, .filter-group input[type="date"]:focus { border-color: #a074b5; box-shadow: 0 0 0 2px rgba(160, 116, 181, 0.3); }
+   .filter-group select { appearance: none; -webkit-appearance: none; -moz-appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23bdc1c6' viewBox='0 0 16 16'%3E%3Cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 10px center; padding-right: 35px; cursor: pointer; }
+   .filter-group input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(0.8); cursor: pointer; }
+   .filter-button-group { display: flex; gap: 10px; align-self: flex-end; padding-bottom: 1px; }
+   .filter-apply-btn, .clear-filters-btn { text-transform: none; padding: 9px 20px; font-size: 0.95rem; height: 40px; }
+
+
    /* --- Dashboard Mood List --- */
-   
+
    .dashboard-mood-list {
-       flex-grow: 1;
-       overflow-y: auto;
-       padding-right: 10px; /* Prevent scrollbar overlap */
-       margin-right: -10px; /* Offset scrollbar */
+       flex-grow: 1; /* Allow list area to grow */
+       /* Removed overflow-y, padding-right, margin-right */
    }
-   
+
    .dashboard-mood-list .mood-list {
        padding: 0;
        margin: 0;
-       display: grid; /* Use grid for layout */
-       grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* Responsive columns */
-       gap: 25px; /* Gap between cards */
+       display: grid;
+       grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+       gap: 25px;
    }
-   
-   .dashboard-main .mood-item { /* Individual mood card */
-    width: auto; /* Let grid handle width */
-    margin-bottom: 0; /* Grid gap handles spacing */
-    background-color: rgba(55, 58, 80, 0.7);
-    padding: 20px 24px;
-    border-radius: 14px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-left-width: 5px;
-    border-left-style: solid;
-    /* border-left-color is set via inline style */
-    transition: box-shadow 0.3s ease, transform 0.3s ease, border-color 0.2s;
-    color: #e0e0e0;
-    display: flex; /* Keep flex for vertical layout */
-    flex-direction: column; /* Keep flex direction */
 
-    /* --- The Core Fix --- */
-    height: 250px;       /* <<< ADD: Set a fixed height (Adjust 250px if needed) */
-    overflow: hidden;    /* <<< ADD: Clip any potential internal overflow */
-    /* --- End Core Fix --- */
-
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    text-align: left;
-    position: relative; /* Keep this */
-}
-   
+   /* --- Individual Mood Item Card --- */
+   .dashboard-main .mood-item {
+       width: auto;
+       margin-bottom: 0;
+       background-color: rgba(55, 58, 80, 0.7);
+       padding: 20px 24px;
+       border-radius: 14px;
+       border: 1px solid rgba(255, 255, 255, 0.1);
+       border-left-width: 5px;
+       border-left-style: solid;
+       transition: box-shadow 0.3s ease, transform 0.3s ease, border-color 0.2s;
+       color: #e0e0e0;
+       display: flex;
+       flex-direction: column;
+       height: 250px;       /* <<< Fixed height */
+       overflow: hidden;    /* <<< Clip overflow */
+       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+       text-align: left;
+       position: relative;
+   }
    .dashboard-main .mood-item:hover {
        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
        transform: translateY(-3px);
        border-color: rgba(255, 255, 255, 0.2);
    }
-   
-   .dashboard-main .mood-item-content { /* Main content area within card */
-       flex-grow: 1;
-       margin-right: 0;
-       margin-bottom: 15px; /* Space before buttons */
-       overflow: hidden; /* Needed for line clamp */
-       display: flex;
-       flex-direction: column;
+
+   /* --- Styles for elements INSIDE the mood item card --- */
+   .dashboard-main .mood-item-header { /* Optional wrapper class from template */
+        flex-shrink: 0;
+        margin-bottom: 8px;
    }
-   
    .dashboard-main .mood-item .mood-title {
-       font-size: 1.15em;
-       margin-bottom: 8px;
-       color: #ffffff;
-       font-weight: 600;
-       font-family: 'Poppins', sans-serif;
-       display: flex;
-       align-items: center;
-       gap: 10px;
-       flex-shrink: 0; /* Prevent title from shrinking */
+        font-size: 1.15em;
+        color: #ffffff;
+        font-weight: 600;
+        font-family: 'Poppins', sans-serif;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-shrink: 0;
    }
-   
    .dashboard-main .mood-item .mood-emoji {
-       font-size: 1.3em;
-       line-height: 1;
-       flex-shrink: 0;
+        font-size: 1.3em;
+        line-height: 1;
+        flex-shrink: 0;
    }
-   
-   .dashboard-main .mood-item .mood-text { /* Mood description text */
-       flex-grow: 1; /* Allow text to take available space */
-       overflow: hidden; /* Needed for line clamp */
-       font-size: 0.95rem;
-       color: #c8c8d8;
-       margin-bottom: 10px; /* Space below text */
-       line-height: 1.5;
-       font-family: 'Lora', serif;
-       /* Apply line clamping */
-       display: -webkit-box;
-       -webkit-box-orient: vertical;
-       -webkit-line-clamp: 4; /* Adjust number of lines */
-       line-clamp: 4;
-       text-overflow: ellipsis;
+   /* Container for the text content and 'View More' link */
+   .dashboard-main .mood-item-content {
+        flex-grow: 1;       /* <<< CRITICAL: Allows this div to expand vertically */
+        overflow: hidden;   /* Needed for text truncation child */
+        display: flex;        /* Use flex to manage children */
+        flex-direction: column; /* Stack text and view more link */
+        min-height: 0;      /* Prevents flex blow-out */
+        margin-bottom: 10px; /* Space between content area and meta */
    }
-   
-   .dashboard-main .mood-item .mood-meta { /* Date/Time info */
-       font-size: 0.75em;
-       opacity: 0.8;
-       color: #b0a8b9;
-       font-family: 'Poppins', sans-serif;
-       margin-top: auto; /* Push to bottom if content is short */
-       padding-top: 10px; /* Space above meta */
-       flex-shrink: 0; /* Prevent shrinking */
+   /* The actual text content - APPLY TRUNCATION HERE */
+   .dashboard-main .mood-item .quill-rendered-content {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 4; /* Adjust number of lines */
+        line-clamp: 4;
+        color: #c8c8d8;
+        font-size: 0.95rem;
+        line-height: 1.5;
+        font-family: 'Lora', serif;
    }
-   
-   /* No results message */
+   .quill-rendered-content > p { margin-bottom: 0.5em; }
+   .quill-rendered-content > *:last-child { margin-bottom: 0; }
+
+   /* --- Metadata - Positioned normally below content --- */
+   .dashboard-main .mood-item .mood-meta {
+        font-size: 0.75em;
+        opacity: 0.8;
+        color: #b0a8b9;
+        font-family: 'Poppins', sans-serif;
+        padding-top: 10px;
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+        flex-shrink: 0;
+        width: 100%;
+   }
+   /* --- Buttons - Pushed to the bottom --- */
+   .edit-delete-buttons {
+        margin-top: auto;   /* <<< CRITICAL: Pushes this block down */
+        padding-top: 10px;
+        flex-shrink: 0;
+        align-self: flex-end;
+        width: 100%;
+        text-align: right;
+        white-space: nowrap;
+   }
+   /* --- End Styles for elements INSIDE the mood item card --- */
+
+
+   /* --- No results message --- */
    .dashboard-content-centered {
        display: flex;
        flex-direction: column;
@@ -894,748 +680,326 @@
        padding: 40px 20px;
        flex-grow: 1;
    }
-   
    .dashboard-content-centered p {
        font-size: 1.1rem;
        color: #bdc1c6;
        margin-bottom: 25px;
    }
-   
-   
+
+
    /* ==========================================================================
       5. Mood Form Page Styles (/mood/new, /mood/edit/*)
       ========================================================================== */
-   
-   body.mood-form-page {
-       display: flex;
-       justify-content: center;
-       align-items: center;
-       padding: 30px 15px;
-       background-image: url('/static/resources/form.png');
-       background-size: cover;                     /* Scale to cover viewport */
-       background-position: center center;         /* Center the image */
-       background-repeat: no-repeat;               /* Do not tile the image */
-       background-attachment: fixed;
-   }
-   
-   .mood-form-page .form-container {
-       width: 90%;
-       max-width: 700px;
-       padding: 35px 45px;
-       background-color: rgba(40, 42, 54, 0.8);
-       backdrop-filter: blur(10px);
-       -webkit-backdrop-filter: blur(10px);
-       border-radius: 15px;
-       box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-       border: 1px solid rgba(255, 255, 255, 0.1);
-       text-align: left;
-       margin: 0 auto;
-   }
-   
-   .mood-form-page h1 {
-       font-size: 2rem;
-       text-align: center;
-       margin-bottom: 30px;
-       border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-       padding-bottom: 15px;
-   }
-   
-   /* Emotion Selector (Pills) */
-   .emotion-selector {
-       display: flex;
-       flex-wrap: wrap;
-       gap: 10px;
-       padding-top: 5px;
-   }
-   
-   .hidden-radio { /* Hide actual radio button */
-       position: absolute;
-       opacity: 0;
-       pointer-events: none;
-       width: 0;
-       height: 0;
-   }
-   
-   .emotion-option { /* Style the label like a button */
-       display: inline-flex;
-       align-items: center;
-       gap: 8px;
-       padding: 8px 16px;
-       background-color: rgba(255, 255, 255, 0.1);
-       color: #bdc1c6;
-       border-radius: 20px;
-       cursor: pointer;
-       transition: all 0.3s ease;
-       border: 1px solid rgba(255, 255, 255, 0.2);
-       font-size: 0.9rem;
-       user-select: none; /* Prevent text selection */
-   }
-   
-   .emotion-option-emoji {
-       font-size: 1.1em;
-       line-height: 1;
-   }
-   
-   .emotion-option:hover {
-       background-color: rgba(255, 255, 255, 0.2);
-       color: #ffffff;
-       border-color: rgba(255, 255, 255, 0.4);
-       transform: translateY(-1px);
-   }
-   
-   .hidden-radio:checked + .emotion-option, /* Style when corresponding radio is checked */
-   .emotion-option.other-option.has-custom-value { /* Style 'Other' when it holds a custom value */
-       background-color: #a074b5;
-       color: #ffffff;
-       border-color: #a074b5; /* Default uses purple border */
-       box-shadow: 0 0 10px rgba(160, 116, 181, 0.4);
-   }
-   
-   .emotion-option.other-option.has-custom-value .emotion-option-emoji,
-   .emotion-option.other-option.has-custom-value .emotion-option-name {
-       color: #ffffff !important; /* Ensure text inside is white */
-   }
-   
-   /* Reset 'Other...' if not checked AND doesn't have custom value */
-   .hidden-radio#emotion-other:not(:checked) + label.emotion-option.other-option:not(.has-custom-value) {
-       background-color: rgba(255, 255, 255, 0.1);
-       border-color: rgba(255, 255, 255, 0.2);
-       color: #bdc1c6;
-       box-shadow: none;
-   }
-   .hidden-radio#emotion-other:not(:checked) + label.emotion-option.other-option:not(.has-custom-value) .emotion-option-emoji,
-   .hidden-radio#emotion-other:not(:checked) + label.emotion-option.other-option:not(.has-custom-value) .emotion-option-name {
-       color: #bdc1c6; /* Reset text color */
-   }
-   
-   /* Focus Styling */
-   .hidden-radio:focus + .emotion-option:not(.has-custom-value),
-   .hidden-radio:focus + .emotion-option.other-option.has-custom-value {
-       outline: none;
-       box-shadow: 0 0 0 3px rgba(160, 116, 181, 0.5), /* Standard purple focus glow */
-                    0 0 10px rgba(160, 116, 181, 0.4); /* Keep selected shadow if applicable */
-   }
-   
-   
+    /* ... Mood Form Styles (Unchanged) ... */
+   body.mood-form-page { display: flex; justify-content: center; align-items: center; padding: 30px 15px; background-image: url('/static/resources/form.png'); background-size: cover; background-position: center center; background-repeat: no-repeat; background-attachment: fixed; }
+   .mood-form-page .form-container { width: 90%; max-width: 700px; padding: 35px 45px; background-color: rgba(40, 42, 54, 0.8); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-radius: 15px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2); border: 1px solid rgba(255, 255, 255, 0.1); text-align: left; margin: 0 auto; }
+   .mood-form-page h1 { font-size: 2rem; text-align: center; margin-bottom: 30px; border-bottom: 1px solid rgba(255, 255, 255, 0.1); padding-bottom: 15px; }
+   /* Emotion Selector */
+   .emotion-selector { display: flex; flex-wrap: wrap; gap: 10px; padding-top: 5px; }
+   .hidden-radio { position: absolute; opacity: 0; pointer-events: none; width: 0; height: 0; }
+   .emotion-option { display: inline-flex; align-items: center; gap: 8px; padding: 8px 16px; background-color: rgba(255, 255, 255, 0.1); color: #bdc1c6; border-radius: 20px; cursor: pointer; transition: all 0.3s ease; border: 1px solid rgba(255, 255, 255, 0.2); font-size: 0.9rem; user-select: none; }
+   .emotion-option-emoji { font-size: 1.1em; line-height: 1; }
+   .emotion-option:hover { background-color: rgba(255, 255, 255, 0.2); color: #ffffff; border-color: rgba(255, 255, 255, 0.4); transform: translateY(-1px); }
+   .hidden-radio:checked + .emotion-option, .emotion-option.other-option.has-custom-value { background-color: #a074b5; color: #ffffff; border-color: #a074b5; box-shadow: 0 0 10px rgba(160, 116, 181, 0.4); }
+   .emotion-option.other-option.has-custom-value .emotion-option-emoji, .emotion-option.other-option.has-custom-value .emotion-option-name { color: #ffffff !important; }
+   .hidden-radio#emotion-other:not(:checked) + label.emotion-option.other-option:not(.has-custom-value) { background-color: rgba(255, 255, 255, 0.1); border-color: rgba(255, 255, 255, 0.2); color: #bdc1c6; box-shadow: none; }
+   .hidden-radio#emotion-other:not(:checked) + label.emotion-option.other-option:not(.has-custom-value) .emotion-option-emoji, .hidden-radio#emotion-other:not(:checked) + label.emotion-option.other-option:not(.has-custom-value) .emotion-option-name { color: #bdc1c6; }
+   .hidden-radio:focus + .emotion-option:not(.has-custom-value), .hidden-radio:focus + .emotion-option.other-option.has-custom-value { outline: none; box-shadow: 0 0 0 3px rgba(160, 116, 181, 0.5), 0 0 10px rgba(160, 116, 181, 0.4); }
+
+
    /* ==========================================================================
       6. Custom Emotion Modal Styles
       ========================================================================== */
-   
-   .modal {
-       display: none;
+   /* ... Custom Emotion Modal Styles (Unchanged) ... */
+   .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0, 0, 0, 0.7); align-items: center; justify-content: center; opacity: 0; visibility: hidden; transition: opacity 0.3s ease, visibility 0s linear 0.3s; }
+   .modal.is-visible { opacity: 1; visibility: visible; transition-delay: 0s; }
+   .modal-content { background-color: #2f3241; margin: auto; padding: 30px 35px; border: 1px solid rgba(255, 255, 255, 0.15); width: 90%; max-width: 480px; border-radius: 12px; box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4); color: #e0e0e0; position: relative; transform: scale(0.95); transition: transform 0.3s ease; }
+   .modal.is-visible .modal-content { transform: scale(1); }
+   .modal-header { padding-bottom: 15px; border-bottom: 1px solid rgba(255, 255, 255, 0.1); margin-bottom: 25px; display: flex; justify-content: center; align-items: center; position: relative; }
+   .modal-header h2 { margin-bottom: 0; color: #fff; font-size: 1.4rem; font-family: 'Playfair Display', serif; }
+   .modal-close { color: #aaa; font-size: 2rem; font-weight: bold; line-height: 1; cursor: pointer; padding: 0 5px; margin: -5px -10px 0 10px; transition: color 0.2s; position: absolute; right: 30px; top: 50%; transform: translateY(-50%); }
+   .modal-close:hover, .modal-close:focus { color: #fff; text-decoration: none; }
+   .modal .form-group { margin-bottom: 20px; }
+   .modal label { font-size: 0.9rem; color: #bdc1c6; margin-bottom: 8px; display: block; }
+   .modal input[type="text"], .modal input[type="color"] { width: 100%; padding: 12px 15px; background-color: rgba(20, 22, 34, 0.7); border: 1px solid rgba(255, 255, 255, 0.2); color: #e0e0e0; border-radius: 6px; font-family: 'Poppins', sans-serif; font-size: 0.95rem; }
+   .modal input[type="text"]:focus, .modal input[type="color"]:focus { border-color: #a074b5; box-shadow: 0 0 0 2px rgba(160, 116, 181, 0.3); outline: none; }
+   .modal input[type="color"] { padding: 5px; height: 45px; cursor: pointer; width: 100%; }
+   .modal input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
+   .modal input[type="color"]::-webkit-color-swatch { border: none; border-radius: 4px; }
+   .emoji-suggestions { margin-top: 10px; display: flex; flex-wrap: wrap; gap: 8px; }
+   .emoji-suggestion-btn { background-color: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); color: #e0e0e0; padding: 5px 8px; border-radius: 5px; cursor: pointer; font-size: 1.3rem; line-height: 1; transition: background-color 0.2s, transform 0.1s; }
+   .emoji-suggestion-btn:hover { background-color: rgba(255, 255, 255, 0.2); transform: scale(1.1); }
+   .emoji-suggestion-btn:active { transform: scale(1.0); }
+   .modal-footer { margin-top: 25px; border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: 20px; gap: 10px; /* Uses .button-group */ }
+   .modal .btn { font-size: 0.9rem; padding: 8px 18px; text-transform: none; }
+   .modal .error-message { font-size: 0.85rem; margin-top: 4px; }
+
+
+   /* ==========================================================================
+      7. HTMX Indicator Styles
+      ========================================================================== */
+   /* ... HTMX Indicator Styles (Unchanged) ... */
+   .htmx-indicator { display: inline-block; opacity: 0; transition: opacity 200ms ease-in; margin-left: 15px; vertical-align: middle; width: 18px; height: 18px; border: 2px solid rgba(160, 116, 181, 0.3); border-radius: 50%; border-top-color: #A074B5; animation: spin 0.8s ease-in-out infinite; -webkit-animation: spin 0.8s ease-in-out infinite; }
+   .htmx-indicator span { display: none; }
+   @keyframes spin { to { transform: rotate(360deg); } }
+   @-webkit-keyframes spin { to { -webkit-transform: rotate(360deg); } }
+   body.htmx-request .htmx-indicator, .htmx-request .htmx-indicator { opacity: 1; }
+   body.htmx-request.htmx-indicator { opacity: 1; }
+   .htmx-swapping { opacity: 0.6; transition: opacity 250ms ease-out; }
+
+
+   /* ==========================================================================
+      8. Utility Classes
+      ========================================================================== */
+   /* ... Utility Classes (Unchanged) ... */
+   .visually-hidden { position: absolute !important; height: 1px; width: 1px; overflow: hidden; clip: rect(1px, 1px, 1px, 1px); white-space: nowrap; }
+
+
+   /* ==========================================================================
+      9. Responsive Adjustments (Grouped)
+      ========================================================================== */
+   /* ... Responsive Styles (Unchanged, but ensure mood-item height is handled) ... */
+   @media (max-width: 992px) {
+       .dashboard-mood-list .mood-list { grid-template-columns: 1fr; gap: 20px; }
+       .dashboard-main .mood-item { height: auto; min-height: 180px; } /* Allow auto height on smaller screens */
+       .dashboard-container { width: 95%; gap: 15px; }
+       .dashboard-main { padding: 20px; max-height: none; }
+       .filter-form { gap: 10px 15px; }
+       .text-search-group { min-width: 200px; }
+       .filter-group select, .filter-group input[type="date"] { width: 140px; }
+   }
+   @media (max-width: 768px) {
+       .dashboard-container { flex-direction: column; padding: 10px; width: 100%; gap: 15px; }
+       .dashboard-sidebar { position: static; width: 100%; max-height: none; flex-direction: row; justify-content: center; padding: 10px 0; border-radius: 15px; margin-bottom: 15px; overflow-x: auto; }
+       .sidebar-nav ul { flex-direction: row; gap: 10px; flex-wrap: nowrap; width: auto; }
+       .sidebar-nav a::after { display: none; }
+       .dashboard-main { padding: 15px; }
+       .filter-form { gap: 10px; }
+       .text-search-group, .emotion-filter-group, .date-filter-group { flex-basis: 45%; flex-grow: 1; }
+       .filter-button-group { flex-basis: 100%; justify-content: center; }
+       .filter-group select, .filter-group input[type="date"] { width: 100%; }
+       .landing-specific-header { padding: 1rem 5%; flex-direction: column; gap: 1.5rem; }
+       .landing-specific-logo img { height: 60px; }
+       .landing-main-content { padding: 1.5rem 5%; }
+       .landing-content-wrapper h1 { font-size: 2.8rem; }
+   }
+   @media (max-width: 576px) {
+       .landing-specific-logo img { height: 50px; }
+       .landing-specific-nav ul { gap: 1rem; }
+       .landing-content-wrapper h1 { font-size: 2.3rem; }
+       .landing-content-wrapper p { font-size: 1rem; }
+       .btn, .signup-button, .read-more-button { padding: 0.6rem 1.5rem; font-size: 0.9rem; }
+       .edit-delete-buttons .btn { padding: 5px 12px; font-size: 0.8rem; }
+       .dashboard-main { padding: 10px; }
+       .dashboard-header h1 { font-size: 1.8rem; }
+       /* .filter-bar { padding: 10px; } REMOVED - Inherited from dashboard-filter-bar */
+       .text-search-group, .emotion-filter-group, .date-filter-group, .filter-button-group { flex-basis: 100%; }
+       .filter-button-group { justify-content: space-around; }
+       .modal-content { padding: 20px; } /* Affects both modals */
+       .modal-header h2 { font-size: 1.2rem; } /* Affects both modals */
+       .emoji-suggestion-btn { font-size: 1.1rem; }
+   }
+
+
+   /* ==========================================================================
+      10. Pagination Styles
+      ========================================================================== */
+   /* ... Pagination Styles (Unchanged) ... */
+   .pagination { margin-top: 30px; padding-top: 20px; border-top: 1px solid rgba(255, 255, 255, 0.1); display: flex; justify-content: center; align-items: center; width: 100%; }
+   .pagination ul { display: flex; align-items: center; gap: 10px; }
+   .pagination li { margin: 0; }
+   .pagination span, .pagination a { display: inline-block; padding: 8px 16px; color: #bdc1c6; text-decoration: none; border-radius: 6px; transition: background-color 0.2s, color 0.2s; font-size: 0.9rem; }
+   .pagination a { background-color: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); }
+   .pagination a:hover { background-color: rgba(160, 116, 181, 0.5); color: #ffffff; border-color: rgba(160, 116, 181, 0.7); }
+   .pagination li.disabled span { color: rgba(189, 193, 198, 0.4); cursor: default; background-color: transparent; border: 1px solid transparent; }
+   .pagination li span:not([class]) { background-color: transparent; border: none; color: #e0e0e0; font-weight: 500; }
+
+
+   /* ==========================================================================
+      11. Rich Editor (Quill) Styles
+      ========================================================================== */
+    /* ... Quill Styles (Unchanged) ... */
+   #editor-container { border-radius: 8px; transition: box-shadow 0.3s ease, border-color 0.3s ease; margin-bottom: 5px; overflow: hidden; width: 100%; position: relative; }
+   .mood-form-page .ql-toolbar.ql-snow { background-color: rgba(30, 32, 44, 0.6); border: 1px solid rgba(255, 255, 255, 0.2); border-bottom: none; padding: 8px 10px; font-family: 'Poppins', sans-serif; box-sizing: border-box; transition: border-color 0.3s ease; border-top-left-radius: 8px; border-top-right-radius: 8px; border-bottom-left-radius: 0; border-bottom-right-radius: 0; }
+   .mood-form-page .ql-container.ql-snow { border: 1px solid rgba(255, 255, 255, 0.2); border-top: none; color: #FFFFFF; font-family: 'Lora', serif; font-size: 1rem; box-sizing: border-box; transition: border-color 0.3s ease, background-color 0.3s ease; border-top-left-radius: 0; border-top-right-radius: 0; border-bottom-left-radius: 8px; border-bottom-right-radius: 8px; background-color: rgba(20, 22, 34, 0.5); }
+   .mood-form-page .ql-editor { padding: 14px 18px; min-height: 140px; box-sizing: border-box; line-height: 1.6; color: #FFFFFF; outline: none; background-color: rgba(20, 22, 34, 0.5); transition: background-color 0.3s ease; }
+   .mood-form-page .ql-editor.ql-blank::before { color: #888dac; opacity: 0.8; font-style: normal; font-family: 'Lora', serif; left: 18px; right: 18px; font-size: 1rem; pointer-events: none; }
+   #editor-container:focus-within .ql-toolbar.ql-snow, #editor-container:focus-within .ql-container.ql-snow { border-color: #a074b5; z-index: 1; }
+   #editor-container:focus-within { box-shadow: 0 0 0 3px rgba(160, 116, 181, 0.3); }
+   #editor-container:focus-within .ql-editor { background-color: rgba(30, 32, 44, 0.6); }
+   #editor-container.invalid-editor { box-shadow: 0 0 0 2px rgba(231, 76, 60, 0.5); }
+   body.mood-form-page #editor-container.invalid-editor .ql-toolbar.ql-snow { border-color: #e74c3c; z-index: 1; }
+   body.mood-form-page #editor-container.invalid-editor .ql-container.ql-snow { border-color: #e74c3c; background-color: transparent; }
+   body.mood-form-page #editor-container.invalid-editor .ql-editor { background-color: rgba(50, 20, 20, 0.5); }
+   .mood-form-page .ql-snow .ql-stroke { stroke: #bdc1c6; transition: stroke 0.2s ease; }
+   .mood-form-page .ql-snow .ql-fill { fill: #bdc1c6; transition: fill 0.2s ease; }
+   .mood-form-page .ql-snow .ql-picker-label { color: #bdc1c6; transition: color 0.2s ease; }
+   .mood-form-page .ql-snow.ql-toolbar button:hover .ql-stroke, .mood-form-page .ql-snow .ql-toolbar button:hover .ql-stroke, .mood-form-page .ql-snow.ql-toolbar button:focus .ql-stroke, .mood-form-page .ql-snow .ql-toolbar button:focus .ql-stroke, .mood-form-page .ql-snow.ql-toolbar button.ql-active .ql-stroke, .mood-form-page .ql-snow .ql-toolbar button.ql-active .ql-stroke, .mood-form-page .ql-snow.ql-toolbar .ql-picker-label:hover .ql-stroke, .mood-form-page .ql-snow .ql-toolbar .ql-picker-label.ql-active .ql-stroke, .mood-form-page .ql-snow.ql-toolbar .ql-picker-item:hover .ql-stroke, .mood-form-page .ql-snow .ql-toolbar .ql-picker-item.ql-selected .ql-stroke { stroke: #a074b5; }
+   .mood-form-page .ql-snow.ql-toolbar button:hover .ql-fill, .mood-form-page .ql-snow .ql-toolbar button:hover .ql-fill, .mood-form-page .ql-snow.ql-toolbar button:focus .ql-fill, .mood-form-page .ql-snow .ql-toolbar button:focus .ql-fill, .mood-form-page .ql-snow.ql-toolbar button.ql-active .ql-fill, .mood-form-page .ql-snow .ql-toolbar button.ql-active .ql-fill, .mood-form-page .ql-snow.ql-toolbar .ql-picker-label:hover .ql-fill, .mood-form-page .ql-snow .ql-toolbar .ql-picker-label.ql-active .ql-fill, .mood-form-page .ql-snow.ql-toolbar .ql-picker-item:hover .ql-fill, .mood-form-page .ql-snow .ql-toolbar .ql-picker-item.ql-selected .ql-fill { fill: #a074b5; }
+   .mood-form-page .ql-snow.ql-toolbar button:hover, .mood-form-page .ql-snow .ql-toolbar button:hover, .mood-form-page .ql-snow.ql-toolbar button:focus, .mood-form-page .ql-snow .ql-toolbar button:focus, .mood-form-page .ql-snow.ql-toolbar button.ql-active, .mood-form-page .ql-snow .ql-toolbar button.ql-active, .mood-form-page .ql-snow.ql-toolbar .ql-picker-label:hover, .mood-form-page .ql-snow.ql-toolbar .ql-picker-label.ql-active, .mood-form-page .ql-snow.ql-toolbar .ql-picker-item:hover, .mood-form-page .ql-snow.ql-toolbar .ql-picker-item.ql-selected { color: #a074b5; }
+
+
+   /* ==========================================================================
+      12. View More & Modal Styles (Added section)
+      ========================================================================== */
+
+   /* --- View More Link --- */
+   .view-more-link {
+       display: none; /* Hide by default - JS will show it */
+       font-size: 0.8rem;
+       font-weight: 500;
+       color: #ffffff; 
+       cursor: pointer;
+       text-decoration: none;
+       margin-top: 5px;
+       align-self: flex-start;
+       transition: color 0.2s ease;
+   }
+
+   .view-more-link:hover {
+       color: #e6d29e;
+   }
+
+
+   /* --- Mood Detail Modal --- */
+   .mood-detail-modal {
+       display: none; /* Hidden by default */
        position: fixed;
-       z-index: 1000;
+       z-index: 1050; /* High z-index */
        left: 0;
        top: 0;
        width: 100%;
        height: 100%;
-       overflow: auto;
-       background-color: rgba(0, 0, 0, 0.7);
+       overflow: hidden; /* Prevent body scrolling */
+       background-color: rgba(0, 0, 0, 0.8);
        align-items: center;
        justify-content: center;
-       /* Added transitions for modal visibility */
        opacity: 0;
        visibility: hidden;
        transition: opacity 0.3s ease, visibility 0s linear 0.3s;
    }
-   
-   .modal.is-visible { /* Class added by JS to show modal */
+
+   .mood-detail-modal.is-visible {
+       display: flex; /* Use flex for centering */
        opacity: 1;
        visibility: visible;
        transition-delay: 0s;
    }
-   
-   .modal-content {
-       background-color: #2f3241;
+
+   .mood-detail-modal-content {
+       background-color: #2f3241; /* Dark background */
        margin: auto;
-       padding: 30px 35px;
+       padding: 25px 35px;
        border: 1px solid rgba(255, 255, 255, 0.15);
        width: 90%;
-       max-width: 480px;
+       max-width: 650px; /* Adjust as needed */
+       max-height: 85vh; /* Limit height */
        border-radius: 12px;
        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
        color: #e0e0e0;
        position: relative;
-       /* Added scale transition */
+       display: flex;
+       flex-direction: column;
        transform: scale(0.95);
        transition: transform 0.3s ease;
    }
-   
-   .modal.is-visible .modal-content { /* Scale up when visible */
+
+   .mood-detail-modal.is-visible .mood-detail-modal-content {
        transform: scale(1);
    }
-   
-   .modal-header {
+
+   .mood-detail-modal-header {
        padding-bottom: 15px;
        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-       margin-bottom: 25px;
+       margin-bottom: 20px;
        display: flex;
-       justify-content: center;
+       justify-content: space-between;
        align-items: center;
-       position: relative;
+       flex-shrink: 0;
    }
-   
-   .modal-header h2 {
-       margin-bottom: 0;
+
+   .mood-detail-modal-header h2 { /* Title inside modal */
+       margin: 0;
        color: #fff;
-       font-size: 1.4rem;
+       font-size: 1.5rem;
        font-family: 'Playfair Display', serif;
+       word-break: break-word;
+       padding-right: 15px;
    }
-   
-   .modal-close {
+
+   .mood-detail-modal-close { /* Close button (X) */
        color: #aaa;
-       font-size: 2rem;
+       font-size: 2.2rem;
        font-weight: bold;
        line-height: 1;
        cursor: pointer;
        padding: 0 5px;
-       margin: -5px -10px 0 10px;
        transition: color 0.2s;
-       position: absolute; /* Take it out of the flex flow */
-       right: 30px;        /* Position from the right edge (adjust as needed) */
-       top: 50%;           /* Align vertically */
-       transform: translateY(-50%); /* Fine-tune vertical alignment */
+       background: none;
+       border: none;
+       flex-shrink: 0;
    }
-   
-   .modal-close:hover,
-   .modal-close:focus {
+
+   .mood-detail-modal-close:hover,
+   .mood-detail-modal-close:focus {
        color: #fff;
        text-decoration: none;
-   }
-   
-   .modal .form-group { /* Spacing inside modal */
-       margin-bottom: 20px;
-   }
-   
-   .modal label { /* Labels inside modal */
-       font-size: 0.9rem;
-       color: #bdc1c6;
-       margin-bottom: 8px;
-       display: block;
-   }
-   
-   .modal input[type="text"],
-   .modal input[type="color"] { /* Inputs inside modal */
-       width: 100%;
-       padding: 12px 15px;
-       background-color: rgba(20, 22, 34, 0.7);
-       border: 1px solid rgba(255, 255, 255, 0.2);
-       color: #e0e0e0;
-       border-radius: 6px;
-       font-family: 'Poppins', sans-serif;
-       font-size: 0.95rem;
-   }
-   
-   .modal input[type="text"]:focus,
-   .modal input[type="color"]:focus {
-       border-color: #a074b5;
-       box-shadow: 0 0 0 2px rgba(160, 116, 181, 0.3);
        outline: none;
    }
-   
-   .modal input[type="color"] { /* Color picker specific */
-       padding: 5px;
-       height: 45px;
-       cursor: pointer;
-       width: 100%;
-   }
-   
-   .modal input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
-   .modal input[type="color"]::-webkit-color-swatch { border: none; border-radius: 4px; }
-   
-   /* Emoji Suggestions */
-   .emoji-suggestions {
-       margin-top: 10px;
-       display: flex;
-       flex-wrap: wrap;
-       gap: 8px;
-   }
-   
-   .emoji-suggestion-btn {
-       background-color: rgba(255, 255, 255, 0.1);
-       border: 1px solid rgba(255, 255, 255, 0.2);
+
+   .mood-detail-modal-body {
+       overflow-y: auto; /* Allow scrolling ONLY for the body */
+       margin-bottom: 20px;
+       flex-grow: 1; /* Allow body to take remaining space */
+       font-family: 'Lora', serif;
+       line-height: 1.6;
        color: #e0e0e0;
-       padding: 5px 8px;
-       border-radius: 5px;
-       cursor: pointer;
-       font-size: 1.3rem;
-       line-height: 1;
-       transition: background-color 0.2s, transform 0.1s;
    }
-   
-   .emoji-suggestion-btn:hover {
-       background-color: rgba(255, 255, 255, 0.2);
-       transform: scale(1.1);
-   }
-   
-   .emoji-suggestion-btn:active {
-       transform: scale(1.0);
-   }
-   
-   /* Modal Footer */
-   .modal-footer { /* Uses .button-group class */
-       margin-top: 25px;
-       border-top: 1px solid rgba(255, 255, 255, 0.1);
-       padding-top: 20px;
-       gap: 10px;
-   }
-   
-   .modal .btn { /* Buttons inside modal */
-       font-size: 0.9rem;
-       padding: 8px 18px;
-       text-transform: none;
-   }
-   
-   .modal .error-message { /* Errors inside modal */
-       font-size: 0.85rem;
-       margin-top: 4px;
-   }
-   
-   
-   /* ==========================================================================
-      7. HTMX Indicator Styles
-      ========================================================================== */
-   
-   .htmx-indicator {
-       display: inline-block;
-       opacity: 0;
-       transition: opacity 200ms ease-in;
-       margin-left: 15px;
-       vertical-align: middle;
-       width: 18px; /* Slightly smaller */
-       height: 18px;
-       border: 2px solid rgba(160, 116, 181, 0.3); /* Lighter border */
-       border-radius: 50%;
-       border-top-color: #A074B5; /* Theme color for spinner */
-       animation: spin 0.8s ease-in-out infinite; /* Faster spin */
-       -webkit-animation: spin 0.8s ease-in-out infinite;
-   }
-   
-   /* Hide the text "Loading..." */
-   .htmx-indicator span { display: none; }
-   
-   @keyframes spin { to { transform: rotate(360deg); } }
-   @-webkit-keyframes spin { to { -webkit-transform: rotate(360deg); } }
-   
-   body.htmx-request .htmx-indicator,
-   .htmx-request .htmx-indicator {
-       opacity: 1;
-   }
-   
-   body.htmx-request.htmx-indicator {
-       opacity: 1;
-   }
-   
-   .htmx-swapping {
-       opacity: 0.6; /* Slightly less transparent */
-       transition: opacity 250ms ease-out;
-   }
-   
-   
-   /* ==========================================================================
-      8. Utility Classes
-      ========================================================================== */
-   
-   .visually-hidden {
-       position: absolute !important;
-       height: 1px;
-       width: 1px;
-       overflow: hidden;
-       clip: rect(1px, 1px, 1px, 1px);
-       white-space: nowrap;
-   }
-   
-   
-   /* ==========================================================================
-      9. Responsive Adjustments (Grouped)
-      ========================================================================== */
-   
-   @media (max-width: 992px) { /* Medium screens / Tablets */
-   
-       .dashboard-mood-list .mood-list {
-           grid-template-columns: 1fr; /* Single column */
-           gap: 20px;
-       }
-   
-       .dashboard-main .mood-item {
-           height: auto; /* Auto height for single column */
-           min-height: 180px;
-       }
-   
-       .dashboard-container {
-           width: 95%;
-           gap: 15px;
-       }
-   
-       .dashboard-main {
-           padding: 20px;
-           max-height: none; /* Remove max-height on smaller screens */
-       }
-   
-       .filter-form {
-           gap: 10px 15px; /* Reduce gap */
-       }
-   
-       .text-search-group {
-           min-width: 200px; /* Adjust min-width */
-       }
-   
-       .filter-group select, .filter-group input[type="date"] {
-           width: 140px; /* Adjust width */
-       }
-   
-   }
-   
-   
-   @media (max-width: 768px) { /* Small screens / Large Phones */
-   
-       .dashboard-container {
-           flex-direction: column;
-           padding: 10px;
-           width: 100%;
-           gap: 15px;
-       }
-   
-       .dashboard-sidebar {
-           position: static; /* Sidebar no longer sticky */
-           width: 100%;
-           max-height: none;
-           flex-direction: row; /* Arrange icons horizontally */
-           justify-content: center;
-           padding: 10px 0;
-           border-radius: 15px;
-           margin-bottom: 15px;
-           overflow-x: auto; /* Allow horizontal scroll if needed */
-       }
-   
-       .sidebar-nav ul {
-           flex-direction: row;
-           gap: 10px;
-           flex-wrap: nowrap; /* Prevent wrapping */
-           width: auto; /* Allow natural width */
-       }
-   
-       .sidebar-nav a::after {
-           display: none; /* Hide tooltips */
-       }
-   
-       .dashboard-main {
-           padding: 15px;
-       }
-   
-       .filter-form {
-           gap: 10px; /* Further reduce gap */
-       }
-   
-       /* Allow filter groups to take more width */
-       .text-search-group,
-       .emotion-filter-group,
-       .date-filter-group {
-           flex-basis: 45%; /* Roughly two per line */
-           flex-grow: 1;
-       }
-   
-       .filter-button-group {
-           flex-basis: 100%; /* Buttons take full width */
-           justify-content: center; /* Center buttons */
-       }
-   
-       .filter-group select, .filter-group input[type="date"] {
-           width: 100%; /* Make inputs full width of their group */
-       }
-   
-       .landing-specific-header { /* Adjust landing header */
-           padding: 1rem 5%;
-           flex-direction: column;
-           gap: 1.5rem;
-       }
-   
-       .landing-specific-logo img { height: 60px; }
-   
-       .landing-main-content { padding: 1.5rem 5%; }
-   
-       .landing-content-wrapper h1 { font-size: 2.8rem; }
-   
-   }
-   
-   
-   @media (max-width: 576px) { /* Small Phones */
-   
-       .landing-specific-logo img { height: 50px; }
-   
-       .landing-specific-nav ul { gap: 1rem; }
-   
-       .landing-content-wrapper h1 { font-size: 2.3rem; }
-   
-       .landing-content-wrapper p { font-size: 1rem; }
-   
-       .btn, .signup-button, .read-more-button { /* Adjust base button padding */
-           padding: 0.6rem 1.5rem;
-           font-size: 0.9rem;
-       }
-   
-       .edit-delete-buttons .btn { padding: 5px 12px; font-size: 0.8rem; }
-   
-       .dashboard-main { padding: 10px; }
-   
-       .dashboard-header h1 { font-size: 1.8rem; }
-   
-       .filter-bar { padding: 10px; }
-   
-       /* Ensure single column layout for filters */
-       .text-search-group,
-       .emotion-filter-group,
-       .date-filter-group,
-       .filter-button-group {
-            flex-basis: 100%;
-       }
-   
-       .filter-button-group { justify-content: space-around; } /* Space out buttons */
-   
-       .modal-content { padding: 20px; }
-   
-       .modal-header h2 { font-size: 1.2rem; }
-   
-       .emoji-suggestion-btn { font-size: 1.1rem; }
-   
-   }
-   
-   
-   /* ==========================================================================
-      10. Pagination Styles
-      ========================================================================== */
-   
-   .pagination {
-       margin-top: 30px;
-       padding-top: 20px;
-       border-top: 1px solid rgba(255, 255, 255, 0.1);
-       display: flex;
-       justify-content: center;
-       align-items: center;
-       width: 100%;
-   }
-   
-   .pagination ul {
+
+   .mood-detail-modal-body .modal-emotion-info {
        display: flex;
        align-items: center;
-       gap: 10px;
+       gap: 12px;
+       margin-bottom: 15px;
+       padding-bottom: 15px;
+       border-bottom: 1px dashed rgba(255, 255, 255, 0.15);
    }
-   
-   .pagination li {
-       margin: 0;
+
+   .mood-detail-modal-body .modal-emotion-info span#modal-emoji {
+       font-size: 1.4rem; /* Larger emoji */
    }
-   
-   .pagination span,
-   .pagination a {
-       display: inline-block;
-       padding: 8px 16px;
-       color: #bdc1c6;
-       text-decoration: none;
-       border-radius: 6px;
-       transition: background-color 0.2s, color 0.2s;
-       font-size: 0.9rem;
-   }
-   
-   .pagination a {
-       background-color: rgba(255, 255, 255, 0.1);
-       border: 1px solid rgba(255, 255, 255, 0.2);
-   }
-   
-   .pagination a:hover {
-       background-color: rgba(160, 116, 181, 0.5);
-       color: #ffffff;
-       border-color: rgba(160, 116, 181, 0.7);
-   }
-   
-   .pagination li.disabled span {
-       color: rgba(189, 193, 198, 0.4);
-       cursor: default;
-       background-color: transparent;
-       border: 1px solid transparent;
-   }
-   
-   .pagination li span:not([class]) { /* Current page number */
-        background-color: transparent;
-        border: none;
-        color: #e0e0e0;
-        font-weight: 500;
-   }
-   
-   
-   /* ==========================================================================
-      11. Rich Editor (Quill) Styles (Corrected & Complete with Inner Tint)
-      NOTE: Changed section number from 6 to 11 for correct sequencing.
-      ========================================================================== */
-   
-   /* Base Editor container wrapper */
-   #editor-container {
-       border-radius: 8px; /* Overall container rounding */
-       transition: box-shadow 0.3s ease, border-color 0.3s ease; /* Smooth transitions */
-       margin-bottom: 5px; /* Match input margin */
-       overflow: hidden; /* Clip child corners */
-       width: 100%; /* Ensure it takes full width */
-       position: relative; /* Context for z-index if needed */
-   }
-   
-   /* Style the Quill Toolbar */
-   .mood-form-page .ql-toolbar.ql-snow {
-       background-color: rgba(30, 32, 44, 0.6);
-       border: 1px solid rgba(255, 255, 255, 0.2);
-       border-bottom: none; /* Connects visually to container below */
-       padding: 8px 10px;
+   .mood-detail-modal-body .modal-emotion-info strong#modal-emotion-name {
+       font-size: 1.1rem;
        font-family: 'Poppins', sans-serif;
-       box-sizing: border-box;
-       transition: border-color 0.3s ease;
-       /* --- Corner Radii for Seamless Look --- */
-       border-top-left-radius: 8px;     /* Rounded top-left */
-       border-top-right-radius: 8px;    /* Rounded top-right */
-       border-bottom-left-radius: 0;    /* Square bottom-left */
-       border-bottom-right-radius: 0;   /* Square bottom-right */
+       font-weight: 500;
    }
-   
-   /* Style the Quill Editor Container (below toolbar) */
-   .mood-form-page .ql-container.ql-snow {
-       border: 1px solid rgba(255, 255, 255, 0.2);
-       border-top: none; /* Toolbar handles top border */
-       /* background-color: rgba(20, 22, 34, 0.5); <= Base background is now handled by .ql-editor or invalid state */
-       color: #FFFFFF; /* Match input text color */
-       font-family: 'Lora', serif; /* Match input font family */
-       font-size: 1rem; /* Match input font size */
-       box-sizing: border-box;
-       transition: border-color 0.3s ease, background-color 0.3s ease;
-       /* --- Corner Radii for Seamless Look --- */
-       border-top-left-radius: 0;       /* Square top-left */
-       border-top-right-radius: 0;      /* Square top-right */
-       border-bottom-left-radius: 8px;  /* Rounded bottom-left */
-       border-bottom-right-radius: 8px; /* Rounded bottom-right */
-       /* Ensure container has a default background if editor is transparent */
-       background-color: rgba(20, 22, 34, 0.5); /* Default background if needed */
+
+   .mood-detail-modal-body .modal-date-info {
+       font-size: 0.85rem;
+       color: #b0a8b9;
+       margin-bottom: 20px;
+       opacity: 0.9;
    }
-   
-   /* Style the actual editable area within Quill */
-   .mood-form-page .ql-editor {
-       padding: 14px 18px; /* Match input padding */
-       min-height: 140px; /* Match textarea min-height */
-       box-sizing: border-box;
-       line-height: 1.6; /* Standard line height */
-       color: #FFFFFF; /* Ensure text color */
-       outline: none; /* Remove default outline on editor area */
-       /* Set default background for the editor area */
-       background-color: rgba(20, 22, 34, 0.5); /* Match container default */
-       transition: background-color 0.3s ease; /* Add transition for background */
+
+   /* Style the Quill content within the modal */
+   .mood-detail-modal-body #modal-full-content {
+       color: #e0e0e0;
    }
-   
-   /* Style the placeholder text */
-   .mood-form-page .ql-editor.ql-blank::before {
-       color: #888dac; /* Match input placeholder color */
-       opacity: 0.8; /* Match input placeholder opacity */
-       font-style: normal; /* Override Quill's default italic */
-       font-family: 'Lora', serif; /* Match editor font */
-       left: 18px; /* Align with padding */
-       right: 18px; /* Align with padding */
-       font-size: 1rem; /* Match editor font size */
-       pointer-events: none; /* Standard for placeholders */
+   .mood-detail-modal-body #modal-full-content p {
+       margin-bottom: 1em;
+       color: inherit;
    }
-   
-   /* --- Focus State Styling --- */
-   #editor-container:focus-within .ql-toolbar.ql-snow,
-   #editor-container:focus-within .ql-container.ql-snow {
-       border-color: #a074b5; /* Apply focus border color */
-       z-index: 1; /* Ensure borders overlap correctly */
+   .mood-detail-modal-body #modal-full-content strong {
+       font-weight: bold;
+       color: #fff;
    }
-   
-   #editor-container:focus-within {
-       box-shadow: 0 0 0 3px rgba(160, 116, 181, 0.3); /* Apply focus shadow to wrapper */
+   .mood-detail-modal-body #modal-full-content em {
+       font-style: italic;
+       color: #d8c1e3;
    }
-   
-   /* Optional: Slightly change editor background on focus */
-   #editor-container:focus-within .ql-editor {
-       background-color: rgba(30, 32, 44, 0.6); /* Slightly different background on focus, like toolbar */
-   }
-   
-   
-   /* --- Invalid State Styling (No !important) --- */
-   
-   /* Outer red glow for the entire component */
-   #editor-container.invalid-editor {
-       box-shadow: 0 0 0 2px rgba(231, 76, 60, 0.5); /* Red glow */
-   }
-   
-   /* Increased Specificity for Invalid Internal Styles */
-   /* Invalid Toolbar Border */
-   body.mood-form-page #editor-container.invalid-editor .ql-toolbar.ql-snow {
-       border-color: #e74c3c; /* Error Red */
-       z-index: 1; /* Ensure border draws cleanly */
-   }
-   
-   /* Invalid Container Border ONLY */
-   body.mood-form-page #editor-container.invalid-editor .ql-container.ql-snow {
-       border-color: #e74c3c; /* Error Red */
-       /* Background is now handled by the .ql-editor rule below */
-        background-color: transparent; /* Ensure container itself doesn't interfere */
-   }
-   
-   /* Apply the Reddish Tint DIRECTLY to the editor typing area when invalid */
-   body.mood-form-page #editor-container.invalid-editor .ql-editor {
-       background-color: rgba(50, 20, 20, 0.5); /* Reddish Tint, matching input.invalid */
-   }
-   
-   
-   /* --- Optional: Toolbar Icon Styling --- */
-   .mood-form-page .ql-snow .ql-stroke {
-       stroke: #bdc1c6; /* Default icon stroke color */
-       transition: stroke 0.2s ease; /* Smooth transition */
-   }
-   .mood-form-page .ql-snow .ql-fill {
-        fill: #bdc1c6; /* Default icon fill color */
-        transition: fill 0.2s ease; /* Smooth transition */
-   }
-   .mood-form-page .ql-snow .ql-picker-label {
-       color: #bdc1c6; /* Dropdown label color */
-       transition: color 0.2s ease; /* Smooth transition */
-   }
-   
-   /* Hover/Active states for toolbar buttons & pickers */
-   .mood-form-page .ql-snow.ql-toolbar button:hover .ql-stroke,
-   .mood-form-page .ql-snow .ql-toolbar button:hover .ql-stroke,
-   .mood-form-page .ql-snow.ql-toolbar button:focus .ql-stroke,
-   .mood-form-page .ql-snow .ql-toolbar button:focus .ql-stroke,
-   .mood-form-page .ql-snow.ql-toolbar button.ql-active .ql-stroke,
-   .mood-form-page .ql-snow .ql-toolbar button.ql-active .ql-stroke,
-   .mood-form-page .ql-snow.ql-toolbar .ql-picker-label:hover .ql-stroke,
-   .mood-form-page .ql-snow .ql-toolbar .ql-picker-label.ql-active .ql-stroke,
-   .mood-form-page .ql-snow.ql-toolbar .ql-picker-item:hover .ql-stroke,
-   .mood-form-page .ql-snow .ql-toolbar .ql-picker-item.ql-selected .ql-stroke {
-       stroke: #a074b5; /* Use theme color for active/hover icons */
-   }
-   
-   .mood-form-page .ql-snow.ql-toolbar button:hover .ql-fill,
-   .mood-form-page .ql-snow .ql-toolbar button:hover .ql-fill,
-   .mood-form-page .ql-snow.ql-toolbar button:focus .ql-fill,
-   .mood-form-page .ql-snow .ql-toolbar button:focus .ql-fill,
-   .mood-form-page .ql-snow.ql-toolbar button.ql-active .ql-fill,
-   .mood-form-page .ql-snow .ql-toolbar button.ql-active .ql-fill,
-   .mood-form-page .ql-snow.ql-toolbar .ql-picker-label:hover .ql-fill,
-   .mood-form-page .ql-snow .ql-toolbar .ql-picker-label.ql-active .ql-fill,
-   .mood-form-page .ql-snow.ql-toolbar .ql-picker-item:hover .ql-fill,
-   .mood-form-page .ql-snow .ql-toolbar .ql-picker-item.ql-selected .ql-fill {
-       fill: #a074b5; /* Use theme color for active/hover icons */
-   }
-   
-   .mood-form-page .ql-snow.ql-toolbar button:hover,
-   .mood-form-page .ql-snow .ql-toolbar button:hover,
-   .mood-form-page .ql-snow.ql-toolbar button:focus,
-   .mood-form-page .ql-snow .ql-toolbar button:focus,
-   .mood-form-page .ql-snow.ql-toolbar button.ql-active,
-   .mood-form-page .ql-snow .ql-toolbar button.ql-active,
-   .mood-form-page .ql-snow.ql-toolbar .ql-picker-label:hover,
-   .mood-form-page .ql-snow.ql-toolbar .ql-picker-label.ql-active,
-   .mood-form-page .ql-snow.ql-toolbar .ql-picker-item:hover,
-   .mood-form-page .ql-snow.ql-toolbar .ql-picker-item.ql-selected {
-       color: #a074b5; /* Use theme color for active/hover text (like in dropdowns) */
-   }
-   
-   
+   /* Add more specific Quill styles (lists, code blocks, etc.) if needed */
+
+
    /* ==========================================================================
       End of Styles
       ========================================================================== */

@@ -1,7 +1,7 @@
 <!-- ui/html/fragments/dashboard_content.tmpl -->
 {{define "dashboard-content"}}
 
-    <!-- Combined Search and Filter Bar -->
+    <!-- Filter Bar Section -->
     <section class="dashboard-filter-bar">
          <form action="/dashboard" method="GET" class="filter-form">
             <!-- Text Search Input -->
@@ -78,53 +78,66 @@
     <!-- Mood List Section -->
     <section class="dashboard-mood-list">
         {{if .DisplayMoods}}
-            <ul class="mood-list"> <!-- Grid layout applied via CSS -->
+            <ul class="mood-list">
                 {{range .DisplayMoods}}
-                    {{/* Add ID to the list item for targeting */}}
                     <li class="mood-item" style="border-left-color: {{.Color}};" id="mood-item-{{.ID}}">
-                         <div class="mood-item-content">
-                            <div class="mood-title">
+                         <div class="mood-item-header">
+                             <div class="mood-title">
                                  <span class="mood-emoji">{{.Emoji}}</span>
                                  <strong>{{.Title | html}}</strong>
-                            </div>
-                            <div class="quill-rendered-content">{{.Content}}</div>
-                            <div class="mood-meta">
-                                <time datetime="{{.CreatedAt.Format "2006-01-02T15:04:05Z"}}">Logged: {{ .CreatedAt | HumanDate }}</time>
-                                {{ $updatedThreshold := AddMinutes .CreatedAt 1 }}
-                                {{if .UpdatedAt.After $updatedThreshold }}
-                                <time datetime="{{.UpdatedAt.Format "2006-01-02T15:04:05Z"}}"> | Updated: {{ .UpdatedAt | HumanDate }}</time>
-                                {{end}}
-                            </div>
-                        </div>
-                        <!-- === Buttons Section === -->
-                        <div class="edit-delete-buttons">
-                            {{/* Edit link remains a standard link for now */}}
-                            <a href="/mood/edit/{{.ID}}" class="btn edit-btn">Edit</a>
+                             </div>
+                         </div>
 
-                            <!-- ****** START OF CHANGES ****** -->
-                            <form hx-post="/mood/delete/{{.ID}}"
-                                  hx-target="#dashboard-content-area"  {{/* CHANGE: Target the main content area */}}
-                                  hx-swap="innerHTML"              {{/* CHANGE: Replace the *contents* of the area */}}
-                                  hx-confirm="Are you sure you want to delete this entry?"
-                                  hx-indicator=".htmx-indicator"   {{/* ADDED: Show loading indicator */}}
-                                  style="display: inline;">
-                                <button type="submit" class="btn delete-btn">Delete</button>
-                            </form>
-                            <!-- ****** END OF CHANGES ****** -->
+                         <div class="mood-item-content">
+                             {{/* Render Content in card using template.HTML type */}}
+                             <div class="quill-rendered-content">{{.Content}}</div>
 
-                        </div>
+                            <a class="view-more-link"
+                               href="#"
+                               data-mood-id="{{.ID}}"
+                               data-title="{{.Title | html}}"
+                               data-emotion="{{.Emotion | html}}"
+                               data-emoji="{{.Emoji}}"
+                               data-color="{{.Color}}"
+                               data-created-at="{{.CreatedAt | HumanDate}}"
+                               {{/* --- START: MODIFIED LINE --- */}}
+                                data-full-content={{printf "%q" .RawContent}}> {{/* <<< CHANGE BACK TO THIS */}}                                 View More...
+                            </a>
+                         </div>
+
+                         <div class="mood-meta">
+                            <time datetime="{{.CreatedAt.Format "2006-01-02T15:04:05Z"}}">Logged: {{ .CreatedAt | HumanDate }}</time>
+                            {{ $updatedThreshold := AddMinutes .CreatedAt 1 }}
+                            {{if .UpdatedAt.After $updatedThreshold }}
+                            <time datetime="{{.UpdatedAt.Format "2006-01-02T15:04:05Z"}}"> | Updated: {{ .UpdatedAt | HumanDate }}</time>
+                            {{end}}
+                         </div>
+
+                         <div class="edit-delete-buttons">
+                             <a href="/mood/edit/{{.ID}}" class="btn edit-btn">Edit</a>
+                             <form hx-post="/mood/delete/{{.ID}}"
+                                   hx-target="#dashboard-content-area"
+                                   hx-swap="innerHTML"
+                                   hx-confirm="Are you sure you want to delete this entry?"
+                                   hx-indicator=".htmx-indicator"
+                                   style="display: inline;">
+                                 <button type="submit" class="btn delete-btn">Delete</button>
+                             </form>
+                         </div>
                     </li>
                 {{end}}
             </ul>
 
-            <!-- === PAGINATION SECTION === -->
+            {{/* === START CORRECTED PAGINATION SECTION === */}}
             {{with .Metadata}}
                 {{if gt .LastPage 1}}
                 <nav class="pagination" aria-label="Pagination">
                     <ul>
+                        {{/* Previous Page Link */}}
                         {{if eq .CurrentPage .FirstPage}}
-                            <li class="disabled"><span>< Previous</span></li>
+                            <li class="disabled"><span>< Previous</span></li> {{/* Use HTML entity for < */}}
                         {{else}}
+                            {{ $prevPage := sub .CurrentPage 1 }} {{/* Calculate previous page */}}
                             <li>
                                 <a href="#"
                                    hx-get="/dashboard"
@@ -132,38 +145,42 @@
                                    hx-swap="innerHTML"
                                    hx-indicator=".htmx-indicator"
                                    hx-include=".filter-form"
-                                   hx-vals='{"page": "{{(sub .CurrentPage 1)}}"}'
+                                   hx-vals='{"page": "{{$prevPage}}"}' {{/* Use calculated variable */}}
                                    hx-push-url="true"
-                                >< Previous</a>
+                                >< Previous</a> {{/* Use HTML entity for < */}}
                             </li>
                         {{end}}
 
+                        {{/* Page X of Y Indicator */}}
                         <li>
                             <span>Page {{.CurrentPage}} of {{.LastPage}}</span>
                         </li>
 
+                        {{/* Next Page Link */}}
                         {{if eq .CurrentPage .LastPage}}
-                             <li class="disabled"><span>Next ></span></li>
+                             <li class="disabled"><span>Next ></span></li> {{/* Use HTML entity for > */}}
                         {{else}}
-                            <li>
+                             {{ $nextPage := add .CurrentPage 1 }} {{/* Calculate next page */}}
+                             <li>
                                  <a href="#"
                                    hx-get="/dashboard"
                                    hx-target="#dashboard-content-area"
                                    hx-swap="innerHTML"
                                    hx-indicator=".htmx-indicator"
                                    hx-include=".filter-form"
-                                   hx-vals='{"page": "{{(add .CurrentPage 1)}}"}'
+                                   hx-vals='{"page": "{{$nextPage}}"}' {{/* Use calculated variable */}}
                                    hx-push-url="true"
-                                 >Next ></a>
+                                 >Next ></a> {{/* Use HTML entity for > */}}
                             </li>
                         {{end}}
                     </ul>
                 </nav>
                 {{end}}
             {{end}}
-            <!-- === END PAGINATION SECTION === -->
+            {{/* === END CORRECTED PAGINATION SECTION === */}}
 
         {{else}}
+            <!-- No Moods Message -->
             <div class="dashboard-content-centered">
                {{if or $.SearchQuery $.FilterEmotion $.FilterStartDate $.FilterEndDate}}
                    <p>No mood entries found matching your filters.</p>
@@ -180,5 +197,28 @@
             </div>
         {{end}}
     </section>
+
+
+    <!-- Mood Detail Modal Structure -->
+    <div id="mood-detail-modal" class="mood-detail-modal">
+        <div class="mood-detail-modal-content">
+            <div class="mood-detail-modal-header">
+                <h2 id="modal-title">Mood Title</h2>
+                <button class="mood-detail-modal-close" id="modal-detail-close-button" aria-label="Close modal">×</button>
+            </div>
+            <div class="mood-detail-modal-body">
+                 <div class="modal-emotion-info">
+                     <span id="modal-emoji">❓</span>
+                     <strong id="modal-emotion-name">Emotion</strong>
+                 </div>
+                 <div class="modal-date-info">
+                     Logged: <span id="modal-created-at">Date</span>
+                 </div>
+                 <div id="modal-full-content" class="quill-rendered-content">
+                     <!-- Full content will be inserted here by JS -->
+                 </div>
+            </div>
+        </div>
+    </div>
 
 {{end}} {{/* End block "dashboard-content" */}}

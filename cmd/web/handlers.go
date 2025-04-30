@@ -97,14 +97,15 @@ func (app *application) showDashboardPage(w http.ResponseWriter, r *http.Request
 	displayMoods := make([]displayMood, len(moods))
 	for i, m := range moods {
 		displayMoods[i] = displayMood{
-			ID:        m.ID,
-			CreatedAt: m.CreatedAt,
-			UpdatedAt: m.UpdatedAt,
-			Title:     m.Title,
-			Content:   template.HTML(m.Content), // Cast content to template.HTML
-			Emotion:   m.Emotion,
-			Emoji:     m.Emoji,
-			Color:     m.Color,
+			ID:         m.ID,
+			CreatedAt:  m.CreatedAt,
+			UpdatedAt:  m.UpdatedAt,
+			Title:      m.Title,
+			Content:    template.HTML(m.Content), // Cast content to template.HTML
+			RawContent: m.Content,
+			Emotion:    m.Emotion,
+			Emoji:      m.Emoji,
+			Color:      m.Color,
 		}
 	}
 
@@ -528,10 +529,22 @@ func (app *application) deleteMood(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
+		// --- Convert moods for display ---
 		displayMoods := make([]displayMood, len(moods))
 		for i, m := range moods {
-			displayMoods[i] = displayMood{ID: m.ID, CreatedAt: m.CreatedAt, UpdatedAt: m.UpdatedAt, Title: m.Title, Content: template.HTML(m.Content), Emotion: m.Emotion, Emoji: m.Emoji, Color: m.Color}
+			displayMoods[i] = displayMood{ // <--- Look inside this assignment
+				ID:         m.ID,
+				CreatedAt:  m.CreatedAt,
+				UpdatedAt:  m.UpdatedAt,
+				Title:      m.Title,
+				Content:    template.HTML(m.Content), // This assigns the HTML-safe version
+				RawContent: m.Content,                // <<< THIS LINE IS MISSING
+				Emotion:    m.Emotion,
+				Emoji:      m.Emoji,
+				Color:      m.Color,
+			}
 		}
+
 		availableEmotions, emotionErr := app.moods.GetDistinctEmotionDetails()
 		if emotionErr != nil {
 			app.logger.Error("Failed to fetch distinct emotions for delete refresh", "error", emotionErr)

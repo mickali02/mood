@@ -2,22 +2,23 @@
 package main
 
 import (
-	"html/template" // <-- IMPORT html/template
-	"time"          // <-- IMPORT time
+	"html/template"
+	"time"
 
-	"github.com/mickali02/mood/internal/data" // Needs access to data.Metadata
+	"github.com/mickali02/mood/internal/data"
 )
 
 // displayMood struct definition
 type displayMood struct {
-	ID        int64
-	CreatedAt time.Time // Needs time import
-	UpdatedAt time.Time // Needs time import
-	Title     string
-	Content   template.HTML // Needs html/template import
-	Emotion   string
-	Emoji     string
-	Color     string
+	ID         int64
+	CreatedAt  time.Time // Needs time import
+	UpdatedAt  time.Time // Needs time import
+	Title      string
+	Content    template.HTML // Needs html/template import
+	RawContent string
+	Emotion    string
+	Emoji      string
+	Color      string
 }
 
 // EmotionDetails struct definition
