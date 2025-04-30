@@ -6,7 +6,6 @@ import (
 	"html/template"
 	"path/filepath"
 	"time"
-	// "strings" // May need if using string funcs
 )
 
 var functions = template.FuncMap{

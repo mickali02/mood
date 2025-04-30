@@ -2,7 +2,7 @@
 package main
 
 import (
-	"bytes" // <-- Added for buffer
+	"bytes" 
 	"database/sql"
 	"errors"
 	"fmt"
@@ -10,46 +10,66 @@ import (
 	"net/http"
 	"net/url"
 	"strconv"
-	"strings" // <-- Added for Contains check
+	"strings" 
 	"time"
 
 	"github.com/mickali02/mood/internal/data"
 	"github.com/mickali02/mood/internal/validator"
 )
 
-// --- Handler for the Dashboard Page ---
+/* ==========================================================================
+   START: Dashboard Handler
+   ========================================================================== */
+// showDashboardPage handles requests for the main dashboard page.
+// It displays a list of mood entries, potentially filtered and paginated,
+// and handles both full page loads and HTMX partial updates for the mood list area.
 func (app *application) showDashboardPage(w http.ResponseWriter, r *http.Request) {
-	// 1. Read filter parameters directly
+	// --- 1. Extract Filter and Pagination Parameters ---
+	// Retrieve filter values directly from the URL query parameters.
+	// We use a validator primarily for the 'page' parameter to ensure it's a valid positive integer.
 	v := validator.NewValidator() // Use validator for page number check
 	query := r.URL.Query()
 
-	searchQuery := query.Get("query") // Use direct reading
+	// Read search text query.
+	searchQuery := query.Get("query") 
+	// Read selected emotion for filtering.
 	filterCombinedEmotion := query.Get("emotion")
+	// Read start date string for filtering.
 	filterStartDateStr := query.Get("start_date")
+	// Read end date string for filtering.
 	filterEndDateStr := query.Get("end_date")
 
-	// Read page parameter with validation
+	// Read and validate the 'page' parameter for pagination.
 	pageStr := query.Get("page")
 	page, err := strconv.Atoi(pageStr)
+	// If 'page' is missing, not a number, or less than 1, default to page 1.
 	if err != nil || page < 1 {
 		page = 1 // Default to page 1 if invalid or missing
 	}
+	// Use the validator to enforce rules on the page number.
 	v.Check(page > 0, "page", "must be a positive integer")
 	v.Check(page <= 10_000_000, "page", "must be less than 10 million")
 
-	// 2. Parse date strings
-	var filterStartDate, filterEndDate time.Time
-	var dateParseError error
+	// --- 2. Parse Date Filter Strings ---
+	// Convert the string representations of start and end dates into time.Time objects.
+	var filterStartDate, filterEndDate time.Time // Initialize as zero time.
+	var dateParseError error  // Variable to capture parsing errors.
 
+	// Parse the start date if provided.
 	if filterStartDateStr != "" {
+		// Attempt to parse using the standard YYYY-MM-DD format.
 		filterStartDate, dateParseError = time.Parse("2006-01-02", filterStartDateStr)
+		// If parsing fails, log a warning and keep the start date as zero (effectively ignoring it).
 		if dateParseError != nil {
 			app.logger.Warn("Invalid start date format", "date", filterStartDateStr, "error", dateParseError)
 			filterStartDate = time.Time{}
 		}
 	}
+
+	// Parse the end date if provided.
 	if filterEndDateStr != "" {
 		parsedEndDate, dateParseError := time.Parse("2006-01-02", filterEndDateStr)
+		// If parsing fails, log a warning and keep the end date as zero.
 		if dateParseError != nil {
 			app.logger.Warn("Invalid end date format", "date", filterEndDateStr, "error", dateParseError)
 			filterEndDate = time.Time{}
@@ -62,30 +82,36 @@ func (app *application) showDashboardPage(w http.ResponseWriter, r *http.Request
 			app.logger.Warn("End date before start date, ignoring end date", "start", filterStartDateStr, "end", filterEndDateStr)
 			// Reset end date if it's invalid relative to start date
 			filterEndDate = time.Time{}
-			// Optionally reset filterEndDateStr as well if you want the input field cleared on re-render
-			// filterEndDateStr = ""
 		}
 	}
 
+	// --- Re-check Validator and Finalize Page Number ---
+	// If the validator found issues with the page number (or potentially other fields later),
+	// log the errors and reset the page to the default (1).
 	if !v.ValidData() {
 		app.logger.Warn("Invalid page parameter", "page", pageStr, "errors", v.Errors)
 		page = 1 // Reset to default if validator fails
 	}
 
-	// 3. Create FilterCriteria struct including pagination
+	// --- 3. Assemble Filter Criteria ---
+	// Create a FilterCriteria struct to pass all filtering and pagination parameters
 	criteria := data.FilterCriteria{
-		TextQuery: searchQuery,
-		Emotion:   filterCombinedEmotion,
-		StartDate: filterStartDate,
-		EndDate:   filterEndDate,
-		Page:      page,
-		PageSize:  4, // Set page size
+		TextQuery: searchQuery,         // Text to search for in title/content.
+		Emotion:   filterCombinedEmotion, // Specific emotion to filter by.
+		StartDate: filterStartDate,       // Start date for filtering (time.Time object).
+		EndDate:   filterEndDate,         // End date for filtering (time.Time object, adjusted to end of day).
+		Page:      page,                // Current page number for pagination.
+		PageSize:  4,                   // Number of items per page (hardcoded here).
 	}
 
-	// 4. Fetch filtered moods AND metadata
-	app.logger.Info("Fetching filtered moods", "criteria", fmt.Sprintf("%+v", criteria))
-	moods, metadata, err := app.moods.GetFiltered(criteria) // Expect 3 return values
+	// --- 4. Fetch Filtered Mood Data ---
+	// Call the data layer function to retrieve mood entries matching the criteria,
+	// along with pagination metadata (total records, current page, page size, etc.)
+	app.logger.Info("Fetching filtered moods", "criteria", fmt.Sprintf("%+v", criteria)) // Log the criteria being used.
+	// GetFiltered now returns moods, metadata, and an error.
+	moods, metadata, err := app.moods.GetFiltered(criteria) 
 	if err != nil {
+		// If there's an error fetching moods (e.g., database connection issue), log the error.
 		app.logger.Error("Failed to fetch filtered moods", "error", err)
 		// Don't nil out moods, return empty slice instead
 		moods = []*data.Mood{}
@@ -93,12 +119,14 @@ func (app *application) showDashboardPage(w http.ResponseWriter, r *http.Request
 		// Optionally, set an error message in templateData to display to the user
 	}
 
-	// --- Convert moods for display ---
-	displayMoods := make([]displayMood, len(moods))
+	// --- 5. Prepare Moods for Display ---
+	// Convert the raw `data.Mood` structs into `displayMood` structs suitable for the template.
+	// This is particularly important for converting the `Content` string into `template.HTML`
+	displayMoods := make([]displayMood, len(moods)) // Pre-allocate slice for efficiency.
 	for i, m := range moods {
 		displayMoods[i] = displayMood{
 			ID:         m.ID,
-			CreatedAt:  m.CreatedAt,
+			CreatedAt:  m.CreatedAt, // Pass through timestamps.
 			UpdatedAt:  m.UpdatedAt,
 			Title:      m.Title,
 			Content:    template.HTML(m.Content), // Cast content to template.HTML
@@ -109,30 +137,41 @@ func (app *application) showDashboardPage(w http.ResponseWriter, r *http.Request
 		}
 	}
 
-	// 5. Fetch distinct emotions
+	// --- 6. Fetch Available Emotions for Filter Dropdown ---
+	// Get a list of distinct emotions (and their associated emoji/color) currently present
+	// in the database. This is used to populate the emotion filter dropdown in the UI.
 	availableEmotions, err := app.moods.GetDistinctEmotionDetails()
 	if err != nil {
+		// If fetching distinct emotions fails, log the error and provide an empty slice
+		// to the template, so the dropdown will simply be empty rather than causing a crash.
 		app.logger.Error("Failed to fetch distinct emotions", "error", err)
 		availableEmotions = []data.EmotionDetail{}
 	}
 
-	// 6. Prepare template data, including metadata
-	templateData := NewTemplateData()
-	templateData.Title = "Dashboard"
-	templateData.SearchQuery = searchQuery
-	templateData.FilterEmotion = filterCombinedEmotion
-	templateData.FilterStartDate = filterStartDateStr
-	templateData.FilterEndDate = filterEndDateStr
-	templateData.DisplayMoods = displayMoods
-	templateData.HasMoodEntries = len(displayMoods) > 0
-	templateData.AvailableEmotions = availableEmotions
-	templateData.Metadata = metadata // Pass metadata
+	// --- 7. Prepare Data for the Template ---
+	// Create the main data structure (`templateData`) that will be passed to the HTML template.
+	// This includes page metadata, fetched data, form values (for repopulating filters)
+	templateData := NewTemplateData()            // Initialize with common data (like flash messages, default emotions).
+	templateData.Title = "Dashboard"             // Set the HTML title for the page.
+	templateData.SearchQuery = searchQuery       // Pass the current search query back to repopulate the input field.
+	templateData.FilterEmotion = filterCombinedEmotion // Pass the selected emotion back.
+	templateData.FilterStartDate = filterStartDateStr // Pass the start date string back.
+	templateData.FilterEndDate = filterEndDateStr     // Pass the end date string back.
+	templateData.DisplayMoods = displayMoods       // The list of moods prepared for display.
+	templateData.HasMoodEntries = len(displayMoods) > 0 // A boolean flag for easily checking if there are moods to show.
+	templateData.AvailableEmotions = availableEmotions // The list of distinct emotions for the filter dropdown.
+	templateData.Metadata = metadata               // Pass the pagination metadata (current page, total pages, etc.).
 
-	// 7. Handle HTMX request or full page load
+	// --- 8. Render Response (HTMX or Full Page) ---
+	// Check if the request came from HTMX (indicated by the 'HX-Request' header).
+	// This allows us to send back only the updated part of the page (the mood list)
+	// instead of reloading the entire page, providing a smoother user experience.
 	if r.Header.Get("HX-Request") == "true" {
 		app.logger.Info("Handling HTMX request for dashboard content area")
+		// Look up the specific template file containing the dashboard layout.
 		ts, ok := app.templateCache["dashboard.tmpl"]
 		if !ok {
+			// If the template isn't found in the cache, this is a critical server error.
 			err := fmt.Errorf("template %q does not exist", "dashboard.tmpl")
 			app.logger.Error("Template lookup failed for HTMX request", "template", "dashboard.tmpl", "error", err)
 			app.serverError(w, r, err) // Use serverError helper
