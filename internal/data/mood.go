@@ -6,7 +6,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"math" 
+	"math"
 	"strings"
 	"time"
 	"unicode/utf8"
