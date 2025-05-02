@@ -75,6 +75,15 @@
         </form>
     </section>
 
+  <!-- === FLASH MESSAGE DISPLAY WITH CLOSE BUTTON === -->
+    {{with .Flash}}
+        <div class="flash-message success"> <!-- Add success/error class dynamically later if needed -->
+            <p>{{.}}</p>
+            <button type="button" class="flash-close-btn" aria-label="Close message">×</button> <!-- The actual button -->
+        </div>
+    {{end}}
+    <!-- === END FLASH MESSAGE DISPLAY === -->
+
     <!-- Mood List Section -->
     <section class="dashboard-mood-list">
         {{if .DisplayMoods}}

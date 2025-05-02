@@ -999,7 +999,65 @@
    }
    /* Add more specific Quill styles (lists, code blocks, etc.) if needed */
 
+/* ==========================================================================
+   13. Flash Message Styles
+   ========================================================================== */
 
-   /* ==========================================================================
-      End of Styles
-      ========================================================================== */
+   .flash-message {
+    padding: 15px 20px;
+    margin: 0 0 25px 0;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    font-family: 'Poppins', sans-serif;
+    text-align: center;
+    font-size: 0.95rem;
+    font-weight: 500;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+    position: relative; /* Crucial for positioning the absolute button */
+    background-color: rgba(40, 42, 54, 0.8);
+    color: #e0e0e0;
+}
+
+/* ... (success, error styles remain the same) ... */
+.flash-message.success {
+    background-color: rgba(46, 139, 87, 0.85);
+    border-color: rgba(60, 179, 113, 0.9);
+    color: #ffffff;
+}
+.flash-message.error {
+    background-color: rgba(220, 20, 60, 0.85);
+    border-color: rgba(178, 34, 34, 0.9);
+    color: #ffffff;
+}
+
+.flash-message p {
+    margin: 0;
+    padding: 0 25px 0 0; /* Add padding-right to prevent text overlapping button */
+    line-height: 1.4;
+}
+
+/* --- CLOSE BUTTON (Top Right Corner) --- */
+.flash-message .flash-close-btn {
+    position: absolute;
+    top: 8px;               /* Position from the top edge */
+    right: 10px;              /* Position from the right edge */
+    /* transform: translateY(-50%); REMOVED - No longer needed */
+    background: none;
+    border: none;
+    color: inherit;           /* Takes color from parent (e.g., white) */
+    font-size: 1.5rem;        /* Adjust size if needed */
+    font-weight: bold;
+    line-height: 1;           /* Important to prevent extra spacing */
+    cursor: pointer;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+    padding: 0 5px;           /* Gives a slightly larger click area */
+}
+.flash-message .flash-close-btn:hover {
+    opacity: 1;
+}
+/* --- END CLOSE BUTTON --- */
+
+/* ==========================================================================
+   End of Styles
+   ========================================================================== */

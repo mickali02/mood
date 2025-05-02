@@ -8,27 +8,27 @@ import (
 	"github.com/mickali02/mood/internal/data"
 )
 
-// displayMood struct definition
+// displayMood struct definition (unchanged)
 type displayMood struct {
 	ID         int64
-	CreatedAt  time.Time // Needs time import
-	UpdatedAt  time.Time // Needs time import
+	CreatedAt  time.Time
+	UpdatedAt  time.Time
 	Title      string
-	Content    template.HTML // Needs html/template import
+	Content    template.HTML
 	RawContent string
 	Emotion    string
 	Emoji      string
 	Color      string
 }
 
-// EmotionDetails struct definition
+// EmotionDetails struct definition (unchanged)
 type EmotionDetails struct {
 	Name  string
 	Emoji string
 	Color string
 }
 
-// EmotionMap definition
+// EmotionMap definition (unchanged)
 var EmotionMap = map[string]EmotionDetails{
 	"Happy":   {Name: "Happy", Emoji: "😊", Color: "#FFD700"},
 	"Sad":     {Name: "Sad", Emoji: "😢", Color: "#6495ED"},
@@ -53,17 +53,18 @@ type TemplateData struct {
 	FormData   map[string]string
 
 	// Page-specific data
-	DisplayMoods      []displayMood        // For dashboard entries
-	Mood              *data.Mood           // For edit form
-	DefaultEmotions   []EmotionDetails     // For forms
-	AvailableEmotions []data.EmotionDetail // For dashboard filter
-	// --- Metadata field uses data.Metadata ---
-	Metadata data.Metadata // For pagination controls
+	DisplayMoods      []displayMood
+	Mood              *data.Mood
+	DefaultEmotions   []EmotionDetails
+	AvailableEmotions []data.EmotionDetail
+	Metadata          data.Metadata
+
+	Flash string // <-- Add Flash field for session messages
 }
 
 // NewTemplateData creates a default TemplateData instance
 func NewTemplateData() *TemplateData {
-	// Populate the STATIC DefaultEmotions slice
+	// (Existing logic unchanged)
 	defaultEmotionsList := make([]EmotionDetails, 0, len(data.ValidEmotions))
 	for _, key := range data.ValidEmotions {
 		if details, ok := EmotionMap[key]; ok {
@@ -80,11 +81,12 @@ func NewTemplateData() *TemplateData {
 		FormData:        make(map[string]string),
 		DefaultEmotions: defaultEmotionsList,
 		DisplayMoods:    make([]displayMood, 0),
-		Metadata:        data.Metadata{}, // Initialize metadata using type from data package
+		Metadata:        data.Metadata{},
+		Flash:           "", // Initialized to empty string implicitly, but can be explicit
 	}
 }
 
-// GetEmotionDetails function (no changes)
+// GetEmotionDetails function (unchanged)
 func GetEmotionDetails(emotionName string) EmotionDetails {
 	if details, ok := EmotionMap[emotionName]; ok {
 		return details
@@ -92,6 +94,7 @@ func GetEmotionDetails(emotionName string) EmotionDetails {
 	return EmotionDetails{Name: emotionName, Emoji: "❓", Color: "#cccccc"}
 }
 
+// newTemplateData function (unchanged)
 func (app *application) newTemplateData() *TemplateData {
 	return NewTemplateData()
 }

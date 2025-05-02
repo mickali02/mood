@@ -8,19 +8,20 @@ import (
 // loggingMiddleware logs details about incoming HTTP requests.
 func (app *application) loggingMiddleware(next http.Handler) http.Handler {
 	fn := func(w http.ResponseWriter, r *http.Request) {
-		// Log request details before passing to the next handler
 		app.logger.Info("received request",
 			"remote_ip", r.RemoteAddr,
 			"proto", r.Proto,
 			"method", r.Method,
-			"uri", r.URL.RequestURI(), // Includes path and query string
+			"uri", r.URL.RequestURI(),
 		)
-
-		// Call the next handler in the chain
 		next.ServeHTTP(w, r)
-
 	}
-
-	// Return the HandlerFunc
 	return http.HandlerFunc(fn)
+}
+
+// sessionMiddleware loads and saves session data for the current request.
+func (app *application) sessionMiddleware(next http.Handler) http.Handler {
+	// Use the Enable() middleware provided by golangcollege/sessions
+	// This automatically loads and saves session data for the request.
+	return app.session.Enable(next)
 }
