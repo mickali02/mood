@@ -64,13 +64,12 @@ func main() {
 	}
 	logger.Info("template cache built successfully")
 
-	// --- Session Manager Initialization --- // <-- Add this section
+	// --- Session Manager Initialization ---
 	sessionManager := sessions.New([]byte(*secret))
-	sessionManager.Lifetime = 12 * time.Hour // Example: Session lasts 12 hours
-	// For production, consider Secure=true if using HTTPS
-	// sessionManager.Secure = true
-	sessionManager.HttpOnly = true                 // Recommended for security
-	sessionManager.SameSite = http.SameSiteLaxMode // Good default for SameSite
+	sessionManager.Lifetime = 12 * time.Hour
+	sessionManager.Secure = true // <--- Make sure this line is present and set to true
+	sessionManager.HttpOnly = true
+	sessionManager.SameSite = http.SameSiteLaxMode
 
 	logger.Info("session manager initialized")
 
