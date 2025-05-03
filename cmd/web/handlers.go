@@ -660,7 +660,7 @@ func (app *application) showStatsPage(w http.ResponseWriter, r *http.Request) {
 	templateData.EmotionCountsJSON = string(emotionCountsJSON) // Pass JSON strings
 	templateData.MonthlyCountsJSON = string(monthlyCountsJSON)
 	// Add a sample quote (you could make this dynamic later)
-	templateData.Quote = "Every mood matters. Thanks for checking in 💛"
+	templateData.Quote = "Every mood matters. Thanks for checking in 💖"
 
 	// Render the new stats template
 	renderErr := app.render(w, http.StatusOK, "stats.tmpl", templateData)

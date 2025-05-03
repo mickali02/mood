@@ -5,69 +5,93 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{.Title}}</title>
-    <!-- Include your existing CSS -->
     <link rel="stylesheet" href="/static/styles.css">
-    <!-- Include Bootstrap Icons if needed for styling -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css">
-    <!-- Removed duplicate styles.css link -->
 </head>
-<body class="dashboard-page"> <!-- Or a new class like stats-page -->
+<body class="dashboard-page stats-page-background"> <!-- Added a specific class for potential background override -->
 
-    <!-- CORRECTED: Removed comments from inside the tag -->
+    <!-- Main container for stats content -->
     <div class="stats-container"
          id="stats-data-container"
          data-emotion-counts='{{.EmotionCountsJSON}}'
          data-monthly-counts='{{.MonthlyCountsJSON}}'
          data-has-data="{{gt .Stats.TotalEntries 0}}">
-        <!-- Comments moved outside/after the opening tag -->
-        <!-- data-emotion-counts uses single quotes for safety -->
-        <!-- data-monthly-counts uses single quotes for safety -->
-        <!-- data-has-data uses double quotes for boolean -->
 
         <header class="stats-header">
             <h1>Your Mood Statistics</h1>
         </header>
 
         {{if gt .Stats.TotalEntries 0}}
-            <!-- Summary Section -->
+            <!-- Summary Section - Now includes 4 cards -->
             <section class="stats-summary">
+                <!-- Total Entries Card -->
                 <div class="summary-card">
                     <h3>Total Entries</h3>
                     <p>{{.Stats.TotalEntries}}</p>
                 </div>
+
+                <!-- Most Common Emotion Card -->
                 {{with .Stats.MostCommonEmotion}}
                 <div class="summary-card">
                     <h3>Most Common</h3>
                     <p>
                         <span class="emoji" style="color: {{.Color}};">{{.Emoji}}</span> {{.Name}}
-                        <span style="font-size: 0.8rem; display: block; color: #bdc1c6;">({{.Count}} times)</span>
+                        <span class="summary-card-detail">({{.Count}} times)</span>
                     </p>
                 </div>
                 {{end}}
+
+                <!-- Latest Mood Card -->
+                {{with .Stats.LatestMood}}
+                <div class="summary-card">
+                    <h3>Latest Mood</h3>
+                    <p class="latest-mood-info">
+                        <span class="emoji" style="color: {{.Color}};">{{.Emoji}}</span> {{.Title}}
+                        <span class="summary-card-detail latest-mood-date">{{.CreatedAt | HumanDate}}</span>
+                    </p>
+                </div>
+                {{else}}
+                 <!-- Optional: Placeholder if no latest mood (shouldn't happen if Total > 0) -->
+                 <div class="summary-card">
+                    <h3>Latest Mood</h3>
+                    <p>-</p>
+                </div>
+                {{end}}
+
+                <!-- Average Entries Per Week Card -->
+                <div class="summary-card">
+                    <h3>Avg. Entries / Week</h3>
+                    <!-- Format float to 1 decimal place -->
+                    <p>{{printf "%.1f" .Stats.AvgEntriesPerWeek}}</p>
+                </div>
             </section>
 
             <!-- Charts Section (Canvas elements only) -->
             <section class="charts-grid">
                 <div class="chart-container">
                     <h3>Emotion Frequency</h3>
-                    <canvas id="emotionBarChart"></canvas> <!-- Canvas ID must match JS -->
+                    <canvas id="emotionBarChart"></canvas>
                 </div>
                 <div class="chart-container">
                     <h3>Emotion Breakdown</h3>
-                    <canvas id="emotionPieChart"></canvas> <!-- Canvas ID must match JS -->
+                    <canvas id="emotionPieChart"></canvas>
                 </div>
-                 <div class="chart-container" style="grid-column: 1 / -1;"> <!-- Span full width -->
+                 <div class="chart-container chart-full-width"> <!-- Use class for styling span -->
                     <h3>Entries Over Time</h3>
-                    <canvas id="monthlyLineChart"></canvas> <!-- Canvas ID must match JS -->
-                </div>
+                    <canvas id="monthlyLineChart"></canvas>
+                    <!-- *** ADDED DESCRIPTION BELOW CANVAS *** -->
+                    <p class="chart-description">Total mood entries logged per month.</p>
+                 </div>
             </section>
 
             <!-- Footer Quote -->
             <footer class="stats-footer">
+                 <!-- Ensure you have the desired quote/emoji here from your handler -->
                 <p>{{.Quote}}</p>
             </footer>
 
         {{else}}
+            <!-- No Stats Message -->
             <div class="no-stats">
                 <p>You haven't logged enough moods to generate statistics yet. Keep tracking!</p>
                 <a href="/dashboard" class="btn dashboard-add-btn" style="margin-top: 15px;">Back to Dashboard</a>
@@ -77,11 +101,8 @@
 
     </div> <!-- Closing stats-container div -->
 
-    <!-- === Chart.js Script (Include via CDN) === -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-    <!-- === Include your NEW external JavaScript file === -->
-    <!-- Use defer so it runs after the DOM is parsed -->
+    <!-- Ensure defer is used so JS runs after HTML is parsed -->
     <script src="/static/js/stats_charts.js" defer></script>
 
 </body>
