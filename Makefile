@@ -40,3 +40,12 @@ db/migrations/up:
 db/migrations/down:
 	@echo 'Running down migrations...'
 	migrate -path ./migrations -database ${MOODNOTES_DB_DSN} down # Changed here
+
+# --- ADDED TARGET FOR TEST DATABASE MIGRATIONS ---
+## testdb/migrations/up: apply all up migrations to the TEST database
+# Use the TEST DSN variable
+.PHONY: testdb/migrations/up
+testdb/migrations/up:
+	@echo 'Running up migrations on TEST database...'
+	migrate -path ./migrations -database ${MOODNOTES_TEST_DB_DSN} up
+# --- END ADDED TARGET ---

@@ -11,6 +11,7 @@ import (
 	"net/url"
 	"strconv"
 	// "strings" // Removed unused import
+	"encoding/json"
 	"time"
 
 	"github.com/mickali02/mood/internal/data"
@@ -623,4 +624,48 @@ func (app *application) clientError(w http.ResponseWriter, status int) {
 // notFound sends a 404 Not Found client error.
 func (app *application) notFound(w http.ResponseWriter) {
 	app.clientError(w, http.StatusNotFound)
+}
+
+// showStatsPage handles requests for the mood statistics page.
+func (app *application) showStatsPage(w http.ResponseWriter, r *http.Request) {
+	// Fetch all stats using the new aggregate function
+	stats, err := app.moods.GetAllStats()
+	if err != nil {
+		app.logger.Error("Failed to fetch mood stats", "error", err)
+		// Optionally, render the page with an error message or just serverError
+		app.serverError(w, r, err)
+		return
+	}
+
+	// Prepare data for Chart.js (Convert slices to JSON strings)
+	// Chart.js can easily consume JSON data.
+	emotionCountsJSON, err := json.Marshal(stats.EmotionCounts)
+	if err != nil {
+		app.logger.Error("Failed to marshal emotion counts to JSON", "error", err)
+		app.serverError(w, r, err)
+		return
+	}
+
+	monthlyCountsJSON, err := json.Marshal(stats.MonthlyCounts)
+	if err != nil {
+		app.logger.Error("Failed to marshal monthly counts to JSON", "error", err)
+		app.serverError(w, r, err)
+		return
+	}
+
+	// Prepare template data
+	templateData := NewTemplateData() // Use your existing helper
+	templateData.Title = "Mood Statistics"
+	templateData.Stats = stats                                 // Pass the whole stats struct
+	templateData.EmotionCountsJSON = string(emotionCountsJSON) // Pass JSON strings
+	templateData.MonthlyCountsJSON = string(monthlyCountsJSON)
+	// Add a sample quote (you could make this dynamic later)
+	templateData.Quote = "Every mood matters. Thanks for checking in 💛"
+
+	// Render the new stats template
+	renderErr := app.render(w, http.StatusOK, "stats.tmpl", templateData)
+	if renderErr != nil {
+		// app.render already logs errors, but serverError handles the response
+		app.serverError(w, r, renderErr)
+	}
 }

@@ -23,6 +23,7 @@ func (app *application) routes() http.Handler {
 	mux.HandleFunc("GET /mood/edit/{id}", app.showEditMoodForm)
 	mux.HandleFunc("POST /mood/edit/{id}", app.updateMood)
 	mux.HandleFunc("POST /mood/delete/{id}", app.deleteMood)
+	mux.HandleFunc("GET /stats", app.showStatsPage)
 
 	// --- Middleware Chain ---
 	// Apply middleware: log first, then manage session state for all mux routes.

@@ -20,7 +20,7 @@
                     <li><a href="/dashboard" data-title="Dashboard" class="active"><i class="bi bi-grid-1x2-fill nav-icon"></i></a></li>
                     <li><a href="/mood/new" data-title="Add New Entry"><i class="bi bi-plus-circle-fill nav-icon"></i></a></li>
                     <!-- === CORRECTED LINE 22 === -->
-                    <li><a href="#" data-title="Mood Stats" class="{{if not .DisplayMoods}}disabled-link{{end}}"><i class="bi bi-bar-chart-fill nav-icon"></i></a></li>
+                    <a href="/stats" data-title="Mood Stats" class="{{if not .HasMoodEntries}}disabled-link{{end}}"><i class="bi bi-bar-chart-fill nav-icon"></i></a></li>
                     <!-- === END CORRECTION === -->
                     <li class="nav-separator"></li>
                     <li><a href="#" data-title="Profile"><i class="bi bi-person-circle nav-icon"></i></a></li>

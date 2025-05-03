@@ -1,0 +1,88 @@
+<!-- ui/html/stats.tmpl -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{.Title}}</title>
+    <!-- Include your existing CSS -->
+    <link rel="stylesheet" href="/static/styles.css">
+    <!-- Include Bootstrap Icons if needed for styling -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css">
+    <!-- Removed duplicate styles.css link -->
+</head>
+<body class="dashboard-page"> <!-- Or a new class like stats-page -->
+
+    <!-- CORRECTED: Removed comments from inside the tag -->
+    <div class="stats-container"
+         id="stats-data-container"
+         data-emotion-counts='{{.EmotionCountsJSON}}'
+         data-monthly-counts='{{.MonthlyCountsJSON}}'
+         data-has-data="{{gt .Stats.TotalEntries 0}}">
+        <!-- Comments moved outside/after the opening tag -->
+        <!-- data-emotion-counts uses single quotes for safety -->
+        <!-- data-monthly-counts uses single quotes for safety -->
+        <!-- data-has-data uses double quotes for boolean -->
+
+        <header class="stats-header">
+            <h1>Your Mood Statistics</h1>
+        </header>
+
+        {{if gt .Stats.TotalEntries 0}}
+            <!-- Summary Section -->
+            <section class="stats-summary">
+                <div class="summary-card">
+                    <h3>Total Entries</h3>
+                    <p>{{.Stats.TotalEntries}}</p>
+                </div>
+                {{with .Stats.MostCommonEmotion}}
+                <div class="summary-card">
+                    <h3>Most Common</h3>
+                    <p>
+                        <span class="emoji" style="color: {{.Color}};">{{.Emoji}}</span> {{.Name}}
+                        <span style="font-size: 0.8rem; display: block; color: #bdc1c6;">({{.Count}} times)</span>
+                    </p>
+                </div>
+                {{end}}
+            </section>
+
+            <!-- Charts Section (Canvas elements only) -->
+            <section class="charts-grid">
+                <div class="chart-container">
+                    <h3>Emotion Frequency</h3>
+                    <canvas id="emotionBarChart"></canvas> <!-- Canvas ID must match JS -->
+                </div>
+                <div class="chart-container">
+                    <h3>Emotion Breakdown</h3>
+                    <canvas id="emotionPieChart"></canvas> <!-- Canvas ID must match JS -->
+                </div>
+                 <div class="chart-container" style="grid-column: 1 / -1;"> <!-- Span full width -->
+                    <h3>Entries Over Time</h3>
+                    <canvas id="monthlyLineChart"></canvas> <!-- Canvas ID must match JS -->
+                </div>
+            </section>
+
+            <!-- Footer Quote -->
+            <footer class="stats-footer">
+                <p>{{.Quote}}</p>
+            </footer>
+
+        {{else}}
+            <div class="no-stats">
+                <p>You haven't logged enough moods to generate statistics yet. Keep tracking!</p>
+                <a href="/dashboard" class="btn dashboard-add-btn" style="margin-top: 15px;">Back to Dashboard</a>
+            </div>
+        {{end}}
+         <a href="/dashboard" class="back-link">← Back to Dashboard</a>
+
+    </div> <!-- Closing stats-container div -->
+
+    <!-- === Chart.js Script (Include via CDN) === -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- === Include your NEW external JavaScript file === -->
+    <!-- Use defer so it runs after the DOM is parsed -->
+    <script src="/static/js/stats_charts.js" defer></script>
+
+</body>
+</html>
