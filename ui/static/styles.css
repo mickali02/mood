@@ -1287,6 +1287,33 @@
     font-size: 0.95rem;
 }
 
+.back-link{
+
+    font-family: 'Poppins', sans-serif;
+    display: inline-block;
+    padding: 10px 25px;
+    background-color: #A074B5; /* Primary Purple */
+    color: #FFFFFF;
+    text-decoration: none;
+    border-radius: 25px; /* Default Pill Shape */
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.1s, box-shadow 0.2s;
+    font-size: 1rem;
+    font-weight: 500;
+    line-height: 1.4;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+}
+
+.back-link:hover {
+    background-color: #A074B5; /* Yellow hover */
+    color: #fff; /* Keep text white */
+    transform: translateY(-2px);
+    box-shadow: 0 0 20px rgba(177, 156, 217, 0.7);
+}
 /* ==========================================================================
    End of Styles
    ========================================================================== */
