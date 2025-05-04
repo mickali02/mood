@@ -13,25 +13,25 @@ import (
 
 	_ "github.com/lib/pq"
 
-	"github.com/golangcollege/sessions" // <-- Import the sessions package
-	"github.com/mickali02/mood/internal/data"
+	"github.com/golangcollege/sessions"       // <-- Import the sessions package
+	"github.com/mickali02/mood/internal/data" // <-- Ensure internal/data is imported
 )
 
 // application struct holds application-wide dependencies.
 type application struct {
 	logger        *slog.Logger
 	addr          string
-	moods         *data.MoodModel
+	moods         *data.MoodModel // Existing MoodModel
+	users         *data.UserModel // <-- UserModel field (already present in your provided code)
 	templateCache map[string]*template.Template
-	session       *sessions.Session // <-- Add session field
+	session       *sessions.Session // Existing session field
 }
 
 func main() {
 	// --- Configuration ---
 	addr := flag.String("addr", ":4000", "HTTP network address")
 	dsn := flag.String("dsn", os.Getenv("MOODNOTES_DB_DSN"), "PostgreSQL DSN (reads MOODNOTES_DB_DSN env var)")
-	// Define a flag for the secret key
-	secret := flag.String("secret", "Gm9zN!cRz&7$eL4qjV1@xPu!Zw5#Tb6K", "Secret key (must be 32 bytes)") // <-- Add secret flag
+	secret := flag.String("secret", "Gm9zN!cRz&7$eL4qjV1@xPu!Zw5#Tb6K", "Secret key (must be 32 bytes)")
 	flag.Parse()
 
 	// --- Logging ---
@@ -67,20 +67,23 @@ func main() {
 	// --- Session Manager Initialization ---
 	sessionManager := sessions.New([]byte(*secret))
 	sessionManager.Lifetime = 12 * time.Hour
-	sessionManager.Secure = true // <--- Make sure this line is present and set to true
+	sessionManager.Secure = true
 	sessionManager.HttpOnly = true
 	sessionManager.SameSite = http.SameSiteLaxMode
 
 	logger.Info("session manager initialized")
 
 	// --- Application Dependencies ---
+	// *** UPDATED THIS SECTION ***
 	app := &application{
 		logger:        logger,
 		addr:          *addr,
-		moods:         &data.MoodModel{DB: db},
-		templateCache: templateCache,
-		session:       sessionManager, // <-- Inject session manager
+		moods:         &data.MoodModel{DB: db}, // Initialize MoodModel
+		users:         &data.UserModel{DB: db}, // <-- Initialize UserModel, passing db
+		templateCache: templateCache,           // Initialize Template Cache
+		session:       sessionManager,          // Initialize Session Manager
 	}
+	// *** END OF UPDATE ***
 
 	// --- Start Server ---
 	logger.Info("starting server", slog.String("addr", app.addr))

@@ -603,6 +603,82 @@ func (app *application) deleteMood(w http.ResponseWriter, r *http.Request) {
 	// If deleteErrOccurred, the serverError handler was already called and handled the response.
 }
 
+// === NEW: User Authentication Handlers (Placeholders) ===
+
+// signupUserForm displays the user signup page.
+func (app *application) signupUserForm(w http.ResponseWriter, r *http.Request) {
+	// Create empty template data initially
+	data := app.newTemplateData()             // Use your helper to get default data
+	data.Title = "Sign Up - Feel Flow"        // Set a specific title
+	data.FormErrors = make(map[string]string) // Ensure maps are initialized
+	data.FormData = make(map[string]string)
+
+	// Render the signup template
+	// Use "signup.tmpl" which is the base name of the template file
+	err := app.render(w, http.StatusOK, "signup.tmpl", data)
+	if err != nil {
+		// The render helper should already log the error
+		app.serverError(w, r, err) // Send generic server error response
+	}
+}
+
+// signupUser handles the submission of the signup form.
+func (app *application) signupUser(w http.ResponseWriter, r *http.Request) {
+	// TODO (Later):
+	// 1. Parse form data (name, email, password).
+	// 2. Validate the data (non-blank fields, valid email, password length).
+	// 3. If validation fails, re-render signup form with errors.
+	// 4. Hash the password securely using bcrypt (via password.Set method).
+	// 5. Create a data.User struct.
+	// 6. Insert the user into the database using app.users.Insert().
+	// 7. Handle potential errors (like duplicate email).
+	// 8. Add a flash message ("Signup successful!").
+	// 9. Redirect the user (e.g., to the login page or dashboard).
+
+	// Placeholder:
+	fmt.Fprintln(w, "Process User Signup Form Placeholder")
+}
+
+// loginUserForm displays the user login page.
+func (app *application) loginUserForm(w http.ResponseWriter, r *http.Request) {
+	// TODO (Later):
+	// 1. Check if user is already logged in, redirect if so.
+	// 2. Create template data (e.g., flash message, empty form struct).
+	// 3. Render an HTML login form template (e.g., "login.tmpl").
+
+	// Placeholder:
+	fmt.Fprintln(w, "Display User Login Form Placeholder")
+}
+
+// loginUser handles the submission of the login form.
+func (app *application) loginUser(w http.ResponseWriter, r *http.Request) {
+	// TODO (Later):
+	// 1. Parse form data (email, password).
+	// 2. Authenticate the user using app.users.Authenticate(email, password).
+	// 3. Handle authentication errors (ErrInvalidCredentials, ErrRecordNotFound).
+	//    - If error, re-render login form with flash message.
+	// 4. If authentication successful:
+	//    - Regenerate the session ID (security best practice).
+	//    - Store the user ID in the session (e.g., app.session.Put(r, "authenticatedUserID", userID)).
+	//    - Add a flash message ("Login successful!").
+	//    - Redirect the user to the dashboard ("/dashboard").
+
+	// Placeholder:
+	fmt.Fprintln(w, "Process User Login Form Placeholder")
+}
+
+// logoutUser handles logging the user out.
+func (app *application) logoutUser(w http.ResponseWriter, r *http.Request) {
+	// TODO (Later):
+	// 1. Remove the authenticatedUserID key from the session (app.session.Remove(r, "authenticatedUserID")).
+	// 2. Add a flash message ("You have been logged out.").
+	// 3. Redirect the user to the landing or login page.
+	// Optional: Destroy the session completely if needed (app.session.Destroy(r))
+
+	// Placeholder:
+	fmt.Fprintln(w, "Process User Logout Placeholder")
+}
+
 // --- Error Helpers ---
 // serverError logs an internal server error and sends a 500 response.
 func (app *application) serverError(w http.ResponseWriter, r *http.Request, err error) {

@@ -1,0 +1,68 @@
+<!-- ui/html/signup.tmpl -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{.Title}}</title> <!-- Use TemplateData -->
+    <!-- Link your existing CSS -->
+    <link rel="stylesheet" href="/static/styles.css">
+    <!-- Add other necessary links (fonts, icons) if needed, like from mood_form.tmpl -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+</head>
+<body class="mood-form-page"> <!-- Reuse form page styling -->
+
+    <div class="form-container"> <!-- Reuse form container styling -->
+        <h1>Create Account</h1>
+
+        <!-- Display flash messages if any -->
+        {{with .Flash}}
+            <div class='flash-message success'>{{.}}</div> <!-- Adjust class if needed -->
+        {{end}}
+
+        <form action="/user/signup" method="POST" novalidate>
+            <!-- Add CSRF token later if using -->
+
+            <div class="form-group">
+                <label for="name">Name:</label>
+                <!-- Use FormData to repopulate on error -->
+                <input type="text" id="name" name="name" value='{{index .FormData "name"}}' required class="{{if index .FormErrors "name"}}invalid{{end}}">
+                <!-- Display field-specific error -->
+                {{with index .FormErrors "name"}}
+                    <span class="error-message">{{.}}</span>
+                {{end}}
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" value='{{index .FormData "email"}}' required class="{{if index .FormErrors "email"}}invalid{{end}}">
+                {{with index .FormErrors "email"}}
+                    <span class="error-message">{{.}}</span>
+                {{end}}
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <!-- NEVER repopulate password field -->
+                <input type="password" id="password" name="password" required class="{{if index .FormErrors "password"}}invalid{{end}}">
+                {{with index .FormErrors "password"}}
+                    <span class="error-message">{{.}}</span>
+                {{end}}
+                 <!-- Add password policy hints if desired -->
+                 <small style="color: #ccc; font-size: 0.8em; display: block; margin-top: 5px;">(Minimum 8 characters)</small>
+            </div>
+
+             <!-- Generic Form Error (Optional) -->
+             {{with index .FormErrors "generic"}}
+                 <div class="error-message" style="text-align: center; margin-bottom: 15px;">{{.}}</div>
+             {{end}}
+
+            <div class="button-group">
+                <button type="submit" class="btn dashboard-add-btn">Sign Up</button>
+                <!-- Optional: Link to login page -->
+                <a href="/user/login" class="btn cancel-btn">Already have account? Log In</a>
+            </div>
+        </form>
+    </div>
+
+</body>
+</html>
