@@ -4,24 +4,23 @@ package main
 import (
 	"encoding/json"
 	"errors"
-	"fmt" // <-- Ensure fmt is imported
+	"fmt"
 	"html/template"
-	"net/http" // <-- Ensure net/http is imported
+	"net/http"
 	"net/url"
 	"strconv"
 	"time"
 
-	"github.com/mickali02/mood/internal/data"
-	"github.com/mickali02/mood/internal/validator" // <-- Ensure validator is imported
+	"github.com/mickali02/mood/internal/data"      // <-- Ensure internal/data is imported
+	"github.com/mickali02/mood/internal/validator" // <-- Ensure internal/validator is imported
 )
 
 /* ==========================================================================
    START: Dashboard Handler
    ========================================================================== */
-// showDashboardPage handles requests for the main dashboard page.
-// It displays a list of mood entries, potentially filtered and paginated,
-// handles both full page loads and HTMX partial updates, and shows flash messages.
+// (Keep your existing showDashboardPage handler as it is)
 func (app *application) showDashboardPage(w http.ResponseWriter, r *http.Request) {
+	// ... your existing dashboard logic ...
 	// --- POP FLASH MESSAGE FIRST ---
 	flash := app.session.PopString(r, "flash") // Get and remove flash message from session
 
@@ -56,7 +55,6 @@ func (app *application) showDashboardPage(w http.ResponseWriter, r *http.Request
 			app.logger.Warn("Invalid end date format", "date", filterEndDateStr, "error", dateParseError)
 			filterEndDate = time.Time{}
 		} else {
-			// Include the whole end day
 			filterEndDate = parsedEndDate.Add(24*time.Hour - 1*time.Nanosecond)
 		}
 		if !filterStartDate.IsZero() && !filterEndDate.IsZero() && filterEndDate.Before(filterStartDate) {
@@ -78,7 +76,7 @@ func (app *application) showDashboardPage(w http.ResponseWriter, r *http.Request
 		StartDate: filterStartDate,
 		EndDate:   filterEndDate,
 		Page:      page,
-		PageSize:  4, // Or your desired page size
+		PageSize:  4,
 	}
 
 	// --- 4. Fetch Filtered Mood Data ---
@@ -86,12 +84,8 @@ func (app *application) showDashboardPage(w http.ResponseWriter, r *http.Request
 	moods, metadata, err := app.moods.GetFiltered(criteria)
 	if err != nil {
 		app.logger.Error("Failed to fetch filtered moods", "error", err)
-		// Gracefully handle error, maybe show empty list + flash message
 		moods = []*data.Mood{}
 		metadata = data.Metadata{}
-		// Optionally set an error flash message here
-		// app.session.Put(r, "flash", "Error retrieving mood entries.")
-		// flash = app.session.PopString(r, "flash") // Re-pop if set
 	}
 
 	// --- 5. Prepare Moods for Display ---
@@ -102,8 +96,8 @@ func (app *application) showDashboardPage(w http.ResponseWriter, r *http.Request
 			CreatedAt:  m.CreatedAt,
 			UpdatedAt:  m.UpdatedAt,
 			Title:      m.Title,
-			Content:    template.HTML(m.Content), // Assume content is safe HTML (e.g., from Quill/sanitizer)
-			RawContent: m.Content,                // Keep raw content for modals etc.
+			Content:    template.HTML(m.Content),
+			RawContent: m.Content, // Ensure RawContent is populated
 			Emotion:    m.Emotion,
 			Emoji:      m.Emoji,
 			Color:      m.Color,
@@ -118,9 +112,9 @@ func (app *application) showDashboardPage(w http.ResponseWriter, r *http.Request
 	}
 
 	// --- 7. Prepare Data for the Template ---
-	templateData := app.newTemplateData() // Use your helper
-	templateData.Flash = flash            // Pass the flash message
-	templateData.Title = "Dashboard - Feel Flow"
+	templateData := app.newTemplateData() // <-- Use your helper
+	templateData.Flash = flash            // <-- Pass the flash message
+	templateData.Title = "Dashboard"
 	templateData.SearchQuery = searchQuery
 	templateData.FilterEmotion = filterCombinedEmotion
 	templateData.FilterStartDate = filterStartDateStr
@@ -129,7 +123,6 @@ func (app *application) showDashboardPage(w http.ResponseWriter, r *http.Request
 	templateData.HasMoodEntries = len(displayMoods) > 0
 	templateData.AvailableEmotions = availableEmotions
 	templateData.Metadata = metadata
-	// Add any other necessary fields like IsAuthenticated later
 
 	// --- 8. Render Response (HTMX or Full Page) ---
 	if r.Header.Get("HX-Request") == "true" {
@@ -138,25 +131,20 @@ func (app *application) showDashboardPage(w http.ResponseWriter, r *http.Request
 		if !ok {
 			err := fmt.Errorf("template %q does not exist", "dashboard.tmpl")
 			app.logger.Error("Template lookup failed for HTMX request", "template", "dashboard.tmpl", "error", err)
-			// Avoid double error response if possible
-			// Check if headers already written before calling serverError
-			if w.Header().Get("Content-Type") == "" {
-				app.serverError(w, r, err)
-			}
+			app.serverError(w, r, err)
 			return
 		}
-		// Render the specific block
+		// Render the specific block with the data (including flash message)
 		err = ts.ExecuteTemplate(w, "dashboard-content", templateData)
 		if err != nil {
 			app.logger.Error("Failed to execute template block", "block", "dashboard-content", "error", err)
-			// Headers likely already sent, can't send 500 status easily
 		}
 	} else {
 		app.logger.Info("Handling full page request for dashboard")
-		// Render the full page
+		// Render the full page with the data (including flash message)
 		err = app.render(w, http.StatusOK, "dashboard.tmpl", templateData)
 		if err != nil {
-			// app.render logs, app.serverError sends response if possible
+			// app.render logs, serverError responds if possible
 			app.serverError(w, r, err)
 		}
 	}
@@ -165,23 +153,21 @@ func (app *application) showDashboardPage(w http.ResponseWriter, r *http.Request
 /* ==========================================================================
    Static Pages Handlers
    ========================================================================== */
-
-// showLandingPage handler
+// (Keep your existing showLandingPage and showAboutPage handlers)
 func (app *application) showLandingPage(w http.ResponseWriter, r *http.Request) {
 	templateData := app.newTemplateData()
-	_ = app.session.PopString(r, "flash") // Clear flash
-	templateData.Title = "Feel Flow - Welcome"
+	_ = app.session.PopString(r, "flash")
+	templateData.Title = "Feel Flow - Special Welcome"
 	err := app.render(w, http.StatusOK, "landing.tmpl", templateData)
 	if err != nil {
 		app.serverError(w, r, err)
 	}
 }
 
-// showAboutPage handler
 func (app *application) showAboutPage(w http.ResponseWriter, r *http.Request) {
 	templateData := app.newTemplateData()
-	_ = app.session.PopString(r, "flash") // Clear flash
-	templateData.Title = "About - Feel Flow"
+	_ = app.session.PopString(r, "flash")
+	templateData.Title = "About Feel Flow"
 	err := app.render(w, http.StatusOK, "about.tmpl", templateData)
 	if err != nil {
 		app.serverError(w, r, err)
@@ -191,62 +177,50 @@ func (app *application) showAboutPage(w http.ResponseWriter, r *http.Request) {
 /* ==========================================================================
    Mood Handlers
    ========================================================================== */
-
-// showMoodForm handler
+// (Keep your existing mood handlers: showMoodForm, createMood, showEditMoodForm, updateMood, deleteMood)
 func (app *application) showMoodForm(w http.ResponseWriter, r *http.Request) {
 	templateData := app.newTemplateData()
-	_ = app.session.PopString(r, "flash") // Clear flash
-	templateData.Title = "New Mood Entry - Feel Flow"
+	_ = app.session.PopString(r, "flash")
+	templateData.Title = "New Mood Entry"
 	templateData.HeaderText = "Log Your Mood"
-	// Ensure maps are initialized (should be handled by newTemplateData)
-	// templateData.FormData = make(map[string]string)
-	// templateData.FormErrors = make(map[string]string)
-
+	templateData.FormData = make(map[string]string) // Or handled in newTemplateData
 	err := app.render(w, http.StatusOK, "mood_form.tmpl", templateData)
 	if err != nil {
 		app.serverError(w, r, err)
 	}
 }
 
-// createMood handler
 func (app *application) createMood(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		w.Header().Set("Allow", http.MethodPost)
 		app.clientError(w, http.StatusMethodNotAllowed)
 		return
 	}
-
 	err := r.ParseForm()
 	if err != nil {
 		app.clientError(w, http.StatusBadRequest)
 		return
 	}
-
-	// Extract data
 	title := r.PostForm.Get("title")
 	content := r.PostForm.Get("content")
 	emotionName := r.PostForm.Get("emotion")
 	emoji := r.PostForm.Get("emoji")
 	color := r.PostForm.Get("color")
 
-	// Create mood struct
 	mood := &data.Mood{
 		Title:   title,
-		Content: content, // Assume content needs sanitizing or comes from trusted source (like Quill)
+		Content: content,
 		Emotion: emotionName,
 		Emoji:   emoji,
 		Color:   color,
 	}
 
-	// Validate
 	v := validator.NewValidator()
-	// Assuming ValidateMood exists and works correctly
-	data.ValidateMood(v, mood) // Use your existing validation function
+	data.ValidateMood(v, mood) // Assuming this function exists in data/mood.go
 
 	if !v.ValidData() {
-		// Prepare data for re-rendering
 		templateData := app.newTemplateData()
-		templateData.Title = "New Mood Entry (Error) - Feel Flow"
+		templateData.Title = "New Mood Entry (Error)"
 		templateData.HeaderText = "Log Your Mood"
 		templateData.FormErrors = v.Errors
 		templateData.FormData = map[string]string{
@@ -255,54 +229,36 @@ func (app *application) createMood(w http.ResponseWriter, r *http.Request) {
 			"emotion":        emotionName,
 			"emoji":          emoji,
 			"color":          color,
-			"emotion_choice": r.PostForm.Get("emotion_choice"), // Repopulate radio selection
+			"emotion_choice": r.PostForm.Get("emotion_choice"),
 		}
 
-		// Render based on request type (HTMX or full page)
-		if r.Header.Get("HX-Request") == "true" {
-			// Render the partial form block for HTMX
-			// Note: Ensure 'partials/mood_form_partial.tmpl' exists and defines a block
-			// that can be targeted and swapped correctly. This often requires a specific
-			// template structure for HTMX validation feedback.
-			// For simplicity, we might re-render the full form even for HTMX here,
-			// unless a dedicated partial exists. Let's assume re-rendering full for now.
-			// err = app.render(w, http.StatusOK, "partials/mood_form_partial.tmpl", templateData)
-			err = app.render(w, http.StatusUnprocessableEntity, "mood_form.tmpl", templateData)
-		} else {
-			// Render the full form for standard POST
-			err = app.render(w, http.StatusUnprocessableEntity, "mood_form.tmpl", templateData)
-		}
+		// Simplified re-render for validation error
+		err := app.render(w, http.StatusUnprocessableEntity, "mood_form.tmpl", templateData)
 		if err != nil {
 			app.serverError(w, r, err)
 		}
 		return
 	}
 
-	// Insert into database
 	err = app.moods.Insert(mood)
 	if err != nil {
 		app.serverError(w, r, err)
 		return
 	}
 
-	// Success: Add flash message and redirect
 	app.session.Put(r, "flash", "Mood entry successfully created!")
 	http.Redirect(w, r, "/dashboard", http.StatusSeeOther)
 }
 
-// showEditMoodForm handler
 func (app *application) showEditMoodForm(w http.ResponseWriter, r *http.Request) {
-	// Extract ID
 	id, err := strconv.ParseInt(r.PathValue("id"), 10, 64)
 	if err != nil || id < 1 {
 		app.notFound(w)
 		return
 	}
-
-	// Get mood entry
 	mood, err := app.moods.Get(id)
 	if err != nil {
-		if errors.Is(err, data.ErrRecordNotFound) { // Use the error from data package
+		if errors.Is(err, data.ErrRecordNotFound) { // Use data error
 			app.notFound(w)
 		} else {
 			app.serverError(w, r, err)
@@ -310,30 +266,26 @@ func (app *application) showEditMoodForm(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	// Prepare template data
 	templateData := app.newTemplateData()
-	_ = app.session.PopString(r, "flash") // Clear flash
-	templateData.Title = fmt.Sprintf("Edit Mood #%d - Feel Flow", mood.ID)
+	_ = app.session.PopString(r, "flash")
+	templateData.Title = fmt.Sprintf("Edit Mood Entry #%d", mood.ID)
 	templateData.HeaderText = "Update Your Mood Entry"
-	templateData.Mood = mood // Pass the mood object itself
-	// Pre-populate FormData from the fetched mood data
+	templateData.Mood = mood
 	templateData.FormData = map[string]string{
 		"title":          mood.Title,
 		"content":        mood.Content,
 		"emotion":        mood.Emotion,
 		"emoji":          mood.Emoji,
 		"color":          mood.Color,
-		"emotion_choice": mood.Emotion, // Pre-select radio based on stored emotion
+		"emotion_choice": mood.Emotion,
 	}
 
-	// Render edit form
 	err = app.render(w, http.StatusOK, "mood_edit_form.tmpl", templateData)
 	if err != nil {
 		app.serverError(w, r, err)
 	}
 }
 
-// updateMood handler
 func (app *application) updateMood(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		w.Header().Set("Allow", http.MethodPost)
@@ -341,32 +293,24 @@ func (app *application) updateMood(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Extract ID
 	id, err := strconv.ParseInt(r.PathValue("id"), 10, 64)
 	if err != nil || id < 1 {
 		app.notFound(w)
 		return
 	}
 
-	// Fetch original mood (optional but good for context on error)
-	// We primarily need the ID for the update query.
-	// Let's skip fetching again unless needed for complex logic.
-
-	// Parse form
 	err = r.ParseForm()
 	if err != nil {
 		app.clientError(w, http.StatusBadRequest)
 		return
 	}
 
-	// Extract data
 	title := r.PostForm.Get("title")
 	content := r.PostForm.Get("content")
 	emotionName := r.PostForm.Get("emotion")
 	emoji := r.PostForm.Get("emoji")
 	color := r.PostForm.Get("color")
 
-	// Create mood struct with ID for update
 	mood := &data.Mood{
 		ID:      id,
 		Title:   title,
@@ -376,15 +320,13 @@ func (app *application) updateMood(w http.ResponseWriter, r *http.Request) {
 		Color:   color,
 	}
 
-	// Validate
 	v := validator.NewValidator()
-	data.ValidateMood(v, mood) // Use your existing validation function
+	data.ValidateMood(v, mood) // Assuming this function exists
 
 	if !v.ValidData() {
-		// Fetch original mood needed for re-rendering template
+		// Fetch original mood needed for context if re-rendering
 		originalMood, fetchErr := app.moods.Get(id)
 		if fetchErr != nil {
-			// Handle case where mood was deleted between GET and POST
 			if errors.Is(fetchErr, data.ErrRecordNotFound) {
 				app.notFound(w)
 			} else {
@@ -393,35 +335,30 @@ func (app *application) updateMood(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		// Prepare data for re-rendering
 		templateData := app.newTemplateData()
-		templateData.Title = fmt.Sprintf("Edit Mood #%d (Error) - Feel Flow", id)
+		templateData.Title = fmt.Sprintf("Edit Mood Entry #%d (Error)", id)
 		templateData.HeaderText = "Update Your Mood Entry"
-		templateData.Mood = originalMood // Pass original mood for context if needed by template
+		templateData.Mood = originalMood // Pass original mood
 		templateData.FormErrors = v.Errors
 		templateData.FormData = map[string]string{
-			"title":          title, // Use submitted (invalid) data for repopulation
+			"title":          title, // Use submitted data for repopulation
 			"content":        content,
 			"emotion":        emotionName,
 			"emoji":          emoji,
 			"color":          color,
-			"emotion_choice": r.PostForm.Get("emotion_choice"), // Repopulate radio
+			"emotion_choice": r.PostForm.Get("emotion_choice"),
 		}
 
-		// Render based on request type
-		templateName := "mood_edit_form.tmpl"
-		// Re-rendering the full edit form is generally simpler for validation errors
-		err = app.render(w, http.StatusUnprocessableEntity, templateName, templateData)
+		err := app.render(w, http.StatusUnprocessableEntity, "mood_edit_form.tmpl", templateData)
 		if err != nil {
 			app.serverError(w, r, err)
 		}
 		return
 	}
 
-	// Update in DB
 	err = app.moods.Update(mood)
 	if err != nil {
-		if errors.Is(err, data.ErrRecordNotFound) { // Use error from data package
+		if errors.Is(err, data.ErrRecordNotFound) { // Use data error
 			app.notFound(w)
 		} else {
 			app.serverError(w, r, err)
@@ -429,24 +366,17 @@ func (app *application) updateMood(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Success: Add flash and redirect (or handle HTMX)
 	app.session.Put(r, "flash", "Mood entry successfully updated!")
 
 	if r.Header.Get("HX-Request") == "true" {
-		// For HTMX, typically redirect via header
 		w.Header().Set("HX-Redirect", "/dashboard")
-		w.WriteHeader(http.StatusOK) // OK status, client handles redirect
+		w.WriteHeader(http.StatusOK)
 	} else {
-		// Standard redirect
-		http.Redirect(w, r, "/dashboard", http.StatusSeeOther) // Redirect to dashboard
+		http.Redirect(w, r, "/dashboard", http.StatusSeeOther)
 	}
 }
 
-// deleteMood handler
 func (app *application) deleteMood(w http.ResponseWriter, r *http.Request) {
-	// (Keep your existing deleteMood logic, it seems reasonable with HTMX handling)
-	// ... (your existing deleteMood code) ...
-
 	// Ensure it uses data.ErrRecordNotFound for consistency
 	if r.Method != http.MethodPost {
 		w.Header().Set("Allow", http.MethodPost)
@@ -619,14 +549,12 @@ func (app *application) deleteMood(w http.ResponseWriter, r *http.Request) {
 
 // signupUserForm displays the user signup page.
 func (app *application) signupUserForm(w http.ResponseWriter, r *http.Request) {
-	// Create empty template data initially
-	data := app.newTemplateData()      // Use your helper to get default data
-	data.Title = "Sign Up - Feel Flow" // Set a specific title
-	// Ensure maps are initialized (should be handled by newTemplateData)
-	// data.FormErrors = make(map[string]string)
+	data := app.newTemplateData()
+	data.Title = "Sign Up - Feel Flow"
+	// Ensure maps are initialized here if not done in newTemplateData
 	// data.FormData = make(map[string]string)
+	// data.FormErrors = make(map[string]string)
 
-	// Render the signup template
 	err := app.render(w, http.StatusOK, "signup.tmpl", data)
 	if err != nil {
 		app.serverError(w, r, err)
@@ -635,94 +563,202 @@ func (app *application) signupUserForm(w http.ResponseWriter, r *http.Request) {
 
 // signupUser handles the submission of the signup form.
 func (app *application) signupUser(w http.ResponseWriter, r *http.Request) {
-	// Parse the form data
+	// Parse form data
 	err := r.ParseForm()
 	if err != nil {
 		app.clientError(w, http.StatusBadRequest)
 		return
 	}
 
-	// Get the form values
+	// Extract values
 	name := r.PostForm.Get("name")
 	email := r.PostForm.Get("email")
-	passwordInput := r.PostForm.Get("password") // Renamed to avoid conflict
+	passwordInput := r.PostForm.Get("password")
 
-	// Initialize a new validator instance
+	// Validate input
 	v := validator.NewValidator()
-
-	// Perform validation checks
 	v.Check(validator.NotBlank(name), "name", "Name must be provided")
-	v.Check(validator.MaxLength(name, 100), "name", "Name must not be more than 100 characters long")
+	v.Check(validator.MaxLength(name, 100), "name", "Must not be more than 100 characters")
 
 	v.Check(validator.NotBlank(email), "email", "Email must be provided")
-	v.Check(validator.MaxLength(email, 254), "email", "Email must not be more than 254 characters long")
+	v.Check(validator.MaxLength(email, 254), "email", "Must not be more than 254 characters")
 	v.Check(validator.Matches(email, validator.EmailRX), "email", "Must be a valid email address")
 
 	v.Check(validator.NotBlank(passwordInput), "password", "Password must be provided")
-	v.Check(validator.MinLength(passwordInput, 8), "password", "Password must be at least 8 characters long")
-	v.Check(validator.MaxLength(passwordInput, 72), "password", "Password must not be more than 72 characters long") // bcrypt limit
+	v.Check(validator.MinLength(passwordInput, 8), "password", "Must be at least 8 characters long")
+	v.Check(validator.MaxLength(passwordInput, 72), "password", "Must not be more than 72 characters")
 
-	// Check if validation failed
 	if !v.ValidData() {
+		// Re-render form with errors
 		data := app.newTemplateData()
 		data.Title = "Sign Up (Error) - Feel Flow"
-		data.FormData = map[string]string{
+		data.FormData = map[string]string{ // Repopulate form data
 			"name":  name,
 			"email": email,
-			// DO NOT REPOPULATE PASSWORD
+			// Exclude password
 		}
-		data.FormErrors = v.Errors
+		data.FormErrors = v.Errors // Pass errors
 		err := app.render(w, http.StatusUnprocessableEntity, "signup.tmpl", data)
 		if err != nil {
 			app.serverError(w, r, err)
 		}
-		return // Stop processing
+		return
 	}
 
-	// --- Validation Passed ---
+	// Create user struct
+	user := &data.User{
+		Name:      name,
+		Email:     email,
+		Activated: false, // Or true if not implementing activation step
+	}
 
-	// Placeholder: If validation succeeds, print message (as per video 2 end state)
-	// TODO (Next Steps): Create user struct, hash password, insert user via app.users.Insert()
-	fmt.Fprintln(w, "Validation successful! (Placeholder for adding user)")
+	// Hash password
+	err = user.Password.Set(passwordInput)
+	if err != nil {
+		app.serverError(w, r, err)
+		return
+	}
 
+	// Insert user into DB
+	err = app.users.Insert(user) // Uses the method in internal/data/users.go
+	if err != nil {
+		if errors.Is(err, data.ErrDuplicateEmail) {
+			v.AddError("email", "Email address is already in use") // Add specific error
+
+			// Re-render form with this new error
+			data := app.newTemplateData()
+			data.Title = "Sign Up (Error) - Feel Flow"
+			data.FormData = map[string]string{"name": name, "email": email}
+			data.FormErrors = v.Errors
+			err := app.render(w, http.StatusUnprocessableEntity, "signup.tmpl", data)
+			if err != nil {
+				app.serverError(w, r, err)
+			}
+		} else {
+			// Other insert errors
+			app.serverError(w, r, err)
+		}
+		return
+	}
+
+	// Success: Add flash message and redirect to login
+	app.session.Put(r, "flash", "Your signup was successful! Please log in.")
+	http.Redirect(w, r, "/user/login", http.StatusSeeOther)
 }
 
 // loginUserForm displays the user login page.
 func (app *application) loginUserForm(w http.ResponseWriter, r *http.Request) {
-	// TODO (Later):
-	// 1. Check if user is already logged in, redirect if so.
-	// 2. Create template data (flash, empty form struct).
-	// 3. Render an HTML login form template (e.g., "login.tmpl").
 	data := app.newTemplateData()
 	data.Title = "Login - Feel Flow"
-	// data.FormData = make(map[string]string) // Initialize if needed
-	// data.FormErrors = make(map[string]string) // Initialize if needed
+	// Get flash message from session (e.g., after signup redirect)
+	data.Flash = app.session.PopString(r, "flash")
+	// Initialize maps (should be handled by newTemplateData)
+	// data.FormData = make(map[string]string)
+	// data.FormErrors = make(map[string]string)
 
-	// For now, placeholder or basic template render:
-	// err := app.render(w, http.StatusOK, "login.tmpl", data) // If login.tmpl exists
-	// if err != nil { app.serverError(w, r, err) }
-	fmt.Fprintln(w, "Display User Login Form Placeholder") // Keep placeholder until template exists
+	// Render the login template
+	err := app.render(w, http.StatusOK, "login.tmpl", data)
+	if err != nil {
+		app.serverError(w, r, err)
+	}
 }
 
 // loginUser handles the submission of the login form.
 func (app *application) loginUser(w http.ResponseWriter, r *http.Request) {
-	// TODO (Later): Parse form, authenticate via app.users.Authenticate(), manage session
-	fmt.Fprintln(w, "Process User Login Form Placeholder")
+	// 1. Parse form data
+	err := r.ParseForm()
+	if err != nil {
+		app.clientError(w, http.StatusBadRequest)
+		return
+	}
+
+	// 2. Extract email and password
+	email := r.PostForm.Get("email")
+	passwordInput := r.PostForm.Get("password") // Use different name from package
+
+	// 3. Validate the input briefly (non-blank)
+	// More complex validation isn't usually needed here like on signup,
+	// as the Authenticate method handles the core check.
+	v := validator.NewValidator()
+	v.Check(validator.NotBlank(email), "generic", "Email must be provided")            // Using generic key
+	v.Check(validator.NotBlank(passwordInput), "generic", "Password must be provided") // Using generic key
+
+	// If basic validation fails, re-render with a generic message
+	if !v.ValidData() {
+		data := app.newTemplateData()
+		data.Title = "Login (Error) - Feel Flow"
+		data.FormErrors = v.Errors // Pass the errors map
+		// Repopulate email, but not password
+		data.FormData = map[string]string{"email": email}
+		// Use the generic error message from validator for display
+		data.FormErrors["generic"] = "Both email and password must be provided."
+
+		err := app.render(w, http.StatusUnprocessableEntity, "login.tmpl", data)
+		if err != nil {
+			app.serverError(w, r, err)
+		}
+		return
+	}
+
+	// 4. Authenticate the user
+	id, err := app.users.Authenticate(email, passwordInput)
+	if err != nil {
+		// Check if the error is specifically ErrInvalidCredentials
+		if errors.Is(err, data.ErrInvalidCredentials) {
+			// Authentication failed, re-render login form with error flash/message
+			data := app.newTemplateData()
+			data.Title = "Login (Error) - Feel Flow"
+			// Repopulate email, but not password
+			data.FormData = map[string]string{"email": email}
+			// Add a generic error message for the form
+			data.FormErrors = map[string]string{"generic": "Invalid email or password."}
+
+			// Optionally, add a flash message too for more prominent display
+			// app.session.Put(r, "flash", "Invalid email or password.")
+			// data.Flash = app.session.PopString(r, "flash") // Need to pop if set
+
+			err := app.render(w, http.StatusUnprocessableEntity, "login.tmpl", data)
+			if err != nil {
+				app.serverError(w, r, err)
+			}
+		} else {
+			// Any other error is a server error
+			app.serverError(w, r, err)
+		}
+		return // Stop processing on error
+	}
+
+	// --- Authentication Successful ---
+
+	// 5. Prevent session fixation: Regenerate session ID
+	// DELETE THIS LINE: err = app.session.RenewToken(r)
+	// if err != nil {
+	//     app.serverError(w, r, err)
+	//     return
+	// }
+
+	// 6. Store authenticated user ID in the session
+	app.session.Put(r, "authenticatedUserID", id) // Use the ID returned by Authenticate
+
+	// 7. (Optional) Add success flash message
+	app.session.Put(r, "flash", "You have been logged in successfully!")
+
+	// 8. Redirect to the dashboard
+	http.Redirect(w, r, "/dashboard", http.StatusSeeOther)
 }
 
 // logoutUser handles logging the user out.
 func (app *application) logoutUser(w http.ResponseWriter, r *http.Request) {
-	// TODO (Later): Destroy session data, redirect
+	// TODO (Later): Remove user ID from session, add flash, redirect
 	fmt.Fprintln(w, "Process User Logout Placeholder")
 }
 
 /* ==========================================================================
    Stats Page Handler
    ========================================================================== */
-
-// showStatsPage handler
+// (Keep your existing showStatsPage handler)
 func (app *application) showStatsPage(w http.ResponseWriter, r *http.Request) {
-	// Fetch all stats
+	// ... your existing stats logic ...
 	stats, err := app.moods.GetAllStats()
 	if err != nil {
 		app.logger.Error("Failed to fetch mood stats", "error", err)
@@ -730,7 +766,6 @@ func (app *application) showStatsPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Prepare data for Chart.js
 	emotionCountsJSON, err := json.Marshal(stats.EmotionCounts)
 	if err != nil {
 		app.logger.Error("Failed to marshal emotion counts to JSON", "error", err)
@@ -744,15 +779,13 @@ func (app *application) showStatsPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Prepare template data
 	templateData := app.newTemplateData()
-	templateData.Title = "Mood Statistics - Feel Flow"
+	templateData.Title = "Mood Statistics"
 	templateData.Stats = stats
 	templateData.EmotionCountsJSON = string(emotionCountsJSON)
 	templateData.MonthlyCountsJSON = string(monthlyCountsJSON)
-	templateData.Quote = "Every mood matters. Thanks for checking in 💖" // Example quote
+	templateData.Quote = "Every mood matters. Thanks for checking in 💖"
 
-	// Render the stats template
 	renderErr := app.render(w, http.StatusOK, "stats.tmpl", templateData)
 	if renderErr != nil {
 		app.serverError(w, r, renderErr)
@@ -762,17 +795,14 @@ func (app *application) showStatsPage(w http.ResponseWriter, r *http.Request) {
 /* ==========================================================================
    Error Handlers
    ========================================================================== */
-
-// serverError logs detailed error and sends generic 500 response.
+// (Keep your existing error handlers: serverError, clientError, notFound)
 func (app *application) serverError(w http.ResponseWriter, r *http.Request, err error) {
 	var (
 		method = r.Method
 		uri    = r.URL.RequestURI()
-		// Add trace later if needed
 	)
 	app.logger.Error("server error encountered", "error", err.Error(), "method", method, "uri", uri)
 
-	// Prevent writing error response if headers already sent
 	if w.Header().Get("Content-Type") != "" {
 		app.logger.Warn("headers already written, cannot send error response")
 		return
@@ -780,12 +810,10 @@ func (app *application) serverError(w http.ResponseWriter, r *http.Request, err 
 	http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 }
 
-// clientError sends specific client error status and text.
 func (app *application) clientError(w http.ResponseWriter, status int) {
 	http.Error(w, http.StatusText(status), status)
 }
 
-// notFound sends 404 Not Found response.
 func (app *application) notFound(w http.ResponseWriter) {
 	app.clientError(w, http.StatusNotFound)
 }

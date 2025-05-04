@@ -1,0 +1,51 @@
+<!-- ui/html/login.tmpl -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{.Title}}</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+</head>
+<body class="mood-form-page"> <!-- Reuse form page styling -->
+
+    <div class="form-container">
+        <h1>Login</h1>
+
+        <!-- Display flash messages (e.g., signup success, login failure) -->
+        {{with .Flash}}
+            <!-- Add logic here later to maybe add 'error' class based on content -->
+            <div class='flash-message success'>{{.}}</div>
+        {{end}}
+
+        <form action="/user/login" method="POST" novalidate>
+            <!-- Add CSRF token later -->
+
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <!-- Repopulate email on error -->
+                <input type="email" id="email" name="email" value='{{index .FormData "email"}}' required class="{{if index .FormErrors "generic"}}invalid{{end}}">
+                 <!-- Login often uses a single generic error, but you could add field-specific if desired -->
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" required class="{{if index .FormErrors "generic"}}invalid{{end}}">
+                <!-- Don't show specific password errors on login, use a generic message -->
+            </div>
+
+             <!-- Generic Form Error (for invalid credentials) -->
+             {{with index .FormErrors "generic"}}
+                 <div class="error-message" style="text-align: center; margin-bottom: 15px;">{{.}}</div>
+             {{end}}
+
+            <div class="button-group">
+                <button type="submit" class="btn dashboard-add-btn">Login</button>
+                <!-- Optional: Link to signup page -->
+                <a href="/user/signup" class="btn cancel-btn">Need an account? Sign Up</a>
+            </div>
+        </form>
+    </div>
+
+</body>
+</html>
