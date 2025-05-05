@@ -23,6 +23,7 @@
               hx-post="/mood/edit/{{.Mood.ID}}"
               hx-target="closest .form-container"
               hx-swap="outerHTML">
+              <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
 
             <!-- === Emotion Selector === -->
             <div class="form-group">

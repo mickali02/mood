@@ -130,6 +130,7 @@
                                    hx-confirm="Are you sure you want to delete this entry?"
                                    hx-indicator=".htmx-indicator"
                                    style="display: inline;">
+                                   <input type="hidden" name="csrf_token" value="{{$.CSRFToken}}">
                                  <button type="submit" class="btn delete-btn">Delete</button>
                              </form>
                          </div>

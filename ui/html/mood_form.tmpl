@@ -16,6 +16,7 @@
           <h1>{{.HeaderText}}</h1>
 
           <form action="/mood/new" method="POST" novalidate id="mood-entry-form">
+          <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
 
             <!-- === Emotion Selector === -->
             <div class="form-group">

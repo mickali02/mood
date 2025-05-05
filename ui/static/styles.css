@@ -1314,6 +1314,51 @@
     transform: translateY(-2px);
     box-shadow: 0 0 20px rgba(177, 156, 217, 0.7);
 }
+
+/* --- Style the Logout Button in Sidebar to match Nav Links --- */
+
+.sidebar-nav .logout-button {
+    /* Reset default button styles */
+    border: none;
+    padding: 0;
+    background: none;
+    cursor: pointer;
+    outline: none;
+    font-family: inherit; /* Inherit font if needed */
+
+    /* Apply styles copied from .sidebar-nav a */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px;           /* Match anchor width */
+    height: 50px;          /* Match anchor height */
+    color: #bdc1c6;        /* Match anchor initial color */
+    text-decoration: none;
+    transition: all 0.3s ease;
+    border-radius: 50%;    /* Make it circular */
+    background-color: rgba(255, 255, 255, 0.08); /* Match anchor initial background */
+    position: relative;
+}
+
+/* Hover/Focus styles for the logout button */
+.sidebar-nav .logout-button:hover,
+.sidebar-nav .logout-button:focus {
+    background-color: rgba(255, 255, 255, 0.2); /* Match anchor hover background */
+    color: #ffffff;        /* Match anchor hover color */
+    transform: scale(1.1); /* Match anchor hover transform */
+    box-shadow: 0 0 15px rgba(160, 116, 181, 0.5); /* Match anchor hover shadow */
+}
+
+/* Ensure icon inside the button inherits color correctly */
+.sidebar-nav .logout-button .nav-icon {
+   color: inherit; /* Make sure icon takes button's color */
+   transition: all 0.3s ease; /* Add transition to icon if not already present */
+}
+
+/* Optional: Adjust icon hover scale if needed */
+ .sidebar-nav .logout-button:hover .nav-icon {
+    transform: scale(1.1); /* Match anchor icon hover */
+ }
 /* ==========================================================================
    End of Styles
    ========================================================================== */

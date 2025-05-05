@@ -3,6 +3,8 @@ package main
 
 import (
 	"net/http"
+
+	"github.com/justinas/nosurf"
 )
 
 // loggingMiddleware logs details about incoming HTTP requests.
@@ -51,6 +53,27 @@ func (app *application) requireAuthentication(next http.Handler) http.Handler {
 	}
 	// Wrap the handler function so it satisfies the http.Handler interface.
 	return http.HandlerFunc(fn)
+}
+
+// noSurf middleware adds CSRF protection to all non-safe methods (POST, PUT, DELETE, etc.)
+func noSurf(next http.Handler) http.Handler {
+	// Create a new CSRF handler
+	csrfHandler := nosurf.New(next)
+
+	// Configure the base cookie settings
+	// Ensure Secure is true if using HTTPS (which you are)
+	csrfHandler.SetBaseCookie(http.Cookie{
+		HttpOnly: true,
+		Path:     "/",                  // Available across the entire site
+		Secure:   true,                 // Requires HTTPS
+		SameSite: http.SameSiteLaxMode, // Standard SameSite setting
+		// MaxAge and Domain can be set if needed, but defaults are often fine
+	})
+
+	// You can add custom error handling here if desired using csrfHandler.SetFailureHandler()
+	// For now, it will return a 403 Forbidden by default on failure.
+
+	return csrfHandler
 }
 
 // **** END ADDED MIDDLEWARE ****
