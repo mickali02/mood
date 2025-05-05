@@ -42,6 +42,22 @@ func (app *application) showDashboardPage(w http.ResponseWriter, r *http.Request
 		return
 	}
 
+	// --- FETCH USER DETAILS ---
+	user, err := app.users.Get(userID) // Use the UserModel to get user by ID
+	if err != nil {
+		// Handle case where user ID from session doesn't match a user in DB
+		// This might indicate session inconsistency or a deleted user.
+		app.logger.Error("Failed to get user details for dashboard", "userID", userID, "error", err)
+		// Decide how to handle: show generic greeting, log out user, or show error?
+		// For now, log error and proceed (UserName will be empty in templateData).
+		// You could also redirect to logout:
+		// app.session.Remove(r, "authenticatedUserID")
+		// http.Redirect(w, r, "/user/login", http.StatusFound)
+		// return
+		user = &data.User{} // Use an empty user struct to avoid nil pointers later
+	}
+	// --- END FETCH USER DETAILS ---
+
 	v := validator.NewValidator()
 	query := r.URL.Query()
 	searchQuery := query.Get("query")
@@ -130,6 +146,7 @@ func (app *application) showDashboardPage(w http.ResponseWriter, r *http.Request
 	templateData.HasMoodEntries = len(displayMoods) > 0
 	templateData.AvailableEmotions = availableEmotions
 	templateData.Metadata = metadata
+	templateData.UserName = user.Name
 
 	if r.Header.Get("HX-Request") == "true" {
 		app.logger.Info("Handling HTMX request for dashboard content area")

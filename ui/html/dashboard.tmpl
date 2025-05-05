@@ -39,8 +39,15 @@
         <!-- Main Dashboard Content -->
         <main class="dashboard-main">
             <header class="dashboard-header">
-                <h1>Hi welcome back Mickali!</h1>
-                <!-- Wrap the text if you want to hide/style it separately -->
+                <!-- **** MODIFIED GREETING **** -->
+                <h1>
+                    {{if .UserName}} <!-- Check if UserName is available -->
+                        Hi {{.UserName}}, how are you feeling today?
+                    {{else}}
+                        Welcome! <!-- Fallback greeting -->
+                    {{end}}
+                </h1>
+                <!-- **** END MODIFIED GREETING **** -->
                 <div class="htmx-indicator"><span>Loading...</span></div>
             </header>
 

@@ -52,6 +52,7 @@ type TemplateData struct {
 	FilterEmotion   string
 	FilterStartDate string
 	FilterEndDate   string
+	UserName        string
 
 	FormErrors map[string]string
 	FormData   map[string]string
@@ -109,6 +110,7 @@ func NewTemplateData() *TemplateData {
 		Flash:             "",    // Populated later
 		IsAuthenticated:   false, // Populated later
 		CSRFToken:         "",    // Populated later
+		UserName:          "",
 
 		// --- Initialize Stats Fields ---
 		Stats:             nil,
