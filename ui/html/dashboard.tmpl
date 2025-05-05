@@ -24,7 +24,14 @@
                     <!-- === END CORRECTION === -->
                     <li class="nav-separator"></li>
                     <li><a href="#" data-title="Profile"><i class="bi bi-person-circle nav-icon"></i></a></li>
-                    <li><a href="#" data-title="Logout"><i class="bi bi-box-arrow-right nav-icon"></i></a></li>
+                    <li>
+                        <form action="/user/logout" method="POST" style="display: inline;">
+                            <!-- Add CSRF token later -->
+                            <button type="submit" class="logout-button" data-title="Logout">
+                                <i class="bi bi-box-arrow-right nav-icon"></i>
+                            </button>
+                        </form>
+                    </li>
                </ul>
            </nav>
         </aside>

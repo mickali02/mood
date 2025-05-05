@@ -609,7 +609,7 @@ func (app *application) signupUser(w http.ResponseWriter, r *http.Request) {
 	user := &data.User{
 		Name:      name,
 		Email:     email,
-		Activated: false, // Or true if not implementing activation step
+		Activated: true, // Or true if not implementing activation step
 	}
 
 	// Hash password
@@ -730,13 +730,6 @@ func (app *application) loginUser(w http.ResponseWriter, r *http.Request) {
 
 	// --- Authentication Successful ---
 
-	// 5. Prevent session fixation: Regenerate session ID
-	// DELETE THIS LINE: err = app.session.RenewToken(r)
-	// if err != nil {
-	//     app.serverError(w, r, err)
-	//     return
-	// }
-
 	// 6. Store authenticated user ID in the session
 	app.session.Put(r, "authenticatedUserID", id) // Use the ID returned by Authenticate
 
@@ -749,8 +742,15 @@ func (app *application) loginUser(w http.ResponseWriter, r *http.Request) {
 
 // logoutUser handles logging the user out.
 func (app *application) logoutUser(w http.ResponseWriter, r *http.Request) {
-	// TODO (Later): Remove user ID from session, add flash, redirect
-	fmt.Fprintln(w, "Process User Logout Placeholder")
+	// Remove the authentication token from the session data.
+	app.session.Remove(r, "authenticatedUserID") // Use the same key as in loginUser
+
+	// Add a flash message to inform the user.
+	app.session.Put(r, "flash", "You have been logged out successfully.")
+
+	// Redirect the user to the application's landing page.
+	// Redirecting to "/" often makes sense, or "/landing" if that's your main entry.
+	http.Redirect(w, r, "/landing", http.StatusSeeOther) // Redirect to landing page
 }
 
 /* ==========================================================================

@@ -114,42 +114,45 @@ func (m *UserModel) Insert(user *User) error {
 
 // Authenticate checks if a user exists with the given email and password.
 // It returns the user ID on success.
+// Authenticate checks if a user exists with the given email and password AND is activated.
+// It returns the user ID on success.
 func (m *UserModel) Authenticate(email, plaintextPassword string) (int64, error) {
 	var id int64
-	var hashedPassword []byte // Variable to store the hash from the DB
+	var hashedPassword []byte
 
-	// Retrieve the id and hashed password for the user with the given email.
+	// Query to find the activated user by email and get their ID and hashed password.
 	query := `
         SELECT id, password_hash FROM users
-        WHERE email = $1 AND activated = TRUE` // Only allow activated users to log in
+        WHERE email = $1 AND activated = TRUE`
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
+	// Execute query, scanning the ID and hash into variables.
 	err := m.DB.QueryRowContext(ctx, query, email).Scan(&id, &hashedPassword)
 	if err != nil {
-		// If no matching email OR user is not activated, return ErrInvalidCredentials.
+		// If no row is found (wrong email or user not activated), return ErrInvalidCredentials.
 		if errors.Is(err, sql.ErrNoRows) {
 			return 0, ErrInvalidCredentials
 		}
-		// Return other errors directly.
+		// For any other database error, return it directly.
 		return 0, err
 	}
 
-	// Check if the provided plaintext password matches the stored hash.
+	// Compare the provided plaintext password with the stored hash.
 	err = bcrypt.CompareHashAndPassword(hashedPassword, []byte(plaintextPassword))
 	if err != nil {
-		// If mismatch, return ErrInvalidCredentials.
+		// If the hashes don't match, return ErrInvalidCredentials.
 		if errors.Is(err, bcrypt.ErrMismatchedHashAndPassword) {
 			return 0, ErrInvalidCredentials
 		}
-		// Return other comparison errors directly.
+		// For any other bcrypt error, return it directly.
 		return 0, err
 	}
 
-	// If everything is okay, return the user ID.
+	// If the password is correct, return the user ID and a nil error.
 	return id, nil
-}
+} // end Authenticate
 
 // Get retrieves a specific user based on their ID.
 func (m *UserModel) Get(id int64) (*User, error) {
