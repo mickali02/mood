@@ -25,3 +25,32 @@ func (app *application) sessionMiddleware(next http.Handler) http.Handler {
 	// This automatically loads and saves session data for the request.
 	return app.session.Enable(next)
 }
+
+// **** ADD THIS MIDDLEWARE ****
+// requireAuthentication checks if a user is authenticated. If not, it redirects
+// them to the login page and returns. Otherwise, it calls the next handler.
+func (app *application) requireAuthentication(next http.Handler) http.Handler {
+	fn := func(w http.ResponseWriter, r *http.Request) {
+		// Use the isAuthenticated helper we created earlier.
+		if !app.isAuthenticated(r) {
+			app.logger.Warn("Authentication required", "uri", r.URL.RequestURI()) // Log attempt
+
+			// Add a flash message to be shown on the login page.
+			app.session.Put(r, "flash", "You must be logged in to view this page.")
+
+			// Redirect the user to the login page.
+			http.Redirect(w, r, "/user/login", http.StatusFound) // 302 Found
+			return                                               // Important: Stop processing the request here.
+		}
+
+		// If the user *is* authenticated, call the next handler in the chain.
+		// Crucially, this also prevents caching of protected pages by browsers/proxies,
+		// as different responses (login page vs actual page) might be served for the same URL.
+		w.Header().Add("Cache-Control", "no-store")
+		next.ServeHTTP(w, r)
+	}
+	// Wrap the handler function so it satisfies the http.Handler interface.
+	return http.HandlerFunc(fn)
+}
+
+// **** END ADDED MIDDLEWARE ****

@@ -3,9 +3,12 @@ package main
 
 import (
 	"html/template"
+	"net/http" // Ensure this is imported
 	"time"
 
 	"github.com/mickali02/mood/internal/data"
+	// Import your sessions package if not already done via main.go's application struct
+	// "github.com/golangcollege/sessions"
 )
 
 // displayMood struct definition (unchanged)
@@ -61,46 +64,57 @@ type TemplateData struct {
 
 	Flash string // Flash field for session messages
 
-	// --- NEW Fields for Stats Page ---
-	Stats             *data.MoodStats // Holds the aggregated stats (pointer type)
-	EmotionCountsJSON string          // JSON string for emotion chart data
-	MonthlyCountsJSON string          // JSON string for monthly chart data
-	Quote             string          // Encouraging quote for stats page
-	// --- END NEW Fields ---
+	// --- Fields for Stats Page ---
+	Stats             *data.MoodStats
+	EmotionCountsJSON string
+	MonthlyCountsJSON string
+	Quote             string
+
+	// --- NEW Field for Authentication State ---
+	IsAuthenticated bool `json:"is_authenticated"` // Correctly added
+	// --- END NEW Field ---
+
+	// --- Optional: Add field for current user ---
+	// User *data.User
+	// --- End add field ---
 }
 
-// NewTemplateData creates a default TemplateData instance
-func NewTemplateData() *TemplateData {
+// NewTemplateData creates a *basic* default TemplateData instance.
+// Authentication status and Flash message are added later by app.newTemplateData.
+// **** CORRECTED: Only returns the basic struct ****
+func NewTemplateData() *TemplateData { // <-- REMOVED r *http.Request parameter here
 	// (Existing logic for DefaultEmotions unchanged)
-	defaultEmotionsList := make([]EmotionDetails, 0, len(data.ValidEmotions)) // Using ValidEmotions from data package
+	defaultEmotionsList := make([]EmotionDetails, 0, len(data.ValidEmotions))
 	for _, key := range data.ValidEmotions {
 		if details, ok := EmotionMap[key]; ok {
 			defaultEmotionsList = append(defaultEmotionsList, details)
 		} else {
-			// Fallback if an emotion in ValidEmotions isn't in EmotionMap (shouldn't happen ideally)
 			defaultEmotionsList = append(defaultEmotionsList, EmotionDetails{Name: key, Emoji: "❓", Color: "#cccccc"})
 		}
 	}
 
 	// Initialize the struct with default/zero values for all fields
-	return &TemplateData{
+	return &TemplateData{ // <-- Return the initialized struct directly
 		Title:             "Mood Tracker",
 		HeaderText:        "How are you feeling?",
 		FormErrors:        make(map[string]string),
 		FormData:          make(map[string]string),
 		DefaultEmotions:   defaultEmotionsList,
 		DisplayMoods:      make([]displayMood, 0),
-		AvailableEmotions: make([]data.EmotionDetail, 0), // Initialize empty slice
-		Metadata:          data.Metadata{},               // Initialize empty struct
-		Flash:             "",                            // Initialize empty string
+		AvailableEmotions: make([]data.EmotionDetail, 0),
+		Metadata:          data.Metadata{},
+		Flash:             "", // Flash populated later
 
-		// --- Initialize NEW Fields ---
-		Stats:             nil,  // Initialize stats pointer as nil
-		EmotionCountsJSON: "[]", // Default to empty JSON array string
-		MonthlyCountsJSON: "[]", // Default to empty JSON array string
-		Quote:             "",   // Initialize empty quote
-		// --- END Initialize NEW Fields ---
+		// --- Initialize Stats Fields ---
+		Stats:             nil,
+		EmotionCountsJSON: "[]",
+		MonthlyCountsJSON: "[]",
+		Quote:             "",
+
+		// --- Initialize Auth Field ---
+		IsAuthenticated: false, // Auth status populated later
 	}
+	// REMOVED the extra 'return td' which caused an error
 }
 
 // GetEmotionDetails function (unchanged)
@@ -108,12 +122,35 @@ func GetEmotionDetails(emotionName string) EmotionDetails {
 	if details, ok := EmotionMap[emotionName]; ok {
 		return details
 	}
-	// Return a default/unknown representation
 	return EmotionDetails{Name: emotionName, Emoji: "❓", Color: "#cccccc"}
 }
 
-// newTemplateData function (helper, unchanged)
-// This simply calls NewTemplateData, so it benefits from the updates above.
-func (app *application) newTemplateData() *TemplateData {
-	return NewTemplateData()
+// **** CORRECTED: newTemplateData HELPER METHOD ON application ****
+// This now takes the request, creates base data, adds auth status, and adds flash.
+func (app *application) newTemplateData(r *http.Request) *TemplateData {
+	// Create the basic template data struct.
+	td := NewTemplateData() // Call the corrected basic initializer
+
+	// Add the authentication status to the template data.
+	td.IsAuthenticated = app.isAuthenticated(r) // Use the helper method below
+
+	// Add the flash message to the template data.
+	td.Flash = app.session.PopString(r, "flash")
+
+	// Add current user information (Optional, implement later if needed)
+	// if td.IsAuthenticated {
+	//    userID := app.session.GetInt64(r, "authenticatedUserID")
+	//    user, err := app.users.Get(userID)
+	//    // ... handle error, assign td.User ...
+	// }
+
+	// Return the populated template data.
+	return td
+}
+
+// **** ADDED: isAuthenticated HELPER METHOD ON application ****
+// This checks the session for the authenticatedUserID key.
+func (app *application) isAuthenticated(r *http.Request) bool {
+	// The Exists() method from golangcollege/sessions checks if the key is present.
+	return app.session.Exists(r, "authenticatedUserID")
 }
