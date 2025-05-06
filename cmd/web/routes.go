@@ -13,7 +13,7 @@ func (app *application) routes() http.Handler {
 	mux.Handle("GET /static/", http.StripPrefix("/static", fileServer))
 
 	// --- Unprotected Application Routes ---
-	mux.HandleFunc("GET /{$}", app.showLandingPage)
+	mux.HandleFunc("GET /{$}", app.showLandingPage) // Assuming this is intended root
 	mux.HandleFunc("GET /landing", app.showLandingPage)
 	mux.HandleFunc("GET /about", app.showAboutPage)
 	mux.HandleFunc("GET /user/signup", app.signupUserForm)
@@ -32,12 +32,16 @@ func (app *application) routes() http.Handler {
 	mux.HandleFunc("GET /stats", app.requireAuthentication(http.HandlerFunc(app.showStatsPage)).ServeHTTP)
 	mux.HandleFunc("POST /user/logout", app.requireAuthentication(http.HandlerFunc(app.logoutUser)).ServeHTTP)
 
-	// --- Base Middleware Chain ---
-	// Order: Log -> Session -> CSRF -> Mux (with its own per-route middleware)
-	// **MODIFIED:** Added noSurf middleware
-	standardMiddleware := app.sessionMiddleware(app.loggingMiddleware(mux))
-	csrfProtectedMiddleware := noSurf(standardMiddleware) // Apply noSurf globally
+	// --- NEW USER PROFILE ROUTES ---
+	mux.HandleFunc("GET /user/profile", app.requireAuthentication(http.HandlerFunc(app.showUserProfilePage)).ServeHTTP)
+	mux.HandleFunc("POST /user/profile/update", app.requireAuthentication(http.HandlerFunc(app.updateUserProfile)).ServeHTTP)
+	mux.HandleFunc("POST /user/profile/password", app.requireAuthentication(http.HandlerFunc(app.changeUserPassword)).ServeHTTP)
+	mux.HandleFunc("POST /user/profile/reset-entries", app.requireAuthentication(http.HandlerFunc(app.resetUserEntries)).ServeHTTP)
+	mux.HandleFunc("POST /user/profile/delete-account", app.requireAuthentication(http.HandlerFunc(app.deleteUserAccount)).ServeHTTP)
+	// --- END NEW USER PROFILE ROUTES ---
 
-	// Return the fully wrapped handler chain.
-	return csrfProtectedMiddleware // <-- Return the CSRF protected chain
+	standardMiddleware := app.sessionMiddleware(app.loggingMiddleware(mux))
+	csrfProtectedMiddleware := noSurf(standardMiddleware)
+
+	return csrfProtectedMiddleware
 }

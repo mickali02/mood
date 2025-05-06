@@ -1,4 +1,4 @@
--- File: migrations/XXXXXXXXXX_add_user_id_to_moods.up.sql
+-- File: migrations/000004_add_user_id_to_moods.up.sql
 ALTER TABLE moods
 ADD COLUMN user_id BIGINT NOT NULL; -- Add the column, initially disallow NULLs
 

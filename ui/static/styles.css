@@ -1359,6 +1359,180 @@
  .sidebar-nav .logout-button:hover .nav-icon {
     transform: scale(1.1); /* Match anchor icon hover */
  }
+
+ /* ==========================================================================
+   Profile Page Styles (for profile.tmpl as a full page)
+   ========================================================================== */
+
+/* Ensure body.dashboard-page (if used on profile.tmpl) provides a good base */
+/* body.dashboard-page {
+    display: flex; /* This might already be there from your main body styles */
+    /* flex-direction: column; */
+    /* align-items: center; /* Center .profile-container if body is flex */
+    /* padding-top: 40px; /* Add some top padding */
+    /* padding-bottom: 40px; */
+/* } */
+
+.profile-container {
+    width: 90%;
+    max-width: 800px; /* Adjust max-width as desired */
+    margin: 60px auto; /* Center the container on the page with top/bottom margin */
+    padding: 30px 40px;
+    background-color: rgba(40, 42, 54, 0.85); /* Darker, slightly more opaque than dashboard main */
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 15px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #e0e0e0;
+}
+
+.profile-container h1 {
+    text-align: center;
+    font-size: 2.2rem;
+    color: #ffffff;
+    margin-bottom: 35px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.profile-section {
+    background-color: rgba(55, 58, 80, 0.7); /* Slightly lighter sections */
+    padding: 25px 30px;
+    margin-bottom: 30px;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.profile-section:last-of-type {
+    margin-bottom: 20px; /* Reduce margin for the last section before back button */
+}
+
+.profile-section h2 {
+    font-size: 1.5rem;
+    color: #e6d29e; /* Accent color for section titles */
+    margin-top: 0;
+    margin-bottom: 25px;
+    padding-bottom: 10px;
+    border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
+    font-family: 'Playfair Display', serif; /* Consistent heading font */
+}
+
+/* Form group styling within profile sections */
+.profile-section .form-group {
+    margin-bottom: 20px;
+}
+
+.profile-section label {
+    font-weight: 500;
+    color: #bdc1c6;
+    font-size: 0.95rem;
+}
+
+.profile-section input[type="text"],
+.profile-section input[type="email"],
+.profile-section input[type="password"],
+.profile-section select {
+    background-color: rgba(20, 22, 34, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    color: #e0e0e0;
+    padding: 12px 16px; /* Slightly less padding than main forms if desired */
+    font-size: 0.95rem;
+}
+
+.profile-section input[type="text"]:focus,
+.profile-section input[type="email"]:focus,
+.profile-section input[type="password"]:focus,
+.profile-section select:focus {
+    border-color: #c8a2c8; /* Your accent purple for focus */
+    background-color: rgba(30, 32, 44, 0.7);
+    box-shadow: 0 0 0 3px rgba(200, 162, 200, 0.3); /* Lighter purple shadow */
+}
+
+.profile-section select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23bdc1c6' viewBox='0 0 16 16'%3E%3Cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 35px;
+}
+
+.profile-section .form-hint {
+    font-size: 0.8em;
+    color: #a0a8b4;
+    display: block;
+    margin-top: 5px;
+}
+
+.profile-section .button-group {
+    margin-top: 25px;
+    justify-content: flex-start; /* Align buttons to the left within sections */
+}
+.profile-section .button-group .btn {
+    padding: 10px 22px;
+    font-size: 0.9rem;
+}
+
+
+/* Specific buttons for reset/delete */
+.profile-actions .btn.reset-btn {
+    background-color: #ffae42; /* Orange warning */
+    color: #2c3e50;
+}
+.profile-actions .btn.reset-btn:hover {
+    background-color: #ffc171;
+}
+
+.profile-actions .btn.delete-btn {
+    background-color: #e74c3c; /* Red danger */
+    color: #ffffff;
+}
+.profile-actions .btn.delete-btn:hover {
+    background-color: #c0392b;
+}
+
+.profile-section p {
+    color: #c8c8d8;
+    font-size: 0.9rem;
+    line-height: 1.7;
+    margin-bottom: 15px;
+}
+
+.profile-warning {
+    color: #f87c7c !important; /* Make warning text more prominent */
+    font-weight: 500;
+    border-left: 3px solid #e74c3c;
+    padding-left: 10px;
+}
+
+/* Back to Dashboard link at the very bottom */
+.profile-container > div[style*="text-align: center"] { /* Targets the specific div you have */
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255,255,255,0.1);
+}
+
+/* --- CLOSE BUTTON 'X' --- */
+.flash-message .flash-close-btn {
+    background: none;
+    border: none;
+    color: inherit; /* Inherits color from .flash-message (e.g., white for success/error) */
+    font-size: 1.6rem; /* Make X a bit larger */
+    font-weight: bold;
+    line-height: 1; /* Important for vertical alignment */
+    cursor: pointer;
+    opacity: 0.7;
+    transition: opacity 0.2s ease;
+    padding: 0 5px; /* Small padding for easier clicking */
+    margin-left: 15px; /* Space from the message text */
+}
+
+.flash-message .flash-close-btn:hover {
+    opacity: 1;
+}
 /* ==========================================================================
    End of Styles
    ========================================================================== */

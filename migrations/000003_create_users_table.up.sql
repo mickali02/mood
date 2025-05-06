@@ -1,4 +1,4 @@
--- migrations/00000X_create_users_table.up.sql
+-- migrations/000003_create_users_table.up.sql
 CREATE TABLE IF NOT EXISTS users (
     id BIGSERIAL PRIMARY KEY,
     created_at TIMESTAMP(0) WITH TIME ZONE NOT NULL DEFAULT NOW(),

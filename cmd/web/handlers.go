@@ -10,7 +10,6 @@ import (
 	"net/url"
 	"strconv"
 	"time"
-	// "github.com/lib/pq" // Keep commented unless specific pq errors are checked
 
 	"github.com/mickali02/mood/internal/data"
 	"github.com/mickali02/mood/internal/validator"
@@ -713,6 +712,264 @@ func (app *application) showStatsPage(w http.ResponseWriter, r *http.Request) {
 	if renderErr != nil {
 		app.serverError(w, r, renderErr)
 	}
+}
+
+/*
+==========================================================================
+	User Profile Handlers
+==========================================================================
+*/
+
+func (app *application) showUserProfilePage(w http.ResponseWriter, r *http.Request) {
+	userID := app.getUserIDFromSession(r)
+	if userID == 0 {
+		// Should be caught by requireAuthentication, but defensive check
+		app.clientError(w, http.StatusUnauthorized)
+		return
+	}
+
+	user, err := app.users.Get(userID)
+	if err != nil {
+		if errors.Is(err, data.ErrRecordNotFound) {
+			app.notFound(w) // Should not happen if session is valid
+		} else {
+			app.serverError(w, r, err)
+		}
+		return
+	}
+
+	templateData := app.newTemplateData(r)
+	templateData.Title = "User Profile"
+	// Pass the user object or individual fields. Passing the object is convenient.
+	templateData.User = user // Make sure User field is in TemplateData struct
+	// Initialize FormData for profile form (if not already populated from a previous error)
+	if templateData.FormData == nil {
+		templateData.FormData = make(map[string]string)
+	}
+	if _, ok := templateData.FormData["name"]; !ok {
+		templateData.FormData["name"] = user.Name
+	}
+	if _, ok := templateData.FormData["email"]; !ok {
+		templateData.FormData["email"] = user.Email
+	}
+
+	err = app.render(w, http.StatusOK, "profile.tmpl", templateData)
+	if err != nil {
+		app.serverError(w, r, err)
+	}
+}
+
+func (app *application) updateUserProfile(w http.ResponseWriter, r *http.Request) {
+	userID := app.getUserIDFromSession(r)
+	if userID == 0 {
+		app.clientError(w, http.StatusUnauthorized)
+		return
+	}
+
+	user, err := app.users.Get(userID)
+	if err != nil {
+		// Handle error, potentially log out if user not found
+		app.serverError(w, r, err)
+		return
+	}
+
+	err = r.ParseForm()
+	if err != nil {
+		app.clientError(w, http.StatusBadRequest)
+		return
+	}
+
+	originalEmail := user.Email // Keep original for comparison if email changes
+
+	user.Name = r.PostForm.Get("name")
+	user.Email = r.PostForm.Get("email")
+	// Note: user.Password and user.Activated are NOT changed here.
+	// We are updating the fetched `user` object in place.
+
+	v := validator.NewValidator()
+	// Validate only the fields being changed
+	v.Check(validator.NotBlank(user.Name), "name", "Name must be provided")
+	v.Check(validator.MaxLength(user.Name, 100), "name", "Name must not be more than 100 characters")
+	v.Check(validator.NotBlank(user.Email), "email", "Email must be provided")
+	v.Check(validator.MaxLength(user.Email, 254), "email", "Must not be more than 254 characters")
+	v.Check(validator.Matches(user.Email, validator.EmailRX), "email", "Must be a valid email address")
+
+	if !v.ValidData() {
+		templateData := app.newTemplateData(r)
+		templateData.Title = "User Profile (Error)"
+		templateData.User = user // Pass user with attempted changes
+		templateData.FormErrors = v.Errors
+		templateData.FormData = map[string]string{
+			"name":  user.Name,
+			"email": user.Email,
+		}
+		errRender := app.render(w, http.StatusUnprocessableEntity, "profile.tmpl", templateData)
+		if errRender != nil {
+			app.serverError(w, r, errRender)
+		}
+		return
+	}
+
+	// Call the UserModel's Update method
+	err = app.users.Update(user) // This will update name, email, language
+	if err != nil {
+		if errors.Is(err, data.ErrDuplicateEmail) {
+			v.AddError("email", "Email address is already in use")
+			templateData := app.newTemplateData(r)
+			templateData.Title = "User Profile (Error)"
+			user.Email = originalEmail // Revert email in the struct for display if it was the duplicate
+			templateData.User = user
+			templateData.FormErrors = v.Errors
+			templateData.FormData = map[string]string{
+				"name":  user.Name,
+				"email": user.Email, // Show the problematic email or original? Let's show what they typed.
+			}
+			errRender := app.render(w, http.StatusUnprocessableEntity, "profile.tmpl", templateData)
+			if errRender != nil {
+				app.serverError(w, r, errRender)
+			}
+		} else {
+			app.serverError(w, r, err)
+		}
+		return
+	}
+
+	app.session.Put(r, "flash", "Profile updated successfully.")
+	http.Redirect(w, r, "/user/profile", http.StatusSeeOther)
+}
+
+func (app *application) changeUserPassword(w http.ResponseWriter, r *http.Request) {
+	userID := app.getUserIDFromSession(r)
+	if userID == 0 {
+		app.clientError(w, http.StatusUnauthorized)
+		return
+	}
+
+	user, err := app.users.Get(userID)
+	if err != nil {
+		app.serverError(w, r, err)
+		return
+	}
+
+	err = r.ParseForm()
+	if err != nil {
+		app.clientError(w, http.StatusBadRequest)
+		return
+	}
+
+	currentPassword := r.PostForm.Get("current_password")
+	newPassword := r.PostForm.Get("new_password")
+	confirmPassword := r.PostForm.Get("confirm_password")
+
+	v := validator.NewValidator()
+	data.ValidatePasswordUpdate(v, currentPassword, newPassword, confirmPassword)
+
+	if !v.ValidData() {
+		templateData := app.newTemplateData(r)
+		templateData.Title = "User Profile (Password Error)"
+		templateData.User = user
+		templateData.FormErrors = v.Errors
+		templateData.FormData = make(map[string]string)
+		templateData.FormData["name"] = user.Name
+		templateData.FormData["email"] = user.Email
+
+		errRender := app.render(w, http.StatusUnprocessableEntity, "profile.tmpl", templateData)
+		if errRender != nil {
+			app.serverError(w, r, errRender)
+		}
+		return
+	}
+
+	match, err := user.Password.Matches(currentPassword)
+	if err != nil {
+		app.serverError(w, r, err)
+		return
+	}
+	if !match {
+		v.AddError("current_password", "Current password incorrect")
+		templateData := app.newTemplateData(r)
+		templateData.Title = "User Profile (Password Error)"
+		templateData.User = user
+		templateData.FormErrors = v.Errors
+		templateData.FormData = make(map[string]string)
+		templateData.FormData["name"] = user.Name
+		templateData.FormData["email"] = user.Email
+
+		errRender := app.render(w, http.StatusUnprocessableEntity, "profile.tmpl", templateData)
+		if errRender != nil {
+			app.serverError(w, r, errRender)
+		}
+		return
+	}
+
+	err = user.Password.Set(newPassword) // This updates the user.Password.hash internally
+	if err != nil {
+		app.serverError(w, r, err)
+		return
+	}
+
+	// Now use the exported Hash() method to get the new hash
+	err = app.users.UpdatePassword(user.ID, user.Password.Hash()) // <-- CORRECTED LINE
+	if err != nil {
+		app.serverError(w, r, err)
+		return
+	}
+
+	app.session.Put(r, "flash", "Password updated successfully.")
+	http.Redirect(w, r, "/user/profile", http.StatusSeeOther)
+}
+
+func (app *application) resetUserEntries(w http.ResponseWriter, r *http.Request) {
+	userID := app.getUserIDFromSession(r)
+	if userID == 0 {
+		app.clientError(w, http.StatusUnauthorized)
+		return
+	}
+
+	// No form parsing needed if just a button click, but ensure it's POST
+	if r.Method != http.MethodPost {
+		app.clientError(w, http.StatusMethodNotAllowed)
+		return
+	}
+
+	err := app.moods.DeleteAllByUserID(userID)
+	if err != nil {
+		app.serverError(w, r, err)
+		return
+	}
+
+	app.session.Put(r, "flash", "All your mood entries have been reset.")
+	http.Redirect(w, r, "/user/profile", http.StatusSeeOther)
+}
+
+func (app *application) deleteUserAccount(w http.ResponseWriter, r *http.Request) {
+	userID := app.getUserIDFromSession(r)
+	if userID == 0 {
+		app.clientError(w, http.StatusUnauthorized)
+		return
+	}
+
+	if r.Method != http.MethodPost {
+		app.clientError(w, http.StatusMethodNotAllowed)
+		return
+	}
+
+	// 1. Delete the user (moods should cascade delete due to FK constraint)
+	err := app.users.Delete(userID)
+	if err != nil {
+		// If user not found, it might be a stale session, log out anyway
+		if errors.Is(err, data.ErrRecordNotFound) {
+			app.logger.Warn("Attempt to delete non-existent user account", "userID", userID)
+		} else {
+			app.serverError(w, r, err)
+			return // Don't proceed if there was a real DB error
+		}
+	}
+
+	// 2. Log the user out by removing their session
+	app.session.Remove(r, "authenticatedUserID")
+	app.session.Put(r, "flash", "Your account has been successfully deleted.")
+	http.Redirect(w, r, "/landing", http.StatusSeeOther) // Redirect to landing page
 }
 
 /*

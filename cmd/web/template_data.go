@@ -2,14 +2,13 @@
 package main
 
 import (
+	"errors"
 	"html/template"
 	"net/http" // Ensure this is imported
 	"time"
 
 	"github.com/justinas/nosurf" // <-- Import nosurf
 	"github.com/mickali02/mood/internal/data"
-	// Import your sessions package if not already done via main.go's application struct
-	// "github.com/golangcollege/sessions"
 )
 
 // displayMood struct definition (unchanged)
@@ -75,13 +74,8 @@ type TemplateData struct {
 	// --- Field for Authentication State ---
 	IsAuthenticated bool `json:"is_authenticated"`
 
-	// --- ADD CSRF Token field ---
-	CSRFToken string `json:"csrf_token"` // <-- ADDED THIS FIELD
-	// --- END ADD ---
-
-	// --- Optional: Add field for current user ---
-	// User *data.User
-	// --- End add field ---
+	CSRFToken string     `json:"csrf_token"`
+	User      *data.User `json:"user"`
 }
 
 // NewTemplateData creates a *basic* default TemplateData instance.
@@ -111,6 +105,7 @@ func NewTemplateData() *TemplateData {
 		IsAuthenticated:   false, // Populated later
 		CSRFToken:         "",    // Populated later
 		UserName:          "",
+		User:              nil, // Initialize User as nil
 
 		// --- Initialize Stats Fields ---
 		Stats:             nil,
@@ -131,30 +126,23 @@ func GetEmotionDetails(emotionName string) EmotionDetails {
 // newTemplateData HELPER METHOD ON application
 // Populates base data, authentication status, flash messages, and CSRF token.
 func (app *application) newTemplateData(r *http.Request) *TemplateData {
-	// Create the basic template data struct.
 	td := NewTemplateData()
-
-	// Add the authentication status.
 	td.IsAuthenticated = app.isAuthenticated(r)
-
-	// Add the flash message.
 	td.Flash = app.session.PopString(r, "flash")
+	td.CSRFToken = nosurf.Token(r)
 
-	// Add the CSRF token.
-	td.CSRFToken = nosurf.Token(r) // <-- Use nosurf to get the token for the current request
-
-	// Add current user information (Optional, implement later if needed)
-	// if td.IsAuthenticated {
-	//    userID := app.getUserIDFromSession(r) // Assuming GetInt64 helper exists or use Get().(int64)
-	//    user, err := app.users.Get(userID)
-	//    if err == nil {
-	//        td.User = user
-	//    } else if !errors.Is(err, data.ErrRecordNotFound) { // Log unexpected errors
-	// 		 app.logger.Error("Failed to get user for template data", "userID", userID, "error", err)
-	//    }
-	// }
-
-	// Return the populated template data.
+	if td.IsAuthenticated {
+		userID := app.getUserIDFromSession(r)
+		if userID > 0 { // Ensure userID is valid before fetching
+			user, err := app.users.Get(userID)
+			if err == nil {
+				td.User = user
+				td.UserName = user.Name // Keep UserName populated for convenience if templates use it
+			} else if !errors.Is(err, data.ErrRecordNotFound) {
+				app.logger.Error("Failed to get user for template data", "userID", userID, "error", err)
+			}
+		}
+	}
 	return td
 }
 

@@ -1,16 +1,15 @@
-// internal/data/users.go
+// mood/internal/data/users.go
 package data
 
 import (
-	"context" // <-- Added
+	"context"
 	"database/sql"
 	"errors"
-	"strings" // <-- Added
+	"strings"
 	"time"
 
-	"golang.org/x/crypto/bcrypt" // <-- Added
-	// Import validator if needed for password validation methods later
-	// "github.com/mickali02/mood/internal/validator"
+	"github.com/mickali02/mood/internal/validator"
+	"golang.org/x/crypto/bcrypt"
 )
 
 // Define user-specific errors
@@ -18,10 +17,10 @@ var (
 	ErrDuplicateEmail     = errors.New("duplicate email")
 	ErrRecordNotFound     = errors.New("record not found")
 	ErrInvalidCredentials = errors.New("invalid credentials")
-	// Add more errors as needed (e.g., ErrPasswordMismatch for authentication)
+	ErrEditConflict       = errors.New("edit conflict") // For optimistic locking if/when versioning is added
 )
 
-// User struct definition
+// User struct definition (Language field removed)
 type User struct {
 	ID        int64     `json:"id"`
 	CreatedAt time.Time `json:"created_at"`
@@ -29,7 +28,7 @@ type User struct {
 	Email     string    `json:"email"`
 	Password  password  `json:"-"` // Use custom password type
 	Activated bool      `json:"activated"`
-	// Version int `json:"-"` // Optional version for optimistic locking
+	// Version int    `json:"-"` // Optional version for optimistic locking
 }
 
 // Custom password type
@@ -45,153 +44,125 @@ func (p *password) Set(plaintextPassword string) error {
 	if err != nil {
 		return err
 	}
-
-	p.plaintext = &plaintextPassword // Store the plaintext (as pointer)
-	p.hash = hash                    // Store the hash
+	p.plaintext = &plaintextPassword
+	p.hash = hash
 	return nil
 }
 
-// Matches checks whether the provided plaintext password matches the
-// stored hash.
+// Hash returns the stored password hash.
+// This is an exported method to allow access from other packages.
+func (p *password) Hash() []byte {
+	return p.hash
+}
+
+// Matches checks whether the provided plaintext password matches the stored hash.
 func (p *password) Matches(plaintextPassword string) (bool, error) {
-	// Compare the provided plaintext password with the stored hash.
 	err := bcrypt.CompareHashAndPassword(p.hash, []byte(plaintextPassword))
 	if err != nil {
-		// If the error is specifically bcrypt.ErrMismatchedHashAndPassword,
-		// it means the password doesn't match. Return false and nil error.
 		if errors.Is(err, bcrypt.ErrMismatchedHashAndPassword) {
 			return false, nil
 		}
-		// For any other error (e.g., invalid hash format), return the error.
 		return false, err
 	}
-
-	// If err is nil, the password matches.
 	return true, nil
 }
 
-// --- UserModel Struct Definition ---
-// UserModel wraps the connection pool.
+// --- Validator for User (Language validation removed) ---
+func ValidateUser(v *validator.Validator, user *User) {
+	v.Check(validator.NotBlank(user.Name), "name", "Name must be provided")
+	v.Check(validator.MaxLength(user.Name, 100), "name", "Must not be more than 100 characters")
+
+	v.Check(validator.NotBlank(user.Email), "email", "Email must be provided")
+	v.Check(validator.MaxLength(user.Email, 254), "email", "Must not be more than 254 characters")
+	v.Check(validator.Matches(user.Email, validator.EmailRX), "email", "Must be a valid email address")
+
+	// If user.Password.plaintext is not nil, it means a password is being set/validated (e.g., signup or password change).
+	if user.Password.plaintext != nil {
+		v.Check(validator.NotBlank(*user.Password.plaintext), "password", "Password must be provided")
+		v.Check(validator.MinLength(*user.Password.plaintext, 8), "password", "Must be at least 8 characters long")
+		v.Check(validator.MaxLength(*user.Password.plaintext, 72), "password", "Must not be more than 72 characters")
+	} else if user.ID == 0 && len(user.Password.hash) == 0 {
+		// This case is for a new user (ID is 0) where SetPassword was never called (hash is empty, plaintext is nil).
+		v.AddError("password", "Password must be provided")
+	}
+}
+
+// --- Validator for Password Change (remains unchanged) ---
+func ValidatePasswordUpdate(v *validator.Validator, currentPassword, newPassword, confirmPassword string) {
+	v.Check(validator.NotBlank(currentPassword), "current_password", "Current password must be provided")
+	v.Check(validator.NotBlank(newPassword), "new_password", "New password must be provided")
+	v.Check(validator.MinLength(newPassword, 8), "new_password", "New password must be at least 8 characters long")
+	v.Check(validator.MaxLength(newPassword, 72), "new_password", "New password must not be more than 72 characters long")
+	v.Check(validator.NotBlank(confirmPassword), "confirm_password", "Confirm new password must be provided")
+	v.Check(newPassword == confirmPassword, "confirm_password", "New passwords do not match")
+}
+
+// --- UserModel Struct Definition (remains unchanged) ---
 type UserModel struct {
-	DB *sql.DB // Pointer to the database connection pool
+	DB *sql.DB
 }
 
 // --- UserModel Methods ---
 
-// Insert a new user record into the database.
-// Note: This version takes a pointer to a User struct.
-// It assumes the password hash has already been set using password.Set().
+// Insert a new user record into the database. (Language removed)
 func (m *UserModel) Insert(user *User) error {
 	query := `
         INSERT INTO users (name, email, password_hash, activated)
         VALUES ($1, $2, $3, $4)
-        RETURNING id, created_at` // Return ID and CreatedAt after insert
+        RETURNING id, created_at`
 
 	args := []any{
 		user.Name,
 		user.Email,
-		user.Password.hash, // Insert the pre-computed hash
+		user.Password.hash,
 		user.Activated,
 	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	// Use QueryRowContext to get the returned ID and created_at timestamp.
-	// Scan them back into the user struct.
 	err := m.DB.QueryRowContext(ctx, query, args...).Scan(&user.ID, &user.CreatedAt)
 	if err != nil {
-		// Check for unique constraint violation on email
-		// Ensure "users_email_key" is your actual constraint name (check with \d users in psql)
-		if err.Error() != "" && strings.Contains(err.Error(), `duplicate key value violates unique constraint "users_email_key"`) {
+		if strings.Contains(err.Error(), `duplicate key value violates unique constraint "users_email_key"`) {
 			return ErrDuplicateEmail
 		}
-		return err // Return other errors directly
+		return err
 	}
-
 	return nil
 }
 
-// Authenticate checks if a user exists with the given email and password.
-// It returns the user ID on success.
-// Authenticate checks if a user exists with the given email and password AND is activated.
-// It returns the user ID on success.
-func (m *UserModel) Authenticate(email, plaintextPassword string) (int64, error) {
-	var id int64
-	var hashedPassword []byte
-
-	// Query to find the activated user by email and get their ID and hashed password.
-	query := `
-        SELECT id, password_hash FROM users
-        WHERE email = $1 AND activated = TRUE`
-
-	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
-	defer cancel()
-
-	// Execute query, scanning the ID and hash into variables.
-	err := m.DB.QueryRowContext(ctx, query, email).Scan(&id, &hashedPassword)
-	if err != nil {
-		// If no row is found (wrong email or user not activated), return ErrInvalidCredentials.
-		if errors.Is(err, sql.ErrNoRows) {
-			return 0, ErrInvalidCredentials
-		}
-		// For any other database error, return it directly.
-		return 0, err
-	}
-
-	// Compare the provided plaintext password with the stored hash.
-	err = bcrypt.CompareHashAndPassword(hashedPassword, []byte(plaintextPassword))
-	if err != nil {
-		// If the hashes don't match, return ErrInvalidCredentials.
-		if errors.Is(err, bcrypt.ErrMismatchedHashAndPassword) {
-			return 0, ErrInvalidCredentials
-		}
-		// For any other bcrypt error, return it directly.
-		return 0, err
-	}
-
-	// If the password is correct, return the user ID and a nil error.
-	return id, nil
-} // end Authenticate
-
-// Get retrieves a specific user based on their ID.
+// Get retrieves a specific user based on their ID. (Language removed)
 func (m *UserModel) Get(id int64) (*User, error) {
 	if id < 1 {
-		return nil, ErrRecordNotFound // Return specific error for invalid ID
+		return nil, ErrRecordNotFound
 	}
-
 	query := `
         SELECT id, created_at, name, email, password_hash, activated
         FROM users
         WHERE id = $1`
 
 	var user User
-
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	// Scan the password hash directly into user.Password.hash
 	err := m.DB.QueryRowContext(ctx, query, id).Scan(
 		&user.ID,
 		&user.CreatedAt,
 		&user.Name,
 		&user.Email,
-		&user.Password.hash, // Scan into the hash field of the password struct
+		&user.Password.hash,
 		&user.Activated,
 	)
-
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return nil, ErrRecordNotFound // Use our specific error
+			return nil, ErrRecordNotFound
 		}
-		return nil, err // Return other errors
+		return nil, err
 	}
-
-	// User found and scanned correctly
 	return &user, nil
 }
 
-// GetByEmail retrieves user details based on email address.
+// GetByEmail retrieves user details based on email address. (Language removed)
 func (m *UserModel) GetByEmail(email string) (*User, error) {
 	query := `
         SELECT id, created_at, name, email, password_hash, activated
@@ -199,7 +170,6 @@ func (m *UserModel) GetByEmail(email string) (*User, error) {
         WHERE email = $1`
 
 	var user User
-
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
@@ -211,51 +181,120 @@ func (m *UserModel) GetByEmail(email string) (*User, error) {
 		&user.Password.hash,
 		&user.Activated,
 	)
-
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, ErrRecordNotFound
 		}
 		return nil, err
 	}
-
 	return &user, nil
 }
 
-// Update allows changing user details like name, email, password hash, activation status.
-// Add optimistic locking later if needed using a version column.
+// Update allows changing user profile details: name, email. (Language removed)
 func (m *UserModel) Update(user *User) error {
 	query := `
         UPDATE users
-        SET name = $1, email = $2, password_hash = $3, activated = $4
-        WHERE id = $5
-        RETURNING id` // Optionally return something to confirm update
+        SET name = $1, email = $2 
+        WHERE id = $3
+        RETURNING id`
 
 	args := []any{
 		user.Name,
 		user.Email,
-		user.Password.hash, // Assumes hash is updated if password changed
-		user.Activated,
 		user.ID,
 	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	// Use QueryRowContext if you are using RETURNING, otherwise use ExecContext
-	err := m.DB.QueryRowContext(ctx, query, args...).Scan(&user.ID) // Example scan if returning ID
+	err := m.DB.QueryRowContext(ctx, query, args...).Scan(&user.ID)
 	if err != nil {
-		// Check for duplicate email error on update
-		if err.Error() != "" && strings.Contains(err.Error(), `duplicate key value violates unique constraint "users_email_key"`) {
+		switch {
+		case strings.Contains(err.Error(), `duplicate key value violates unique constraint "users_email_key"`):
 			return ErrDuplicateEmail
-		}
-		// Check if the record was not found for update (could happen if ID is wrong)
-		// QueryRowContext returns sql.ErrNoRows if RETURNING finds no row.
-		if errors.Is(err, sql.ErrNoRows) {
+		case errors.Is(err, sql.ErrNoRows):
 			return ErrRecordNotFound
+		default:
+			return err
 		}
+	}
+	return nil
+}
+
+// UpdatePassword updates a user's password hash in the database. (remains unchanged)
+func (m *UserModel) UpdatePassword(userID int64, newPasswordHash []byte) error {
+	query := `
+		UPDATE users
+		SET password_hash = $1
+		WHERE id = $2`
+
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	result, err := m.DB.ExecContext(ctx, query, newPasswordHash, userID)
+	if err != nil {
 		return err
 	}
 
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+	if rowsAffected == 0 {
+		return ErrRecordNotFound
+	}
+	return nil
+}
+
+// Authenticate checks if a user exists with the given email and password AND is activated. (remains unchanged)
+func (m *UserModel) Authenticate(email, plaintextPassword string) (int64, error) {
+	var id int64
+	var hashedPassword []byte
+	query := `
+        SELECT id, password_hash FROM users
+        WHERE email = $1 AND activated = TRUE`
+
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	err := m.DB.QueryRowContext(ctx, query, email).Scan(&id, &hashedPassword)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return 0, ErrInvalidCredentials
+		}
+		return 0, err
+	}
+
+	err = bcrypt.CompareHashAndPassword(hashedPassword, []byte(plaintextPassword))
+	if err != nil {
+		if errors.Is(err, bcrypt.ErrMismatchedHashAndPassword) {
+			return 0, ErrInvalidCredentials
+		}
+		return 0, err
+	}
+	return id, nil
+}
+
+// Delete a user by ID. (remains unchanged)
+func (m *UserModel) Delete(id int64) error {
+	if id < 1 {
+		return ErrRecordNotFound
+	}
+	query := `DELETE FROM users WHERE id = $1`
+
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	result, err := m.DB.ExecContext(ctx, query, id)
+	if err != nil {
+		return err
+	}
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+	if rowsAffected == 0 {
+		return ErrRecordNotFound
+	}
 	return nil
 }

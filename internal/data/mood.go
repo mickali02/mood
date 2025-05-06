@@ -572,6 +572,31 @@ func (m *MoodModel) GetAllStats(userID int64) (*MoodStats, error) { // <-- Added
 	return stats, nil
 }
 
+// DeleteAllByUserID deletes all mood entries for a specific user.
+func (m *MoodModel) DeleteAllByUserID(userID int64) error {
+	if userID < 1 {
+		return errors.New("invalid user ID provided for deleting moods")
+	}
+
+	query := `DELETE FROM moods WHERE user_id = $1`
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second) // Longer timeout for potentially many deletes
+	defer cancel()
+
+	result, err := m.DB.ExecContext(ctx, query, userID)
+	if err != nil {
+		return fmt.Errorf("mood delete all by user_id exec: %w", err)
+	}
+
+	_, err = result.RowsAffected() // We don't strictly need to check rowsAffected here
+	// If user has no moods, 0 rows affected is fine.
+	if err != nil {
+		return fmt.Errorf("mood delete all by user_id rows affected: %w", err)
+	}
+
+	return nil
+}
+
 // --- Remove or Comment Out Deprecated/Unused ---
 // func (m *MoodModel) GetAll() ([]*Mood, Metadata, error) { ... }
 // func (m *MoodModel) Search(query string) ([]*Mood, Metadata, error) { ... }
