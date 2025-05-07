@@ -1306,6 +1306,7 @@
     text-transform: uppercase;
     letter-spacing: 0.5px;
     box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+    margin-top: 20px;
 }
 
 .back-link:hover {
@@ -1411,7 +1412,7 @@
 
 .profile-section h2 {
     font-size: 1.5rem;
-    color: #e6d29e; /* Accent color for section titles */
+    color: #f0f0f0; /* Accent color for section titles */
     margin-top: 0;
     margin-bottom: 25px;
     padding-bottom: 10px;
