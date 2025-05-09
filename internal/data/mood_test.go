@@ -5,6 +5,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"fmt"
 	"os"
 	"reflect"
 	"testing"
@@ -64,23 +65,36 @@ func cleanupTestDB(t *testing.T, db *sql.DB) {
 // Helper to insert a test user and return their ID
 func insertTestUser(t *testing.T, db *sql.DB) int64 {
 	t.Helper()
-	user := &User{Name: "Test User", Email: "test@example.com", Activated: true}
+	// Use unique emails for each test user insertion if needed across tests
+	// This helps avoid duplicate email errors if cleanup fails or tests run in parallel unexpectedly
+	email := fmt.Sprintf("testuser_%d@example.com", time.Now().UnixNano())
+	user := &User{Name: "Test User", Email: email, Activated: true}
 	err := user.Password.Set("password")
 	if err != nil {
 		t.Fatalf("Failed to set test user password: %v", err)
 	}
 	userModel := UserModel{DB: db}
 	err = userModel.Insert(user)
-	if err != nil {
+	// Handle potential duplicate email error gracefully during setup
+	if err != nil && errors.Is(err, ErrDuplicateEmail) {
+		// If duplicate, try fetching the existing user
+		existingUser, getErr := userModel.GetByEmail(email)
+		if getErr != nil {
+			t.Fatalf("Failed to insert test user (%v) and failed to fetch existing user (%v)", err, getErr)
+		}
+		t.Logf("Test user %s already existed, using ID %d", email, existingUser.ID)
+		return existingUser.ID
+	} else if err != nil {
 		t.Fatalf("Failed to insert test user: %v", err)
 	}
+
 	if user.ID == 0 {
 		t.Fatal("Test user ID is 0 after insert")
 	}
 	return user.ID
 }
 
-// --- Test Functions for Statistics (Updated) ---
+// --- Test Functions for Statistics (Updated for Weekly) ---
 func TestMoodModel_GetTotalMoodCount(t *testing.T) {
 	if testing.Short() {
 		t.Skip("postgres: skipping integration test in short mode")
@@ -88,11 +102,11 @@ func TestMoodModel_GetTotalMoodCount(t *testing.T) {
 	db := newTestDB(t)
 	defer db.Close()
 	defer cleanupTestDB(t, db)
-	testUserID := insertTestUser(t, db) // Get a valid user ID
+	testUserID := insertTestUser(t, db)
 	model := MoodModel{DB: db}
 
 	t.Run("NoEntries", func(t *testing.T) {
-		count, err := model.GetTotalMoodCount(testUserID) // Pass UserID
+		count, err := model.GetTotalMoodCount(testUserID)
 		if err != nil {
 			t.Fatalf("Expected no error, got %s", err)
 		}
@@ -101,12 +115,11 @@ func TestMoodModel_GetTotalMoodCount(t *testing.T) {
 		}
 	})
 	t.Run("WithEntries", func(t *testing.T) {
-		// Insert moods associated with the test user
 		_, err := db.Exec(`INSERT INTO moods (title, content, emotion, emoji, color, user_id) VALUES ('T1','','H','h','#fff', $1), ('T2','','S','s','#000', $1)`, testUserID)
 		if err != nil {
 			t.Fatalf("Failed to insert test data: %s", err)
 		}
-		count, err := model.GetTotalMoodCount(testUserID) // Pass UserID
+		count, err := model.GetTotalMoodCount(testUserID)
 		if err != nil {
 			t.Fatalf("Expected no error, got %s", err)
 		}
@@ -127,7 +140,7 @@ func TestMoodModel_GetEmotionCounts(t *testing.T) {
 	model := MoodModel{DB: db}
 
 	t.Run("NoEntries", func(t *testing.T) {
-		counts, err := model.GetEmotionCounts(testUserID) // Pass UserID
+		counts, err := model.GetEmotionCounts(testUserID)
 		if err != nil {
 			t.Fatalf("Expected no error, got %s", err)
 		}
@@ -140,10 +153,11 @@ func TestMoodModel_GetEmotionCounts(t *testing.T) {
 		if err != nil {
 			t.Fatalf("Failed to insert test data: %s", err)
 		}
-		counts, err := model.GetEmotionCounts(testUserID) // Pass UserID
+		counts, err := model.GetEmotionCounts(testUserID)
 		if err != nil {
 			t.Fatalf("Expected no error, got %s", err)
 		}
+		// Expected order is by count DESC, then name ASC
 		expected := []EmotionCount{{Name: "Happy", Emoji: "😊", Color: "#FFD700", Count: 3}, {Name: "Calm", Emoji: "😌", Color: "#90EE90", Count: 1}, {Name: "Sad", Emoji: "😢", Color: "#6495ED", Count: 1}}
 		if !reflect.DeepEqual(counts, expected) {
 			t.Errorf("Mismatch in emotion counts.\nExpected: %+v\nGot:      %+v", expected, counts)
@@ -151,7 +165,8 @@ func TestMoodModel_GetEmotionCounts(t *testing.T) {
 	})
 }
 
-func TestMoodModel_GetMonthlyEntryCounts(t *testing.T) {
+// ** NEW Test for Weekly Counts **
+func TestMoodModel_GetWeeklyEntryCounts(t *testing.T) {
 	if testing.Short() {
 		t.Skip("postgres: skipping integration test in short mode")
 	}
@@ -162,30 +177,48 @@ func TestMoodModel_GetMonthlyEntryCounts(t *testing.T) {
 	model := MoodModel{DB: db}
 
 	t.Run("NoEntries", func(t *testing.T) {
-		counts, err := model.GetMonthlyEntryCounts(testUserID) // Pass UserID
+		counts, err := model.GetWeeklyEntryCounts(testUserID)
 		if err != nil {
 			t.Fatalf("Expected no error, got %s", err)
 		}
 		if len(counts) != 0 {
-			t.Errorf("Expected 0 monthly counts, got %d", len(counts))
+			t.Errorf("Expected 0 weekly counts, got %d", len(counts))
 		}
 	})
 	t.Run("WithEntries", func(t *testing.T) {
-		_, err := db.Exec(`INSERT INTO moods (title, content, emotion, emoji, color, created_at, user_id) VALUES ('Jan1','','N','😐','#B0C4DE','2024-01-15 10:00:00+00', $1),('Feb1','','H','😊','#FFD700','2024-02-05 11:00:00+00', $1),('Jan2','','S','😢','#6495ED','2024-01-20 12:00:00+00', $1),('Feb2','','H','😊','#FFD700','2024-02-25 13:00:00+00', $1),('Old','','C','😌','#90EE90','2023-12-10 09:00:00+00', $1)`, testUserID)
+		// Use dates spanning a few weeks. Note: Week numbers depend on the specific dates.
+		// 2024-01-01 is Week 1 (Monday)
+		// 2024-01-08 is Week 2 (Monday)
+		// 2024-01-15 is Week 3 (Monday)
+		// 2023-12-25 is Week 52 of 2023 (Monday)
+		_, err := db.Exec(`INSERT INTO moods (title, content, emotion, emoji, color, created_at, user_id) VALUES
+            ('Week1-1','','N','😐','#B0C4DE','2024-01-01 10:00:00+00', $1),
+            ('Week1-2','','H','😊','#FFD700','2024-01-03 11:00:00+00', $1),
+            ('Week2-1','','S','😢','#6495ED','2024-01-08 12:00:00+00', $1),
+            ('Week2-2','','H','😊','#FFD700','2024-01-10 13:00:00+00', $1),
+            ('Week2-3','','C','😌','#90EE90','2024-01-14 09:00:00+00', $1),
+            ('OldWeek','','A','😠','#DC143C','2023-12-27 15:00:00+00', $1)`, // Belongs to 2023-W52
+			testUserID)
 		if err != nil {
 			t.Fatalf("Failed to insert test data: %s", err)
 		}
-		counts, err := model.GetMonthlyEntryCounts(testUserID) // Pass UserID
+		counts, err := model.GetWeeklyEntryCounts(testUserID)
 		if err != nil {
 			t.Fatalf("Expected no error, got %s", err)
 		}
-		expected := []MonthlyCount{{Month: "Dec 2023", Count: 1}, {Month: "Jan 2024", Count: 2}, {Month: "Feb 2024", Count: 2}}
+		// Expected order is chronological week start
+		expected := []WeeklyCount{
+			{Week: "2023-52", Count: 1}, // Week starting 2023-12-25
+			{Week: "2024-01", Count: 2}, // Week starting 2024-01-01
+			{Week: "2024-02", Count: 3}, // Week starting 2024-01-08
+		}
 		if !reflect.DeepEqual(counts, expected) {
-			t.Errorf("Mismatch in monthly counts.\nExpected: %+v\nGot:      %+v", expected, counts)
+			t.Errorf("Mismatch in weekly counts.\nExpected: %+v\nGot:      %+v", expected, counts)
 		}
 	})
 }
 
+// ** UPDATED Test for GetAllStats **
 func TestMoodModel_GetAllStats(t *testing.T) {
 	if testing.Short() {
 		t.Skip("postgres: skipping integration test in short mode")
@@ -197,7 +230,7 @@ func TestMoodModel_GetAllStats(t *testing.T) {
 	model := MoodModel{DB: db}
 
 	t.Run("NoEntries", func(t *testing.T) {
-		stats, err := model.GetAllStats(testUserID) // Pass UserID
+		stats, err := model.GetAllStats(testUserID)
 		if err != nil {
 			t.Fatalf("Expected no error, got %s", err)
 		}
@@ -213,16 +246,30 @@ func TestMoodModel_GetAllStats(t *testing.T) {
 		if len(stats.EmotionCounts) != 0 {
 			t.Errorf("Expected 0 EmotionCounts, got %d", len(stats.EmotionCounts))
 		}
-		if len(stats.MonthlyCounts) != 0 {
-			t.Errorf("Expected 0 MonthlyCounts, got %d", len(stats.MonthlyCounts))
+		// Check WeeklyCounts is empty
+		if len(stats.WeeklyCounts) != 0 {
+			t.Errorf("Expected 0 WeeklyCounts, got %d", len(stats.WeeklyCounts))
+		}
+		if stats.LatestMood != nil {
+			t.Errorf("Expected LatestMood nil, got %+v", stats.LatestMood)
+		}
+		if stats.AvgEntriesPerWeek != 0.0 {
+			t.Errorf("Expected AvgEntriesPerWeek 0.0, got %f", stats.AvgEntriesPerWeek)
 		}
 	})
 	t.Run("WithEntries", func(t *testing.T) {
-		_, err := db.Exec(`INSERT INTO moods (title, content, emotion, emoji, color, created_at, user_id) VALUES ('JH','','Happy','😊','#FFD700','2024-01-10 10:00:00+00', $1),('JS','','Sad','😢','#6495ED','2024-01-15 11:00:00+00', $1),('FH1','','Happy','😊','#FFD700','2024-02-05 12:00:00+00', $1),('FH2','','Happy','😊','#FFD700','2024-02-20 13:00:00+00', $1),('FC','','Calm','😌','#90EE90','2024-02-25 14:00:00+00', $1)`, testUserID)
+		// Insert data similar to GetWeeklyEntryCounts test
+		_, err := db.Exec(`INSERT INTO moods (title, content, emotion, emoji, color, created_at, user_id) VALUES
+            ('Week1-1','','Happy','😊','#FFD700','2024-01-01 10:00:00+00', $1),
+            ('Week1-2','','Sad','😢','#6495ED','2024-01-03 11:00:00+00', $1),
+            ('Week2-1','','Happy','😊','#FFD700','2024-01-08 12:00:00+00', $1),
+            ('Week2-2','','Happy','😊','#FFD700','2024-01-10 13:00:00+00', $1),
+            ('Week2-3','','Calm','😌','#90EE90','2024-01-14 14:00:00+00', $1)`,
+			testUserID)
 		if err != nil {
 			t.Fatalf("Failed to insert test data: %s", err)
 		}
-		stats, err := model.GetAllStats(testUserID) // Pass UserID
+		stats, err := model.GetAllStats(testUserID)
 		if err != nil {
 			t.Fatalf("Expected no error, got %s", err)
 		}
@@ -243,14 +290,23 @@ func TestMoodModel_GetAllStats(t *testing.T) {
 		if !reflect.DeepEqual(stats.EmotionCounts, expectedEmotionCounts) {
 			t.Errorf("Mismatch in EmotionCounts.\nExpected: %+v\nGot:      %+v", expectedEmotionCounts, stats.EmotionCounts)
 		}
-		expectedMonthlyCounts := []MonthlyCount{{Month: "Jan 2024", Count: 2}, {Month: "Feb 2024", Count: 3}}
-		if !reflect.DeepEqual(stats.MonthlyCounts, expectedMonthlyCounts) {
-			t.Errorf("Mismatch in MonthlyCounts.\nExpected: %+v\nGot:      %+v", expectedMonthlyCounts, stats.MonthlyCounts)
+		// Verify WeeklyCounts
+		expectedWeeklyCounts := []WeeklyCount{{Week: "2024-01", Count: 2}, {Week: "2024-02", Count: 3}}
+		if !reflect.DeepEqual(stats.WeeklyCounts, expectedWeeklyCounts) {
+			t.Errorf("Mismatch in WeeklyCounts.\nExpected: %+v\nGot:      %+v", expectedWeeklyCounts, stats.WeeklyCounts)
+		}
+		// Verify Latest Mood (should be the last one inserted chronologically)
+		if stats.LatestMood == nil || stats.LatestMood.Title != "Week2-3" {
+			t.Errorf("Expected LatestMood 'Week2-3', got %+v", stats.LatestMood)
+		}
+		// Basic check for AvgEntriesPerWeek (value depends on when test is run vs '2024-01-01')
+		if stats.AvgEntriesPerWeek <= 0 {
+			t.Errorf("Expected positive AvgEntriesPerWeek, got %f", stats.AvgEntriesPerWeek)
 		}
 	})
 }
 
-// --- CRUD Tests (Updated) ---
+// --- CRUD Tests (Unchanged - already handle UserID) ---
 
 func TestMoodModel_Insert(t *testing.T) {
 	if testing.Short() {
@@ -266,7 +322,7 @@ func TestMoodModel_Insert(t *testing.T) {
 		mood := &Mood{
 			Title: "Test Insert", Content: "<p>This is content</p>",
 			Emotion: "Neutral", Emoji: "😐", Color: "#B0C4DE",
-			UserID: testUserID, // Add UserID
+			UserID: testUserID,
 		}
 		err := model.Insert(mood)
 		if err != nil {
@@ -282,7 +338,7 @@ func TestMoodModel_Insert(t *testing.T) {
 			t.Errorf("Expected non-zero UpdatedAt after insert")
 		}
 
-		fetchedMood, errGet := model.Get(mood.ID, testUserID) // Pass UserID
+		fetchedMood, errGet := model.Get(mood.ID, testUserID)
 		if errGet != nil {
 			t.Fatalf("Failed to fetch inserted mood: %v", errGet)
 		}
@@ -306,10 +362,9 @@ func TestMoodModel_Get(t *testing.T) {
 	defer db.Close()
 	defer cleanupTestDB(t, db)
 	testUserID := insertTestUser(t, db)
-	otherUserID := insertTestUser(t, db) // Insert a second user for ownership tests
+	otherUserID := insertTestUser(t, db)
 	model := MoodModel{DB: db}
 
-	// Setup: Insert moods for both users
 	moodUser1 := &Mood{Title: "User1 Mood", Content: "...", Emotion: "Happy", Emoji: "😊", Color: "#FFD700", UserID: testUserID}
 	err := model.Insert(moodUser1)
 	if err != nil {
@@ -322,7 +377,7 @@ func TestMoodModel_Get(t *testing.T) {
 	}
 
 	t.Run("GetExistingOwned", func(t *testing.T) {
-		fetchedMood, err := model.Get(moodUser1.ID, testUserID) // Get User1's mood as User1
+		fetchedMood, err := model.Get(moodUser1.ID, testUserID)
 		if err != nil {
 			t.Fatalf("Get failed for existing owned ID %d: %v", moodUser1.ID, err)
 		}
@@ -335,28 +390,28 @@ func TestMoodModel_Get(t *testing.T) {
 	})
 
 	t.Run("GetExistingNotOwned", func(t *testing.T) {
-		_, err := model.Get(moodUser2.ID, testUserID) // Try to get User2's mood as User1
-		if !errors.Is(err, ErrRecordNotFound) {       // Expect RecordNotFound because it's not owned by testUserID
+		_, err := model.Get(moodUser2.ID, testUserID)
+		if !errors.Is(err, ErrRecordNotFound) {
 			t.Errorf("Expected ErrRecordNotFound when getting non-owned mood, got %v", err)
 		}
 	})
 
 	t.Run("GetNonExistentPositiveID", func(t *testing.T) {
-		_, err := model.Get(int64(999999), testUserID) // Pass UserID
+		_, err := model.Get(int64(999999), testUserID)
 		if !errors.Is(err, ErrRecordNotFound) {
 			t.Errorf("Expected ErrRecordNotFound for non-existent ID, got %v", err)
 		}
 	})
 
 	t.Run("GetZeroID", func(t *testing.T) {
-		_, err := model.Get(0, testUserID) // Pass UserID
+		_, err := model.Get(0, testUserID)
 		if !errors.Is(err, ErrRecordNotFound) {
 			t.Errorf("Expected ErrRecordNotFound for ID 0, got %v", err)
 		}
 	})
 
 	t.Run("GetNegativeID", func(t *testing.T) {
-		_, err := model.Get(-1, testUserID) // Pass UserID
+		_, err := model.Get(-1, testUserID)
 		if !errors.Is(err, ErrRecordNotFound) {
 			t.Errorf("Expected ErrRecordNotFound for ID -1, got %v", err)
 		}
@@ -374,7 +429,6 @@ func TestMoodModel_Update(t *testing.T) {
 	otherUserID := insertTestUser(t, db)
 	model := MoodModel{DB: db}
 
-	// Setup: Insert moods to update/check against
 	originalMood := &Mood{Title: "Original Title", Content: "...", Emotion: "Sad", Emoji: "😢", Color: "#6495ED", UserID: testUserID}
 	err := model.Insert(originalMood)
 	if err != nil {
@@ -386,20 +440,20 @@ func TestMoodModel_Update(t *testing.T) {
 		t.Fatalf("Setup insert failed: %v", err)
 	}
 	originalUpdatedAt := originalMood.UpdatedAt
-	time.Sleep(10 * time.Millisecond)
+	time.Sleep(10 * time.Millisecond) // Ensure time difference for UpdatedAt check
 
 	t.Run("UpdateOwned", func(t *testing.T) {
 		moodToUpdate := &Mood{
 			ID: originalMood.ID, Title: "Updated Title", Content: "Updated Content",
 			Emotion: "Excited", Emoji: "🤩", Color: "#FF69B4",
-			UserID: testUserID, // Set correct UserID
+			UserID: testUserID,
 		}
 		err := model.Update(moodToUpdate)
 		if err != nil {
 			t.Fatalf("Update failed for owned ID %d: %v", moodToUpdate.ID, err)
 		}
 
-		updatedMood, errGet := model.Get(originalMood.ID, testUserID) // Verify with UserID
+		updatedMood, errGet := model.Get(originalMood.ID, testUserID)
 		if errGet != nil {
 			t.Fatalf("Failed to fetch mood after update: %v", errGet)
 		}
@@ -413,16 +467,15 @@ func TestMoodModel_Update(t *testing.T) {
 
 	t.Run("UpdateNotOwned", func(t *testing.T) {
 		moodToUpdate := &Mood{
-			ID:    otherUserMood.ID, // ID of the other user's mood
+			ID:    otherUserMood.ID,
 			Title: "Attempted Update Title", Content: "...", Emotion: "Neutral", Emoji: "😐", Color: "#ccc",
-			UserID: testUserID, // Try to update as testUserID
+			UserID: testUserID, // Try update as wrong user
 		}
 		err := model.Update(moodToUpdate)
-		if !errors.Is(err, ErrRecordNotFound) { // Expect RecordNotFound because ownership check fails
+		if !errors.Is(err, ErrRecordNotFound) {
 			t.Errorf("Expected ErrRecordNotFound when updating non-owned mood, got %v", err)
 		}
-		// Verify original wasn't changed
-		fetchedOther, _ := model.Get(otherUserMood.ID, otherUserID) // Fetch as correct owner
+		fetchedOther, _ := model.Get(otherUserMood.ID, otherUserID)
 		if fetchedOther.Title == moodToUpdate.Title {
 			t.Error("Non-owned mood was incorrectly updated")
 		}
@@ -468,30 +521,29 @@ func TestMoodModel_Delete(t *testing.T) {
 	}
 
 	t.Run("DeleteOwned", func(t *testing.T) {
-		err := model.Delete(moodToDelete.ID, testUserID) // Delete as owner
+		err := model.Delete(moodToDelete.ID, testUserID)
 		if err != nil {
 			t.Fatalf("Delete failed for owned ID %d: %v", moodToDelete.ID, err)
 		}
-		_, errGet := model.Get(moodToDelete.ID, testUserID) // Verify gone (as owner)
+		_, errGet := model.Get(moodToDelete.ID, testUserID)
 		if !errors.Is(errGet, ErrRecordNotFound) {
 			t.Errorf("Expected ErrRecordNotFound after deleting owned ID, got %v", errGet)
 		}
-		keptMood, errGetKeep := model.Get(moodToKeep.ID, testUserID) // Verify other owned mood remains
+		keptMood, errGetKeep := model.Get(moodToKeep.ID, testUserID)
 		if errGetKeep != nil || keptMood == nil {
 			t.Errorf("Owned mood that should have been kept was affected")
 		}
-		otherKeptMood, errGetOther := model.Get(otherUserMood.ID, otherUserID) // Verify other user's mood remains
+		otherKeptMood, errGetOther := model.Get(otherUserMood.ID, otherUserID)
 		if errGetOther != nil || otherKeptMood == nil {
 			t.Errorf("Other user's mood was affected")
 		}
 	})
 
 	t.Run("DeleteNotOwned", func(t *testing.T) {
-		err := model.Delete(otherUserMood.ID, testUserID) // Try delete other user's mood as testUser
-		if !errors.Is(err, ErrRecordNotFound) {           // Expect RecordNotFound due to ownership check
+		err := model.Delete(otherUserMood.ID, testUserID)
+		if !errors.Is(err, ErrRecordNotFound) {
 			t.Errorf("Expected ErrRecordNotFound when deleting non-owned mood, got %v", err)
 		}
-		// Verify other user's mood still exists
 		otherKeptMood, errGetOther := model.Get(otherUserMood.ID, otherUserID)
 		if errGetOther != nil || otherKeptMood == nil {
 			t.Errorf("Non-owned mood was incorrectly deleted")
@@ -499,14 +551,14 @@ func TestMoodModel_Delete(t *testing.T) {
 	})
 
 	t.Run("DeleteNonExistent", func(t *testing.T) {
-		err := model.Delete(int64(999999), testUserID) // Pass UserID
+		err := model.Delete(int64(999999), testUserID)
 		if !errors.Is(err, ErrRecordNotFound) {
 			t.Errorf("Expected ErrRecordNotFound when deleting non-existent ID, got %v", err)
 		}
 	})
 
 	t.Run("DeleteZeroID", func(t *testing.T) {
-		err := model.Delete(0, testUserID) // Pass UserID
+		err := model.Delete(0, testUserID)
 		if !errors.Is(err, ErrRecordNotFound) {
 			t.Errorf("Expected ErrRecordNotFound when deleting ID 0, got %v", err)
 		}
@@ -525,7 +577,7 @@ func TestMoodModel_GetDistinctEmotionDetails(t *testing.T) {
 	model := MoodModel{DB: db}
 
 	t.Run("NoEntriesForUser", func(t *testing.T) {
-		details, err := model.GetDistinctEmotionDetails(testUserID1) // Pass UserID
+		details, err := model.GetDistinctEmotionDetails(testUserID1)
 		if err != nil {
 			t.Fatalf("Expected no error, got %v", err)
 		}
@@ -544,10 +596,11 @@ func TestMoodModel_GetDistinctEmotionDetails(t *testing.T) {
 			t.Fatalf("Failed to insert test data: %v", err)
 		}
 
-		details1, err1 := model.GetDistinctEmotionDetails(testUserID1) // Get for User1
+		details1, err1 := model.GetDistinctEmotionDetails(testUserID1)
 		if err1 != nil {
 			t.Fatalf("Expected no error for user 1, got %v", err1)
 		}
+		// Expected order is alphabetical by emotion name
 		expected1 := []EmotionDetail{
 			{Name: "Calm", Emoji: "😌", Color: "#90EE90"},
 			{Name: "Happy", Emoji: "😊", Color: "#FFD700"},
@@ -557,7 +610,7 @@ func TestMoodModel_GetDistinctEmotionDetails(t *testing.T) {
 			t.Errorf("Mismatch for user 1.\nExpected: %+v\nGot:      %+v", expected1, details1)
 		}
 
-		details2, err2 := model.GetDistinctEmotionDetails(testUserID2) // Get for User2
+		details2, err2 := model.GetDistinctEmotionDetails(testUserID2)
 		if err2 != nil {
 			t.Fatalf("Expected no error for user 2, got %v", err2)
 		}
@@ -586,17 +639,17 @@ func TestMoodModel_GetFiltered(t *testing.T) {
 	_, err := db.Exec(`INSERT INTO moods (title, content, emotion, emoji, color, created_at, user_id) VALUES
         ('U1 Day 5 Calm', 'Relax', 'Calm', '😌', '#90EE90', $1, $6), ('U1 Day 4 Happy', 'Good', 'Happy', '😊', '#FFD700', $2, $6),
         ('U1 Day 3 Sad', 'Down', 'Sad', '😢', '#6495ED', $3, $6), ('U1 Day 2 Target', 'Tgt', 'Calm', '😌', '#90EE90', $4, $6),
-        ('U2 Day 1 Happy', 'Start', 'Happy', '😊', '#FFD700', $5, $7)`, // Note UserID $7 for last one
+        ('U2 Day 1 Happy', 'Start', 'Happy', '😊', '#FFD700', $5, $7)`,
 		baseTime.AddDate(0, 0, -0), baseTime.AddDate(0, 0, -1), baseTime.AddDate(0, 0, -2),
 		baseTime.AddDate(0, 0, -3), baseTime.AddDate(0, 0, -4),
-		testUserID1, testUserID2) // Pass UserIDs
+		testUserID1, testUserID2)
 	if err != nil {
 		t.Fatalf("Setup failed: Could not insert moods: %v", err)
 	}
 	totalUser1Records := 4
 
 	t.Run("NoFilters_User1_Page1", func(t *testing.T) {
-		filters := FilterCriteria{Page: 1, PageSize: 3, UserID: testUserID1} // Add UserID
+		filters := FilterCriteria{Page: 1, PageSize: 3, UserID: testUserID1}
 		moods, metadata, err := model.GetFiltered(filters)
 		if err != nil {
 			t.Fatalf("GetFiltered failed: %v", err)
@@ -614,7 +667,7 @@ func TestMoodModel_GetFiltered(t *testing.T) {
 	})
 
 	t.Run("NoFilters_User2", func(t *testing.T) {
-		filters := FilterCriteria{Page: 1, PageSize: 10, UserID: testUserID2} // Filter for User2
+		filters := FilterCriteria{Page: 1, PageSize: 10, UserID: testUserID2}
 		moods, metadata, err := model.GetFiltered(filters)
 		if err != nil {
 			t.Fatalf("GetFiltered failed: %v", err)
@@ -632,7 +685,7 @@ func TestMoodModel_GetFiltered(t *testing.T) {
 	})
 
 	t.Run("FilterText_User1", func(t *testing.T) {
-		filters := FilterCriteria{TextQuery: "Target", Page: 1, PageSize: 10, UserID: testUserID1} // Add UserID
+		filters := FilterCriteria{TextQuery: "Target", Page: 1, PageSize: 10, UserID: testUserID1}
 		moods, _, err := model.GetFiltered(filters)
 		if err != nil {
 			t.Fatalf("GetFiltered failed: %v", err)

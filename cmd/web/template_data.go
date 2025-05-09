@@ -33,13 +33,13 @@ type EmotionDetails struct {
 
 // EmotionMap definition (unchanged)
 var EmotionMap = map[string]EmotionDetails{
-	"Happy":   {Name: "Happy", Emoji: "😊", Color: "#FFD700"},
-	"Sad":     {Name: "Sad", Emoji: "😢", Color: "#6495ED"},
-	"Angry":   {Name: "Angry", Emoji: "😠", Color: "#DC143C"},
-	"Anxious": {Name: "Anxious", Emoji: "😟", Color: "#FF8C00"},
-	"Calm":    {Name: "Calm", Emoji: "😌", Color: "#90EE90"},
-	"Excited": {Name: "Excited", Emoji: "🤩", Color: "#FF69B4"},
-	"Neutral": {Name: "Neutral", Emoji: "😐", Color: "#B0C4DE"},
+	"Happy":   {Name: "Happy", Emoji: "😊", Color: "#FFCA28"},
+	"Sad":     {Name: "Sad", Emoji: "😢", Color: "#5C8DDE"},
+	"Angry":   {Name: "Angry", Emoji: "😠", Color: "#E53935"},
+	"Anxious": {Name: "Anxious", Emoji: "😟", Color: "#FFA000"},
+	"Calm":    {Name: "Calm", Emoji: "😌", Color: "#69B36C"},
+	"Excited": {Name: "Excited", Emoji: "🤩", Color: "#F06292"},
+	"Neutral": {Name: "Neutral", Emoji: "😐", Color: "#A4B8D0"},
 }
 
 // TemplateData holds data passed to HTML templates
@@ -68,7 +68,7 @@ type TemplateData struct {
 	// --- Fields for Stats Page ---
 	Stats             *data.MoodStats
 	EmotionCountsJSON string
-	MonthlyCountsJSON string
+	WeeklyCountsJSON  string
 	Quote             string
 
 	// --- Field for Authentication State ---
@@ -110,7 +110,7 @@ func NewTemplateData() *TemplateData {
 		// --- Initialize Stats Fields ---
 		Stats:             nil,
 		EmotionCountsJSON: "[]",
-		MonthlyCountsJSON: "[]",
+		WeeklyCountsJSON:  "[]",
 		Quote:             "",
 	}
 }

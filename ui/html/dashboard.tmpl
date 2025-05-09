@@ -23,7 +23,6 @@
                         <a href="/stats" data-title="Mood Stats" class="{{if not .HasMoodEntries}}disabled-link{{end}}"><i class="bi bi-bar-chart-fill nav-icon"></i></a>
                     </li>
                     <li class="nav-separator"></li>
-                    <!-- **** REVERTED PROFILE LINK **** -->
                     <li><a href="/user/profile" data-title="Profile"><i class="bi bi-person-circle nav-icon"></i></a></li>
                     <li>
                         <form action="/user/logout" method="POST" style="display: inline;">
@@ -54,17 +53,37 @@
             <div id="dashboard-content-area">
                  {{ block "dashboard-content" . }}
                     <!-- The content from fragments/dashboard_content.tmpl will be rendered here -->
+                    <!-- The modal is NO LONGER defined inside this block -->
                  {{ end }}
             </div> <!-- === END WRAPPER === -->
 
         </main>
     </div> <!-- End of dashboard-container -->
 
-    <!--
-        PROFILE MODAL HTML HAS BEEN REMOVED FROM HERE.
-        The profile will be accessed via a direct link to /user/profile
-        which renders profile.tmpl as a full page.
-    -->
+    <!-- **** MOOD DETAIL MODAL PLACED HERE (Outside HTMX Swap Area) **** -->
+    <div id="mood-detail-modal" class="mood-detail-modal">
+        <div class="mood-detail-modal-content">
+            <div class="mood-detail-modal-header">
+                <h2 id="modal-title">Mood Title</h2>
+                <button class="mood-detail-modal-close" id="modal-detail-close-button" aria-label="Close modal">×</button>
+            </div>
+            <div class="mood-detail-modal-body">
+                 <div class="modal-emotion-info">
+                     <span id="modal-emoji">❓</span>
+                     <strong id="modal-emotion-name">Emotion</strong>
+                 </div>
+                 <div class="modal-date-info">
+                     Logged: <span id="modal-created-at">Date</span>
+                 </div>
+                 <div id="modal-full-content" class="quill-rendered-content">
+                     <!-- Full content will be inserted here by JS -->
+                 </div>
+            </div>
+        </div>
+    </div>
+    <!-- **** END MOOD DETAIL MODAL **** -->
+
+    <!-- Profile Modal structure removed -->
 
     <!-- HTMX Script -->
     <script src="https://unpkg.com/htmx.org@1.9.10" integrity="sha384-D1Kt99CQMDuVetoL1lrYwg5t+9QdHe7NLX/SoJYkXDFfX37iInKRy5xLSi8nO7UC" crossorigin="anonymous"></script>

@@ -22,7 +22,7 @@ import (
 
 var ValidEmotions = []string{"Happy", "Sad", "Angry", "Anxious", "Calm", "Excited", "Neutral"}
 
-// --- Struct Definitions (EmotionDetail, EmotionCount, MonthlyCount are unchanged) ---
+// --- Struct Definitions ---
 type EmotionDetail struct {
 	Name  string
 	Emoji string
@@ -34,8 +34,10 @@ type EmotionCount struct {
 	Color string `json:"color"`
 	Count int    `json:"count"`
 }
-type MonthlyCount struct {
-	Month string `json:"month"`
+
+// Struct for weekly aggregation
+type WeeklyCount struct {
+	Week  string `json:"week"` // e.g., "2024-23" (Year-WeekNumber)
 	Count int    `json:"count"`
 }
 
@@ -44,7 +46,7 @@ type MoodStats struct {
 	TotalEntries      int            `json:"totalEntries"`
 	MostCommonEmotion *EmotionCount  `json:"mostCommonEmotion"`
 	EmotionCounts     []EmotionCount `json:"emotionCounts"`
-	MonthlyCounts     []MonthlyCount `json:"monthlyCounts"`
+	WeeklyCounts      []WeeklyCount  `json:"weeklyCounts"` // Changed from MonthlyCounts
 	LatestMood        *Mood          `json:"latestMood"`
 	AvgEntriesPerWeek float64        `json:"avgEntriesPerWeek"`
 }
@@ -57,10 +59,10 @@ type FilterCriteria struct {
 	EndDate   time.Time
 	Page      int
 	PageSize  int
-	UserID    int64 // <-- ADDED UserID for filtering
+	UserID    int64 // UserID for filtering
 }
 
-// --- Metadata struct (unchanged) ---
+// --- Metadata struct ---
 type Metadata struct {
 	CurrentPage  int `json:"current_page,omitempty"`
 	PageSize     int `json:"page_size,omitempty"`
@@ -69,7 +71,7 @@ type Metadata struct {
 	TotalRecords int `json:"total_records,omitempty"`
 }
 
-// calculateMetadata (unchanged)
+// calculateMetadata
 func calculateMetadata(totalRecords, page, pageSize int) Metadata {
 	if totalRecords == 0 {
 		return Metadata{}
@@ -93,10 +95,10 @@ type Mood struct {
 	Emotion   string    `json:"emotion"`
 	Emoji     string    `json:"emoji"`
 	Color     string    `json:"color"`
-	UserID    int64     `json:"user_id"` // <-- Already added
+	UserID    int64     `json:"user_id"`
 }
 
-// ValidateMood (unchanged)
+// ValidateMood
 func ValidateMood(v *validator.Validator, mood *Mood) {
 	v.Check(validator.NotBlank(mood.Title), "title", "must be provided")
 	v.Check(validator.MaxLength(mood.Title, 100), "title", "must not be more than 100 characters long")
@@ -107,7 +109,7 @@ func ValidateMood(v *validator.Validator, mood *Mood) {
 	v.Check(validator.MaxLength(mood.Emotion, 50), "emotion", "name must not be more than 50 characters long")
 	v.Check(validator.NotBlank(mood.Emoji), "emoji", "must be provided")
 	v.Check(utf8.RuneCountInString(mood.Emoji) >= 1, "emoji", "must contain at least one character")
-	v.Check(utf8.RuneCountInString(mood.Emoji) <= 4, "emoji", "is too long for a typical emoji") // Limit emoji length
+	v.Check(utf8.RuneCountInString(mood.Emoji) <= 4, "emoji", "is too long for a typical emoji")
 	v.Check(validator.NotBlank(mood.Color), "color", "must be provided")
 	v.Check(validator.Matches(mood.Color, validator.HexColorRX), "color", "must be a valid hex color code (e.g., #FFD700)")
 }
@@ -116,15 +118,15 @@ type MoodModel struct {
 	DB *sql.DB
 }
 
-// Insert - Takes UserID from the Mood struct
+// Insert
 func (m *MoodModel) Insert(mood *Mood) error {
 	if mood.UserID < 1 {
 		return errors.New("invalid user ID provided for mood insert")
 	}
 
 	query := `
-        INSERT INTO moods (title, content, emotion, emoji, color, user_id) -- Added user_id
-        VALUES ($1, $2, $3, $4, $5, $6)                            -- Added $6
+        INSERT INTO moods (title, content, emotion, emoji, color, user_id)
+        VALUES ($1, $2, $3, $4, $5, $6)
         RETURNING id, created_at, updated_at`
 
 	args := []any{mood.Title, mood.Content, mood.Emotion, mood.Emoji, mood.Color, mood.UserID}
@@ -134,9 +136,7 @@ func (m *MoodModel) Insert(mood *Mood) error {
 
 	err := m.DB.QueryRowContext(ctx, query, args...).Scan(&mood.ID, &mood.CreatedAt, &mood.UpdatedAt)
 	if err != nil {
-		// Check for potential foreign key violation (if user_id doesn't exist in users table)
-		// The specific error string might vary slightly depending on PostgreSQL version/config
-		if pqErr, ok := err.(*pq.Error); ok && pqErr.Code == "23503" { // 23503 is foreign_key_violation
+		if pqErr, ok := err.(*pq.Error); ok && pqErr.Code == "23503" {
 			return fmt.Errorf("mood insert failed: user with ID %d does not exist: %w", mood.UserID, err)
 		}
 		return fmt.Errorf("mood insert: %w", err)
@@ -144,48 +144,47 @@ func (m *MoodModel) Insert(mood *Mood) error {
 	return nil
 }
 
-// Get - Now requires mood ID and the UserID it should belong to
-func (m *MoodModel) Get(id int64, userID int64) (*Mood, error) { // <-- Added userID parameter
+// Get
+func (m *MoodModel) Get(id int64, userID int64) (*Mood, error) {
 	if id < 1 || userID < 1 {
-		return nil, ErrRecordNotFound // Use shared error
+		return nil, ErrRecordNotFound
 	}
 	query := `
-        SELECT id, created_at, updated_at, title, content, emotion, emoji, color, user_id -- Added user_id
+        SELECT id, created_at, updated_at, title, content, emotion, emoji, color, user_id
         FROM moods
-        WHERE id = $1 AND user_id = $2` // Added user_id check
+        WHERE id = $1 AND user_id = $2`
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
 	var mood Mood
-	err := m.DB.QueryRowContext(ctx, query, id, userID).Scan( // Pass userID as arg
+	err := m.DB.QueryRowContext(ctx, query, id, userID).Scan(
 		&mood.ID, &mood.CreatedAt, &mood.UpdatedAt,
 		&mood.Title, &mood.Content, &mood.Emotion,
-		&mood.Emoji, &mood.Color, &mood.UserID, // Scan UserID
+		&mood.Emoji, &mood.Color, &mood.UserID,
 	)
 
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			// Mood ID doesn't exist OR doesn't belong to this user.
-			return nil, ErrRecordNotFound // Use shared error
+			return nil, ErrRecordNotFound
 		}
 		return nil, fmt.Errorf("mood get: %w", err)
 	}
 	return &mood, nil
 }
 
-// Update - Takes UserID from the Mood struct and checks ownership in WHERE
-func (m *MoodModel) Update(mood *Mood) error { // <-- Mood struct now contains UserID
+// Update
+func (m *MoodModel) Update(mood *Mood) error {
 	if mood.ID < 1 || mood.UserID < 1 {
-		return ErrRecordNotFound // Use shared error
+		return ErrRecordNotFound
 	}
 	query := `
         UPDATE moods
         SET title = $1, content = $2, emotion = $3, emoji = $4, color = $5, updated_at = NOW()
-        WHERE id = $6 AND user_id = $7 -- Added user_id check
+        WHERE id = $6 AND user_id = $7
         RETURNING updated_at`
 
-	args := []any{mood.Title, mood.Content, mood.Emotion, mood.Emoji, mood.Color, mood.ID, mood.UserID} // Use mood.UserID
+	args := []any{mood.Title, mood.Content, mood.Emotion, mood.Emoji, mood.Color, mood.ID, mood.UserID}
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
@@ -193,25 +192,24 @@ func (m *MoodModel) Update(mood *Mood) error { // <-- Mood struct now contains U
 	err := m.DB.QueryRowContext(ctx, query, args...).Scan(&mood.UpdatedAt)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			// Mood ID didn't exist OR didn't belong to this user.
-			return ErrRecordNotFound // Use shared error
+			return ErrRecordNotFound
 		}
 		return fmt.Errorf("mood update: %w", err)
 	}
 	return nil
 }
 
-// Delete - Requires mood ID and the UserID it must belong to
-func (m *MoodModel) Delete(id int64, userID int64) error { // <-- Added userID parameter
+// Delete
+func (m *MoodModel) Delete(id int64, userID int64) error {
 	if id < 1 || userID < 1 {
-		return ErrRecordNotFound // Use shared error
+		return ErrRecordNotFound
 	}
-	query := `DELETE FROM moods WHERE id = $1 AND user_id = $2` // Added user_id check
+	query := `DELETE FROM moods WHERE id = $1 AND user_id = $2`
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	result, err := m.DB.ExecContext(ctx, query, id, userID) // Pass userID as arg
+	result, err := m.DB.ExecContext(ctx, query, id, userID)
 	if err != nil {
 		return fmt.Errorf("mood delete exec: %w", err)
 	}
@@ -222,31 +220,23 @@ func (m *MoodModel) Delete(id int64, userID int64) error { // <-- Added userID p
 	}
 
 	if rowsAffected == 0 {
-		// Mood ID didn't exist OR didn't belong to this user.
-		return ErrRecordNotFound // Use shared error
+		return ErrRecordNotFound
 	}
 	return nil
 }
 
-// GetFiltered - Now requires UserID in the FilterCriteria
+// GetFiltered
 func (m *MoodModel) GetFiltered(filters FilterCriteria) ([]*Mood, Metadata, error) {
 	if filters.UserID < 1 {
-		// Return empty results and metadata if UserID is invalid, rather than an error,
-		// as this might be called internally before auth check in some cases (though shouldn't be).
-		// Log a warning instead.
-		// Consider returning an error if UserID is absolutely required here.
-		// For now, return empty.
-		return []*Mood{}, Metadata{}, errors.New("invalid user ID provided for filtering moods") // Return error is safer
+		return []*Mood{}, Metadata{}, errors.New("invalid user ID provided for filtering moods")
 	}
 
-	// Start building the WHERE clause, always include user_id check first
 	baseQuery := `
         FROM moods
-        WHERE user_id = $1` // Filter by user ID is mandatory
+        WHERE user_id = $1`
 	args := []any{filters.UserID}
-	paramIndex := 2 // Start next parameter index at 2
+	paramIndex := 2
 
-	// Add other filters dynamically
 	if filters.TextQuery != "" {
 		searchTerm := "%" + strings.TrimSpace(filters.TextQuery) + "%"
 		baseQuery += fmt.Sprintf(" AND (title ILIKE $%d OR content ILIKE $%d OR emotion ILIKE $%d)", paramIndex, paramIndex, paramIndex)
@@ -263,7 +253,7 @@ func (m *MoodModel) GetFiltered(filters FilterCriteria) ([]*Mood, Metadata, erro
 				args = append(args, emotionName, emotionEmoji)
 				paramIndex += 2
 			}
-		} else if filters.Emotion != "" { // Handle if only emotion name is passed (e.g., if filter changes)
+		} else if filters.Emotion != "" {
 			baseQuery += fmt.Sprintf(" AND emotion = $%d", paramIndex)
 			args = append(args, filters.Emotion)
 			paramIndex++
@@ -280,7 +270,6 @@ func (m *MoodModel) GetFiltered(filters FilterCriteria) ([]*Mood, Metadata, erro
 		paramIndex++
 	}
 
-	// --- Count Query (Includes user_id filter via baseQuery) ---
 	totalRecordsQuery := `SELECT count(*) ` + baseQuery
 	ctxCount, cancelCount := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancelCount()
@@ -291,7 +280,6 @@ func (m *MoodModel) GetFiltered(filters FilterCriteria) ([]*Mood, Metadata, erro
 		return nil, Metadata{}, fmt.Errorf("count query execution: %w", err)
 	}
 
-	// --- Metadata Calculation (remains the same logic) ---
 	if filters.PageSize <= 0 {
 		filters.PageSize = 4
 	}
@@ -299,22 +287,21 @@ func (m *MoodModel) GetFiltered(filters FilterCriteria) ([]*Mood, Metadata, erro
 		filters.Page = 1
 	}
 	metadata := calculateMetadata(totalRecords, filters.Page, filters.PageSize)
-	if totalRecords == 0 { // Optimization: return early if no records match filters
+	if totalRecords == 0 {
 		return []*Mood{}, metadata, nil
 	}
 	if filters.Page > metadata.LastPage {
-		return []*Mood{}, metadata, nil // Requested page beyond last page
+		return []*Mood{}, metadata, nil
 	}
 
-	// --- Main Select Query (Includes user_id filter and dynamic filters) ---
-	selectQuery := `SELECT id, created_at, updated_at, title, content, emotion, emoji, color, user_id ` + // Added user_id
-		baseQuery + // WHERE clause includes user_id and other filters
+	selectQuery := `SELECT id, created_at, updated_at, title, content, emotion, emoji, color, user_id ` +
+		baseQuery +
 		` ORDER BY created_at DESC LIMIT $` + fmt.Sprint(paramIndex) +
 		` OFFSET $` + fmt.Sprint(paramIndex+1)
 
 	limit := filters.PageSize
 	offset := (filters.Page - 1) * filters.PageSize
-	queryArgs := append(args, limit, offset) // Append limit and offset to the existing args
+	queryArgs := append(args, limit, offset)
 
 	ctxQuery, cancelQuery := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancelQuery()
@@ -325,17 +312,15 @@ func (m *MoodModel) GetFiltered(filters FilterCriteria) ([]*Mood, Metadata, erro
 	}
 	defer rows.Close()
 
-	// Use make with capacity for slight performance improvement
 	moods := make([]*Mood, 0, filters.PageSize)
 	for rows.Next() {
 		var mood Mood
 		err := rows.Scan(
 			&mood.ID, &mood.CreatedAt, &mood.UpdatedAt,
 			&mood.Title, &mood.Content, &mood.Emotion,
-			&mood.Emoji, &mood.Color, &mood.UserID, // Added UserID scan
+			&mood.Emoji, &mood.Color, &mood.UserID,
 		)
 		if err != nil {
-			// Return partial results potentially, or fail entirely? Failing is safer.
 			return nil, metadata, fmt.Errorf("paginated scan row: %w", err)
 		}
 		moods = append(moods, &mood)
@@ -348,21 +333,21 @@ func (m *MoodModel) GetFiltered(filters FilterCriteria) ([]*Mood, Metadata, erro
 	return moods, metadata, nil
 }
 
-// GetDistinctEmotionDetails - Now needs UserID to show only emotions used by that user
-func (m *MoodModel) GetDistinctEmotionDetails(userID int64) ([]EmotionDetail, error) { // <-- Added userID parameter
+// GetDistinctEmotionDetails
+func (m *MoodModel) GetDistinctEmotionDetails(userID int64) ([]EmotionDetail, error) {
 	if userID < 1 {
 		return nil, errors.New("invalid user ID provided for distinct emotions")
 	}
 	query := `
         SELECT DISTINCT emotion, emoji, color FROM moods
         WHERE emotion IS NOT NULL AND emoji IS NOT NULL AND color IS NOT NULL
-          AND user_id = $1 -- Added user_id filter
+          AND user_id = $1
         ORDER BY emotion ASC`
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	rows, err := m.DB.QueryContext(ctx, query, userID) // Pass userID
+	rows, err := m.DB.QueryContext(ctx, query, userID)
 	if err != nil {
 		return nil, fmt.Errorf("distinct emotion query: %w", err)
 	}
@@ -385,22 +370,22 @@ func (m *MoodModel) GetDistinctEmotionDetails(userID int64) ([]EmotionDetail, er
 
 // --- Stat Helper Functions Modified to Accept UserID ---
 
-func (m *MoodModel) GetTotalMoodCount(userID int64) (int, error) { // <-- Added userID parameter
+func (m *MoodModel) GetTotalMoodCount(userID int64) (int, error) {
 	if userID < 1 {
 		return 0, errors.New("invalid user ID")
 	}
-	query := `SELECT COUNT(*) FROM moods WHERE user_id = $1` // Added WHERE
+	query := `SELECT COUNT(*) FROM moods WHERE user_id = $1`
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 	var total int
-	err := m.DB.QueryRowContext(ctx, query, userID).Scan(&total) // Pass userID
+	err := m.DB.QueryRowContext(ctx, query, userID).Scan(&total)
 	if err != nil {
 		return 0, fmt.Errorf("mood count query: %w", err)
 	}
 	return total, nil
 }
 
-func (m *MoodModel) GetEmotionCounts(userID int64) ([]EmotionCount, error) { // <-- Added userID parameter
+func (m *MoodModel) GetEmotionCounts(userID int64) ([]EmotionCount, error) {
 	if userID < 1 {
 		return nil, errors.New("invalid user ID")
 	}
@@ -408,12 +393,12 @@ func (m *MoodModel) GetEmotionCounts(userID int64) ([]EmotionCount, error) { // 
         SELECT emotion, emoji, color, COUNT(*)
         FROM moods
         WHERE emotion IS NOT NULL AND emoji IS NOT NULL AND color IS NOT NULL
-          AND user_id = $1 -- Added WHERE
+          AND user_id = $1
         GROUP BY emotion, emoji, color
         ORDER BY COUNT(*) DESC, emotion ASC`
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
-	rows, err := m.DB.QueryContext(ctx, query, userID) // Pass userID
+	rows, err := m.DB.QueryContext(ctx, query, userID)
 	if err != nil {
 		return nil, fmt.Errorf("emotion counts query: %w", err)
 	}
@@ -433,109 +418,130 @@ func (m *MoodModel) GetEmotionCounts(userID int64) ([]EmotionCount, error) { // 
 	return counts, nil
 }
 
-func (m *MoodModel) GetMonthlyEntryCounts(userID int64) ([]MonthlyCount, error) { // <-- Added userID parameter
+// GetWeeklyEntryCounts - Fetches counts grouped by week
+func (m *MoodModel) GetWeeklyEntryCounts(userID int64) ([]WeeklyCount, error) {
 	if userID < 1 {
 		return nil, errors.New("invalid user ID")
 	}
 	query := `
-        SELECT TO_CHAR(created_at, 'Mon YYYY') AS month_year, COUNT(*) as count
-        FROM moods
-        WHERE user_id = $1 -- Added WHERE
-        GROUP BY month_year, date_trunc('month', created_at)
-        ORDER BY date_trunc('month', created_at) ASC`
+        SELECT
+            TO_CHAR(created_at, 'IYYY-IW') AS week_year,
+            COUNT(*) as count
+        FROM
+            moods
+        WHERE
+            user_id = $1
+        GROUP BY
+            week_year,
+            date_trunc('week', created_at)
+        ORDER BY
+            date_trunc('week', created_at) ASC;
+    `
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
-	rows, err := m.DB.QueryContext(ctx, query, userID) // Pass userID
+
+	rows, err := m.DB.QueryContext(ctx, query, userID)
 	if err != nil {
-		return nil, fmt.Errorf("monthly counts query: %w", err)
+		return nil, fmt.Errorf("weekly counts query: %w", err)
 	}
 	defer rows.Close()
-	counts := []MonthlyCount{}
+
+	counts := []WeeklyCount{}
 	for rows.Next() {
-		var mc MonthlyCount
-		err := rows.Scan(&mc.Month, &mc.Count)
+		var wc WeeklyCount
+		err := rows.Scan(&wc.Week, &wc.Count)
 		if err != nil {
-			return nil, fmt.Errorf("monthly counts scan: %w", err)
+			return nil, fmt.Errorf("weekly counts scan: %w", err)
 		}
-		counts = append(counts, mc)
+		counts = append(counts, wc)
 	}
 	if err = rows.Err(); err != nil {
-		return nil, fmt.Errorf("monthly counts rows iteration: %w", err)
+		return nil, fmt.Errorf("weekly counts rows iteration: %w", err)
 	}
 	return counts, nil
 }
 
-func (m *MoodModel) GetLatestMood(userID int64) (*Mood, error) { // <-- Added userID parameter
+func (m *MoodModel) GetLatestMood(userID int64) (*Mood, error) {
 	if userID < 1 {
 		return nil, errors.New("invalid user ID")
 	}
 	query := `
-        SELECT id, created_at, updated_at, title, content, emotion, emoji, color, user_id -- Added user_id
+        SELECT id, created_at, updated_at, title, content, emotion, emoji, color, user_id
         FROM moods
-        WHERE user_id = $1 -- Added WHERE
+        WHERE user_id = $1
         ORDER BY created_at DESC
         LIMIT 1`
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 	var mood Mood
-	err := m.DB.QueryRowContext(ctx, query, userID).Scan( // Pass userID
+	err := m.DB.QueryRowContext(ctx, query, userID).Scan(
 		&mood.ID, &mood.CreatedAt, &mood.UpdatedAt,
 		&mood.Title, &mood.Content, &mood.Emotion,
-		&mood.Emoji, &mood.Color, &mood.UserID, // Scan UserID
+		&mood.Emoji, &mood.Color, &mood.UserID,
 	)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, nil
-		} // Okay if user has no moods yet
+		}
 		return nil, fmt.Errorf("latest mood get: %w", err)
 	}
 	return &mood, nil
 }
 
-func (m *MoodModel) GetFirstEntryDate(userID int64) (time.Time, error) { // <-- Added userID parameter
+func (m *MoodModel) GetFirstEntryDate(userID int64) (time.Time, error) {
 	if userID < 1 {
 		return time.Time{}, errors.New("invalid user ID")
 	}
-	query := `SELECT MIN(created_at) FROM moods WHERE user_id = $1` // Added WHERE
+	query := `SELECT MIN(created_at) FROM moods WHERE user_id = $1`
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 	var firstDate sql.NullTime
-	err := m.DB.QueryRowContext(ctx, query, userID).Scan(&firstDate) // Pass userID
+	err := m.DB.QueryRowContext(ctx, query, userID).Scan(&firstDate)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return time.Time{}, nil
-		} // Should be NULL instead
+		}
 		return time.Time{}, fmt.Errorf("first entry date query: %w", err)
 	}
 	if !firstDate.Valid {
 		return time.Time{}, nil
-	} // Correctly handles NULL if no moods for user
+	}
 	return firstDate.Time, nil
 }
 
-// GetAllStats - Now accepts UserID and passes it to helper functions
-func (m *MoodModel) GetAllStats(userID int64) (*MoodStats, error) { // <-- Added userID parameter
+// GetAllStats - Fetches all stats, now using weekly counts
+func (m *MoodModel) GetAllStats(userID int64) (*MoodStats, error) {
 	if userID < 1 {
 		return nil, errors.New("invalid user ID for getting stats")
 	}
 
-	total, err := m.GetTotalMoodCount(userID) // Pass userID
+	total, err := m.GetTotalMoodCount(userID)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get total count: %w", err)
 	}
 
-	stats := &MoodStats{TotalEntries: total, EmotionCounts: []EmotionCount{}, MonthlyCounts: []MonthlyCount{}, AvgEntriesPerWeek: 0.0}
+	stats := &MoodStats{
+		TotalEntries:      total,
+		EmotionCounts:     []EmotionCount{},
+		WeeklyCounts:      []WeeklyCount{},
+		AvgEntriesPerWeek: 0.0,
+	}
+
 	if total == 0 {
 		return stats, nil
 	}
 
-	latestMood, err := m.GetLatestMood(userID) // Pass userID
+	latestMood, err := m.GetLatestMood(userID)
 	if err != nil {
-		return nil, fmt.Errorf("failed to get latest mood: %w", err)
+		// Don't return error if it's just sql.ErrNoRows
+		if !errors.Is(err, sql.ErrNoRows) {
+			return nil, fmt.Errorf("failed to get latest mood: %w", err)
+		}
+		// latestMood will remain nil, which is acceptable
 	}
 	stats.LatestMood = latestMood
 
-	emotionCounts, err := m.GetEmotionCounts(userID) // Pass userID
+	emotionCounts, err := m.GetEmotionCounts(userID)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get emotion counts: %w", err)
 	}
@@ -544,18 +550,24 @@ func (m *MoodModel) GetAllStats(userID int64) (*MoodStats, error) { // <-- Added
 		stats.MostCommonEmotion = &emotionCounts[0]
 	}
 
-	monthlyCounts, err := m.GetMonthlyEntryCounts(userID) // Pass userID
+	weeklyCounts, err := m.GetWeeklyEntryCounts(userID)
 	if err != nil {
-		return nil, fmt.Errorf("failed to get monthly counts: %w", err)
+		return nil, fmt.Errorf("failed to get weekly counts: %w", err)
 	}
-	stats.MonthlyCounts = monthlyCounts
+	stats.WeeklyCounts = weeklyCounts
 
-	firstEntryDate, err := m.GetFirstEntryDate(userID) // Pass userID
+	firstEntryDate, err := m.GetFirstEntryDate(userID)
+	// --- CORRECTED ERROR CHECK ---
+	// We only need to check for actual errors returned by GetFirstEntryDate.
+	// GetFirstEntryDate already handles ErrNoRows and returns a zero time.Time in that case.
 	if err != nil {
+		// If there was any error *other* than the ones handled inside GetFirstEntryDate
 		return nil, fmt.Errorf("failed to get first entry date: %w", err)
 	}
+	// --- END CORRECTION ---
 
 	// Calculate AvgEntriesPerWeek (logic remains same)
+	// This check correctly handles the case where GetFirstEntryDate returned a zero time.
 	if !firstEntryDate.IsZero() {
 		duration := time.Since(firstEntryDate)
 		weeks := duration.Hours() / (24 * 7)
@@ -572,7 +584,7 @@ func (m *MoodModel) GetAllStats(userID int64) (*MoodStats, error) { // <-- Added
 	return stats, nil
 }
 
-// DeleteAllByUserID deletes all mood entries for a specific user.
+// DeleteAllByUserID
 func (m *MoodModel) DeleteAllByUserID(userID int64) error {
 	if userID < 1 {
 		return errors.New("invalid user ID provided for deleting moods")
@@ -580,7 +592,7 @@ func (m *MoodModel) DeleteAllByUserID(userID int64) error {
 
 	query := `DELETE FROM moods WHERE user_id = $1`
 
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second) // Longer timeout for potentially many deletes
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
 	result, err := m.DB.ExecContext(ctx, query, userID)
@@ -588,8 +600,7 @@ func (m *MoodModel) DeleteAllByUserID(userID int64) error {
 		return fmt.Errorf("mood delete all by user_id exec: %w", err)
 	}
 
-	_, err = result.RowsAffected() // We don't strictly need to check rowsAffected here
-	// If user has no moods, 0 rows affected is fine.
+	_, err = result.RowsAffected()
 	if err != nil {
 		return fmt.Errorf("mood delete all by user_id rows affected: %w", err)
 	}
@@ -598,5 +609,7 @@ func (m *MoodModel) DeleteAllByUserID(userID int64) error {
 }
 
 // --- Remove or Comment Out Deprecated/Unused ---
+// func (m *MoodModel) GetMonthlyEntryCounts(userID int64) ([]MonthlyCount, error) { ... }
+// type MonthlyCount struct { ... }
 // func (m *MoodModel) GetAll() ([]*Mood, Metadata, error) { ... }
 // func (m *MoodModel) Search(query string) ([]*Mood, Metadata, error) { ... }

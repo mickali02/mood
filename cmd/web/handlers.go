@@ -42,18 +42,10 @@ func (app *application) showDashboardPage(w http.ResponseWriter, r *http.Request
 	}
 
 	// --- FETCH USER DETAILS ---
-	user, err := app.users.Get(userID) // Use the UserModel to get user by ID
+	user, err := app.users.Get(userID)
 	if err != nil {
-		// Handle case where user ID from session doesn't match a user in DB
-		// This might indicate session inconsistency or a deleted user.
 		app.logger.Error("Failed to get user details for dashboard", "userID", userID, "error", err)
-		// Decide how to handle: show generic greeting, log out user, or show error?
-		// For now, log error and proceed (UserName will be empty in templateData).
-		// You could also redirect to logout:
-		// app.session.Remove(r, "authenticatedUserID")
-		// http.Redirect(w, r, "/user/login", http.StatusFound)
-		// return
-		user = &data.User{} // Use an empty user struct to avoid nil pointers later
+		user = &data.User{}
 	}
 	// --- END FETCH USER DETAILS ---
 
@@ -72,7 +64,6 @@ func (app *application) showDashboardPage(w http.ResponseWriter, r *http.Request
 	v.Check(page <= 10_000_000, "page", "must be less than 10 million")
 
 	var filterStartDate, filterEndDate time.Time
-	// Use local error variables within if blocks
 	if filterStartDateStr != "" {
 		var parseErr error
 		filterStartDate, parseErr = time.Parse("2006-01-02", filterStartDateStr)
@@ -98,7 +89,7 @@ func (app *application) showDashboardPage(w http.ResponseWriter, r *http.Request
 
 	if !v.ValidData() {
 		app.logger.Warn("Invalid page parameter", "page", pageStr, "errors", v.Errors)
-		page = 1
+		page = 1 // Default to page 1 on validation error
 	}
 
 	criteria := data.FilterCriteria{
@@ -110,18 +101,21 @@ func (app *application) showDashboardPage(w http.ResponseWriter, r *http.Request
 	app.logger.Info("Fetching filtered moods", "criteria", fmt.Sprintf("%+v", criteria))
 	moods, metadata, err := app.moods.GetFiltered(criteria)
 	if err != nil {
+		// Revert to checking the error string, as returned by the data model
 		if err.Error() == "invalid user ID provided for filtering moods" {
 			app.logger.Error("Invalid UserID passed to GetFiltered", "userID", userID)
 			app.serverError(w, r, errors.New("internal inconsistency: invalid user session"))
 			return
 		}
+		// Handle other potential errors from GetFiltered
 		app.logger.Error("Failed to fetch filtered moods", "error", err)
+		// Default to empty slice and metadata on other errors
 		moods = []*data.Mood{}
 		metadata = data.Metadata{}
 	}
 
 	displayMoods := make([]displayMood, len(moods))
-	for i, moodEntry := range moods { // Renamed inner variable to avoid potential conflict if 'm' used elsewhere
+	for i, moodEntry := range moods {
 		displayMoods[i] = displayMood{
 			ID: moodEntry.ID, CreatedAt: moodEntry.CreatedAt, UpdatedAt: moodEntry.UpdatedAt,
 			Title: moodEntry.Title, Content: template.HTML(moodEntry.Content), RawContent: moodEntry.Content,
@@ -132,7 +126,7 @@ func (app *application) showDashboardPage(w http.ResponseWriter, r *http.Request
 	availableEmotions, err := app.moods.GetDistinctEmotionDetails(userID)
 	if err != nil {
 		app.logger.Error("Failed to fetch distinct emotions", "error", err, "userID", userID)
-		availableEmotions = []data.EmotionDetail{}
+		availableEmotions = []data.EmotionDetail{} // Default to empty slice
 	}
 
 	templateData := app.newTemplateData(r)
@@ -145,26 +139,30 @@ func (app *application) showDashboardPage(w http.ResponseWriter, r *http.Request
 	templateData.HasMoodEntries = len(displayMoods) > 0
 	templateData.AvailableEmotions = availableEmotions
 	templateData.Metadata = metadata
-	templateData.UserName = user.Name
+	templateData.UserName = user.Name // User name from fetched user
 
+	// Handle HTMX request or full page load
 	if r.Header.Get("HX-Request") == "true" {
 		app.logger.Info("Handling HTMX request for dashboard content area")
 		ts, ok := app.templateCache["dashboard.tmpl"]
 		if !ok {
 			err := fmt.Errorf("template %q does not exist", "dashboard.tmpl")
 			app.logger.Error("Template lookup failed", "template", "dashboard.tmpl", "error", err)
-			app.serverError(w, r, err)
+			// Send an HTMX error response if possible, or fallback
+			http.Error(w, "Error loading dashboard content.", http.StatusInternalServerError)
 			return
 		}
+		// Execute only the relevant block for HTMX swap
 		err = ts.ExecuteTemplate(w, "dashboard-content", templateData)
 		if err != nil {
 			app.logger.Error("Failed to execute template block", "block", "dashboard-content", "error", err)
+			// Don't write further if header already sent
 		}
 	} else {
 		app.logger.Info("Handling full page request for dashboard")
 		err = app.render(w, http.StatusOK, "dashboard.tmpl", templateData)
 		if err != nil {
-			app.serverError(w, r, err)
+			// Render handles logging and error response
 		}
 	}
 }
@@ -216,20 +214,34 @@ func (app *application) createMood(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if r.Method != http.MethodPost { /* ... method check ... */
+	// Basic method check (can be middleware too)
+	if r.Method != http.MethodPost {
+		w.Header().Set("Allow", http.MethodPost)
+		app.clientError(w, http.StatusMethodNotAllowed)
+		return
 	}
+
 	err := r.ParseForm()
-	if err != nil { /* ... parse error ... */
+	if err != nil {
+		app.clientError(w, http.StatusBadRequest)
+		return
 	}
+
+	// Extract form data
 	title := r.PostForm.Get("title")
 	content := r.PostForm.Get("content")
 	emotionName := r.PostForm.Get("emotion")
 	emoji := r.PostForm.Get("emoji")
 	color := r.PostForm.Get("color")
+	emotionChoice := r.PostForm.Get("emotion_choice") // Keep track of radio button selection
 
 	mood := &data.Mood{
-		Title: title, Content: content, Emotion: emotionName,
-		Emoji: emoji, Color: color, UserID: userID,
+		Title:   title,
+		Content: content,
+		Emotion: emotionName,
+		Emoji:   emoji,
+		Color:   color,
+		UserID:  userID,
 	}
 
 	v := validator.NewValidator()
@@ -240,9 +252,14 @@ func (app *application) createMood(w http.ResponseWriter, r *http.Request) {
 		templateData.Title = "New Mood Entry (Error)"
 		templateData.HeaderText = "Log Your Mood"
 		templateData.FormErrors = v.Errors
+		// Repopulate form data for user convenience
 		templateData.FormData = map[string]string{
-			"title": title, "content": content, "emotion": emotionName,
-			"emoji": emoji, "color": color, "emotion_choice": r.PostForm.Get("emotion_choice"),
+			"title":          title,
+			"content":        content,
+			"emotion":        emotionName,
+			"emoji":          emoji,
+			"color":          color,
+			"emotion_choice": emotionChoice, // Repopulate selected radio
 		}
 		errRender := app.render(w, http.StatusUnprocessableEntity, "mood_form.tmpl", templateData)
 		if errRender != nil {
@@ -286,10 +303,15 @@ func (app *application) showEditMoodForm(w http.ResponseWriter, r *http.Request)
 	templateData := app.newTemplateData(r)
 	templateData.Title = fmt.Sprintf("Edit Mood Entry #%d", mood.ID)
 	templateData.HeaderText = "Update Your Mood Entry"
-	templateData.Mood = mood
+	templateData.Mood = mood // Pass existing mood data
+	// Populate FormData with existing mood data for the form fields
 	templateData.FormData = map[string]string{
-		"title": mood.Title, "content": mood.Content, "emotion": mood.Emotion,
-		"emoji": mood.Emoji, "color": mood.Color, "emotion_choice": mood.Emotion,
+		"title":          mood.Title,
+		"content":        mood.Content,
+		"emotion":        mood.Emotion,
+		"emoji":          mood.Emoji,
+		"color":          mood.Color,
+		"emotion_choice": mood.Emotion, // Pre-select the correct radio button
 	}
 
 	err = app.render(w, http.StatusOK, "mood_edit_form.tmpl", templateData)
@@ -310,6 +332,7 @@ func (app *application) updateMood(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Get original mood to check ownership and potentially display on error
 	originalMoodForCheck, err := app.moods.Get(id, userID)
 	if err != nil {
 		if errors.Is(err, data.ErrRecordNotFound) {
@@ -320,20 +343,34 @@ func (app *application) updateMood(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if r.Method != http.MethodPost { /* ... method check ... */
+	if r.Method != http.MethodPost {
+		w.Header().Set("Allow", http.MethodPost)
+		app.clientError(w, http.StatusMethodNotAllowed)
+		return
 	}
 	err = r.ParseForm()
-	if err != nil { /* ... parse error ... */
+	if err != nil {
+		app.clientError(w, http.StatusBadRequest)
+		return
 	}
+
+	// Extract form data
 	title := r.PostForm.Get("title")
 	content := r.PostForm.Get("content")
 	emotionName := r.PostForm.Get("emotion")
 	emoji := r.PostForm.Get("emoji")
 	color := r.PostForm.Get("color")
+	emotionChoice := r.PostForm.Get("emotion_choice")
 
+	// Populate mood struct with updated values
 	mood := &data.Mood{
-		ID: id, Title: title, Content: content, Emotion: emotionName,
-		Emoji: emoji, Color: color, UserID: userID,
+		ID:      id, // Set the ID for update
+		Title:   title,
+		Content: content,
+		Emotion: emotionName,
+		Emoji:   emoji,
+		Color:   color,
+		UserID:  userID, // Include UserID for ownership check in model
 	}
 
 	v := validator.NewValidator()
@@ -343,11 +380,16 @@ func (app *application) updateMood(w http.ResponseWriter, r *http.Request) {
 		templateData := app.newTemplateData(r)
 		templateData.Title = fmt.Sprintf("Edit Mood Entry #%d (Error)", id)
 		templateData.HeaderText = "Update Your Mood Entry"
-		templateData.Mood = originalMoodForCheck
+		templateData.Mood = originalMoodForCheck // Pass original mood for context
 		templateData.FormErrors = v.Errors
+		// Repopulate form with submitted (invalid) data
 		templateData.FormData = map[string]string{
-			"title": title, "content": content, "emotion": emotionName,
-			"emoji": emoji, "color": color, "emotion_choice": r.PostForm.Get("emotion_choice"),
+			"title":          title,
+			"content":        content,
+			"emotion":        emotionName,
+			"emoji":          emoji,
+			"color":          color,
+			"emotion_choice": emotionChoice,
 		}
 		errRender := app.render(w, http.StatusUnprocessableEntity, "mood_edit_form.tmpl", templateData)
 		if errRender != nil {
@@ -356,9 +398,10 @@ func (app *application) updateMood(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Perform the update
 	err = app.moods.Update(mood)
 	if err != nil {
-		if errors.Is(err, data.ErrRecordNotFound) {
+		if errors.Is(err, data.ErrRecordNotFound) { // Handle case where mood was deleted between GET and POST
 			app.notFound(w)
 		} else {
 			app.serverError(w, r, err)
@@ -367,17 +410,25 @@ func (app *application) updateMood(w http.ResponseWriter, r *http.Request) {
 	}
 
 	app.session.Put(r, "flash", "Mood entry successfully updated!")
+
+	// Handle HTMX redirect or standard redirect
 	if r.Header.Get("HX-Request") == "true" {
+		// Tell HTMX to redirect the browser after successful swap/update
 		w.Header().Set("HX-Redirect", "/dashboard")
-		w.WriteHeader(http.StatusOK)
+		w.WriteHeader(http.StatusOK) // OK status needed for HX-Redirect
 	} else {
 		http.Redirect(w, r, "/dashboard", http.StatusSeeOther)
 	}
 }
 
 func (app *application) deleteMood(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost { /* ... method check ... */
+	// Basic method check
+	if r.Method != http.MethodPost {
+		w.Header().Set("Allow", http.MethodPost)
+		app.clientError(w, http.StatusMethodNotAllowed)
+		return
 	}
+
 	id, err := strconv.ParseInt(r.PathValue("id"), 10, 64)
 	if err != nil || id < 1 {
 		app.notFound(w)
@@ -389,43 +440,52 @@ func (app *application) deleteMood(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = app.moods.Delete(id, userID) // Pass ID and UserID
+	err = app.moods.Delete(id, userID) // Model handles ownership check
 
 	deleteErrOccurred := false
 	flashMessage := ""
 
 	if err != nil {
 		if errors.Is(err, data.ErrRecordNotFound) {
+			// Log warning but don't flash user for trying to delete non-existent/unauthorized
 			app.logger.Warn("Attempted delete non-existent/unauthorized mood", "id", id, "userID", userID)
-			flashMessage = "" // No flash for not found on delete
+			// For HTMX, maybe return a specific status or empty content?
+			// For non-HTMX, just redirect without flash.
+			flashMessage = ""
 		} else {
+			// Real error during delete
 			app.serverError(w, r, err)
-			deleteErrOccurred = true
+			deleteErrOccurred = true // Prevent redirect/HTMX success response
 		}
 	} else {
+		// Successful delete
 		app.logger.Info("Mood entry deleted successfully", "id", id, "userID", userID)
 		flashMessage = "Mood entry successfully deleted."
 	}
 
-	if flashMessage != "" && !deleteErrOccurred {
+	// Set flash only on actual success
+	if flashMessage != "" {
 		app.session.Put(r, "flash", flashMessage)
 		app.logger.Info("Set flash message for delete success", "message", flashMessage)
 	}
 
+	// Handle HTMX response for successful delete
 	if r.Header.Get("HX-Request") == "true" && !deleteErrOccurred {
-		currentFlash := app.session.PopString(r, "flash")
+		currentFlash := app.session.PopString(r, "flash") // Get the flash message for HTMX response
 		app.logger.Info("Popped flash message for HTMX delete response", "message", currentFlash)
 
-		currentPage := 1
+		// --- Logic to re-render dashboard content after delete ---
+		// Determine the correct page to show after deletion (handle deleting last item on a page)
+		currentPage := 1 // Default
 		searchQuery := ""
 		filterCombinedEmotion := ""
 		filterStartDateStr := ""
 		filterEndDateStr := ""
 
-		// Parse the Referer URL - Use refererURL variable here
+		// Parse Referer URL to maintain filters/page
 		refererURL, parseErr := url.Parse(r.Header.Get("Referer"))
 		if parseErr == nil {
-			refQuery := refererURL.Query() // Use refererURL
+			refQuery := refererURL.Query()
 			searchQuery = refQuery.Get("query")
 			filterCombinedEmotion = refQuery.Get("emotion")
 			filterStartDateStr = refQuery.Get("start_date")
@@ -439,79 +499,78 @@ func (app *application) deleteMood(w http.ResponseWriter, r *http.Request) {
 			app.logger.Warn("Could not parse Referer URL for delete refresh", "referer", r.Header.Get("Referer"), "error", parseErr)
 		}
 
-		// Declare and parse date variables - Use filterStartDate and filterEndDate
+		// Parse dates from referer strings
 		var filterStartDate, filterEndDate time.Time
-		if filterStartDateStr != "" {
+		if filterStartDateStr != "" { /* ... date parsing logic ... */
 			var parseErrStart error
 			filterStartDate, parseErrStart = time.Parse("2006-01-02", filterStartDateStr)
 			if parseErrStart != nil {
-				app.logger.Warn("Invalid start date format from referer", "date", filterStartDateStr, "error", parseErrStart)
 				filterStartDate = time.Time{}
 			}
 		}
-		if filterEndDateStr != "" {
+		if filterEndDateStr != "" { /* ... date parsing logic ... */
 			var parseErrEnd error
 			parsedEndDate, parseErrEnd := time.Parse("2006-01-02", filterEndDateStr)
-			if parseErrEnd != nil {
-				app.logger.Warn("Invalid end date format from referer", "date", filterEndDateStr, "error", parseErrEnd)
-				filterEndDate = time.Time{}
-			} else {
+			if parseErrEnd == nil {
 				filterEndDate = parsedEndDate.Add(24*time.Hour - 1*time.Nanosecond)
+			} else {
+				filterEndDate = time.Time{}
 			}
 			if !filterStartDate.IsZero() && !filterEndDate.IsZero() && filterEndDate.Before(filterStartDate) {
-				app.logger.Warn("End date before start date from referer", "start", filterStartDateStr, "end", filterEndDateStr)
 				filterEndDate = time.Time{}
 			}
 		}
 
-		// Adjust page if last item deleted
+		// Check current total count with same filters to adjust page number if needed
 		countCriteria := data.FilterCriteria{
 			TextQuery: searchQuery, Emotion: filterCombinedEmotion,
-			StartDate: filterStartDate, EndDate: filterEndDate, // Use date variables
-			PageSize: 4, Page: 1, UserID: userID,
+			StartDate: filterStartDate, EndDate: filterEndDate,
+			PageSize: 4, Page: 1, UserID: userID, // PageSize matters, Page 1 to get total
 		}
-		// Use tempMetadata
 		_, tempMetadata, countErr := app.moods.GetFiltered(countCriteria)
 		if countErr != nil {
-			app.logger.Error("Failed to get count for page adjustment", "error", countErr)
+			app.logger.Error("Failed to get count for page adjustment after delete", "error", countErr)
 		} else {
-			lastPage := tempMetadata.LastPage // Use tempMetadata
+			lastPage := tempMetadata.LastPage
 			if lastPage == 0 {
 				lastPage = 1
-			}
+			} // Ensure lastPage is at least 1
 			if currentPage > lastPage {
 				app.logger.Info("Adjusting page after delete", "old_page", currentPage, "new_page", lastPage)
-				currentPage = lastPage
+				currentPage = lastPage // Go to the new last page
 			}
 		}
 
 		// Fetch moods for the potentially adjusted current page
 		criteria := data.FilterCriteria{
 			TextQuery: searchQuery, Emotion: filterCombinedEmotion,
-			StartDate: filterStartDate, EndDate: filterEndDate, // Use date variables
+			StartDate: filterStartDate, EndDate: filterEndDate,
 			Page: currentPage, PageSize: 4, UserID: userID,
 		}
 		moods, metadata, fetchErr := app.moods.GetFiltered(criteria)
-		if fetchErr != nil { /* log error, send HTMX error response */
+		if fetchErr != nil {
+			app.logger.Error("Failed to fetch filtered moods after delete", "error", fetchErr)
+			// Send HTMX error response or fallback
+			http.Error(w, "Error reloading dashboard content.", http.StatusInternalServerError)
 			return
 		}
 
+		// Prepare data for re-rendering the dashboard fragment
 		displayMoods := make([]displayMood, len(moods))
-		for i, moodEntry := range moods { // Renamed inner var
-			displayMoods[i] = displayMood{
+		for i, moodEntry := range moods {
+			displayMoods[i] = displayMood{ /* ... populate displayMood ... */
 				ID: moodEntry.ID, CreatedAt: moodEntry.CreatedAt, UpdatedAt: moodEntry.UpdatedAt,
 				Title: moodEntry.Title, Content: template.HTML(moodEntry.Content), RawContent: moodEntry.Content,
 				Emotion: moodEntry.Emotion, Emoji: moodEntry.Emoji, Color: moodEntry.Color,
 			}
 		}
-
 		availableEmotions, emotionErr := app.moods.GetDistinctEmotionDetails(userID)
 		if emotionErr != nil {
 			availableEmotions = []data.EmotionDetail{}
 		}
 
 		templateData := app.newTemplateData(r)
-		templateData.Flash = currentFlash
+		templateData.Flash = currentFlash // Pass the popped flash message
 		templateData.SearchQuery = searchQuery
 		templateData.FilterEmotion = filterCombinedEmotion
 		templateData.FilterStartDate = filterStartDateStr
@@ -520,29 +579,36 @@ func (app *application) deleteMood(w http.ResponseWriter, r *http.Request) {
 		templateData.HasMoodEntries = len(displayMoods) > 0
 		templateData.AvailableEmotions = availableEmotions
 		templateData.Metadata = metadata
+		// Don't need to fetch User again here, newTemplateData handles it if authenticated
 
+		// Render just the dashboard content block for HTMX swap
 		ts, ok := app.templateCache["dashboard.tmpl"]
-		if !ok { /* log error, send HTMX error response */
+		if !ok {
+			err := fmt.Errorf("template %q does not exist", "dashboard.tmpl")
+			app.logger.Error("Template lookup failed", "template", "dashboard.tmpl", "error", err)
+			http.Error(w, "Error loading dashboard content.", http.StatusInternalServerError)
 			return
 		}
-
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
-		w.WriteHeader(http.StatusOK)
+		w.WriteHeader(http.StatusOK) // Important: OK status for successful HTMX swap
 		execErr := ts.ExecuteTemplate(w, "dashboard-content", templateData)
-		if execErr != nil { /* log error */
+		if execErr != nil {
+			app.logger.Error("Failed to execute template block for delete refresh", "block", "dashboard-content", "error", execErr)
 		}
-		return
+		return // Stop execution after HTMX response
 	}
 
+	// Standard redirect for non-HTMX requests if no error occurred
 	if !deleteErrOccurred {
 		http.Redirect(w, r, "/dashboard", http.StatusSeeOther)
 	}
+	// If deleteErrOccurred, the serverError handler already wrote the response.
 }
 
 /*
 ==========================================================================
 
-	User Authentication Handlers (Unchanged)
+	User Authentication Handlers
 	==========================================================================
 */
 func (app *application) signupUserForm(w http.ResponseWriter, r *http.Request) {
@@ -555,14 +621,24 @@ func (app *application) signupUserForm(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *application) signupUser(w http.ResponseWriter, r *http.Request) {
+	// Check method
+	if r.Method != http.MethodPost {
+		w.Header().Set("Allow", http.MethodPost)
+		app.clientError(w, http.StatusMethodNotAllowed)
+		return
+	}
+
 	err := r.ParseForm()
 	if err != nil {
 		app.clientError(w, http.StatusBadRequest)
 		return
 	}
+
+	// Extract and validate form data
 	name := r.PostForm.Get("name")
 	email := r.PostForm.Get("email")
 	passwordInput := r.PostForm.Get("password")
+
 	v := validator.NewValidator()
 	v.Check(validator.NotBlank(name), "name", "Name must be provided")
 	v.Check(validator.MaxLength(name, 100), "name", "Must not be more than 100 characters")
@@ -576,7 +652,7 @@ func (app *application) signupUser(w http.ResponseWriter, r *http.Request) {
 	if !v.ValidData() {
 		templateData := app.newTemplateData(r)
 		templateData.Title = "Sign Up (Error) - Feel Flow"
-		templateData.FormData = map[string]string{"name": name, "email": email}
+		templateData.FormData = map[string]string{"name": name, "email": email} // Don't repopulate password
 		templateData.FormErrors = v.Errors
 		errRender := app.render(w, http.StatusUnprocessableEntity, "signup.tmpl", templateData)
 		if errRender != nil {
@@ -584,12 +660,16 @@ func (app *application) signupUser(w http.ResponseWriter, r *http.Request) {
 		}
 		return
 	}
-	user := &data.User{Name: name, Email: email, Activated: true}
+
+	// Create user struct and set password
+	user := &data.User{Name: name, Email: email, Activated: true} // Activate immediately for simplicity
 	err = user.Password.Set(passwordInput)
 	if err != nil {
 		app.serverError(w, r, err)
 		return
 	}
+
+	// Insert user into database
 	err = app.users.Insert(user)
 	if err != nil {
 		if errors.Is(err, data.ErrDuplicateEmail) {
@@ -607,6 +687,8 @@ func (app *application) signupUser(w http.ResponseWriter, r *http.Request) {
 		}
 		return
 	}
+
+	// Success
 	app.session.Put(r, "flash", "Your signup was successful! Please log in.")
 	http.Redirect(w, r, "/user/login", http.StatusSeeOther)
 }
@@ -621,53 +703,72 @@ func (app *application) loginUserForm(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *application) loginUser(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		w.Header().Set("Allow", http.MethodPost)
+		app.clientError(w, http.StatusMethodNotAllowed)
+		return
+	}
+
 	err := r.ParseForm()
 	if err != nil {
 		app.clientError(w, http.StatusBadRequest)
 		return
 	}
+
 	email := r.PostForm.Get("email")
 	passwordInput := r.PostForm.Get("password")
-	v := validator.NewValidator()
-	v.Check(validator.NotBlank(email), "generic", "Email must be provided")
-	v.Check(validator.NotBlank(passwordInput), "generic", "Password must be provided")
 
-	if !v.ValidData() {
+	// Basic validation for presence
+	v := validator.NewValidator()
+	v.Check(validator.NotBlank(email), "generic", "Email must be provided")            // Using generic key
+	v.Check(validator.NotBlank(passwordInput), "generic", "Password must be provided") // Using generic key
+
+	// Use a generic error message on login failure
+	genericError := func() {
 		templateData := app.newTemplateData(r)
 		templateData.Title = "Login (Error) - Feel Flow"
-		templateData.FormData = map[string]string{"email": email}
-		templateData.FormErrors = map[string]string{"generic": "Both email and password must be provided."}
+		templateData.FormData = map[string]string{"email": email} // Repopulate email
+		templateData.FormErrors = map[string]string{"generic": "Invalid email or password."}
 		errRender := app.render(w, http.StatusUnprocessableEntity, "login.tmpl", templateData)
 		if errRender != nil {
 			app.serverError(w, r, errRender)
 		}
+	}
+
+	if !v.ValidData() {
+		genericError()
 		return
 	}
+
+	// Authenticate user
 	id, err := app.users.Authenticate(email, passwordInput)
 	if err != nil {
 		if errors.Is(err, data.ErrInvalidCredentials) {
-			templateData := app.newTemplateData(r)
-			templateData.Title = "Login (Error) - Feel Flow"
-			templateData.FormData = map[string]string{"email": email}
-			templateData.FormErrors = map[string]string{"generic": "Invalid email or password."}
-			errRender := app.render(w, http.StatusUnprocessableEntity, "login.tmpl", templateData)
-			if errRender != nil {
-				app.serverError(w, r, errRender)
-			}
-		} else {
+			genericError()
+		} else { // Handle other potential errors (e.g., database connection)
 			app.serverError(w, r, err)
 		}
 		return
 	}
-	app.session.Put(r, "authenticatedUserID", id)
+
+	// Authentication successful
+	app.session.Put(r, "authenticatedUserID", id) // Store user ID in session
 	app.session.Put(r, "flash", "You have been logged in successfully!")
-	http.Redirect(w, r, "/dashboard", http.StatusSeeOther)
+	http.Redirect(w, r, "/dashboard", http.StatusSeeOther) // Redirect to dashboard
 }
 
 func (app *application) logoutUser(w http.ResponseWriter, r *http.Request) {
+	// Check method
+	if r.Method != http.MethodPost {
+		w.Header().Set("Allow", http.MethodPost)
+		app.clientError(w, http.StatusMethodNotAllowed)
+		return
+	}
+
+	// Remove user ID from session
 	app.session.Remove(r, "authenticatedUserID")
 	app.session.Put(r, "flash", "You have been logged out successfully.")
-	http.Redirect(w, r, "/landing", http.StatusSeeOther)
+	http.Redirect(w, r, "/landing", http.StatusSeeOther) // Redirect to landing page
 }
 
 /*
@@ -690,14 +791,40 @@ func (app *application) showStatsPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// *** ADDED: Defensive check in case GetAllStats could return nil without error ***
+	if stats == nil {
+		// This case should ideally not happen if GetAllStats is implemented correctly,
+		// but good to handle defensively.
+		app.logger.Error("GetAllStats returned nil stats object unexpectedly", "userID", userID)
+		// Render with empty stats or return an error
+		stats = &data.MoodStats{} // Proceed with empty stats for the template
+		// Alternatively, treat as server error:
+		// app.serverError(w, r, errors.New("failed to retrieve stats data"))
+		// return
+	}
+
+	// *** ADDED: Detailed logging BEFORE marshalling ***
+	app.logger.Info("Preparing stats data for template",
+		"userID", userID,
+		"totalEntries", stats.TotalEntries,
+		"hasMostCommon", stats.MostCommonEmotion != nil,
+		"emotionCountsLength", len(stats.EmotionCounts),
+		"weeklyCountsLength", len(stats.WeeklyCounts),
+		"hasLatestMood", stats.LatestMood != nil,
+		"avgEntries", stats.AvgEntriesPerWeek,
+	)
+	// *** END ADDED LOGGING ***
+
 	emotionCountsJSON, err := json.Marshal(stats.EmotionCounts)
 	if err != nil {
 		app.serverError(w, r, fmt.Errorf("marshal emotion counts: %w", err))
 		return
 	}
-	monthlyCountsJSON, err := json.Marshal(stats.MonthlyCounts)
+
+	// Marshal Weekly Counts instead of Monthly
+	weeklyCountsJSON, err := json.Marshal(stats.WeeklyCounts) // Ensure this variable is declared and used
 	if err != nil {
-		app.serverError(w, r, fmt.Errorf("marshal monthly counts: %w", err))
+		app.serverError(w, r, fmt.Errorf("marshal weekly counts: %w", err))
 		return
 	}
 
@@ -705,8 +832,12 @@ func (app *application) showStatsPage(w http.ResponseWriter, r *http.Request) {
 	templateData.Title = "Mood Statistics"
 	templateData.Stats = stats
 	templateData.EmotionCountsJSON = string(emotionCountsJSON)
-	templateData.MonthlyCountsJSON = string(monthlyCountsJSON)
+	templateData.WeeklyCountsJSON = string(weeklyCountsJSON) // Ensure this field exists in TemplateData
 	templateData.Quote = "Every mood matters. Thanks for checking in 💖"
+
+	// *** ADDED: Log final JSON being sent ***
+	app.logger.Debug("Final JSON for template", "emotions", templateData.EmotionCountsJSON, "weekly", templateData.WeeklyCountsJSON)
+	// *** END ADDED LOGGING ***
 
 	renderErr := app.render(w, http.StatusOK, "stats.tmpl", templateData)
 	if renderErr != nil {
@@ -723,7 +854,6 @@ func (app *application) showStatsPage(w http.ResponseWriter, r *http.Request) {
 func (app *application) showUserProfilePage(w http.ResponseWriter, r *http.Request) {
 	userID := app.getUserIDFromSession(r)
 	if userID == 0 {
-		// Should be caught by requireAuthentication, but defensive check
 		app.clientError(w, http.StatusUnauthorized)
 		return
 	}
@@ -731,7 +861,7 @@ func (app *application) showUserProfilePage(w http.ResponseWriter, r *http.Reque
 	user, err := app.users.Get(userID)
 	if err != nil {
 		if errors.Is(err, data.ErrRecordNotFound) {
-			app.notFound(w) // Should not happen if session is valid
+			app.notFound(w)
 		} else {
 			app.serverError(w, r, err)
 		}
@@ -740,9 +870,7 @@ func (app *application) showUserProfilePage(w http.ResponseWriter, r *http.Reque
 
 	templateData := app.newTemplateData(r)
 	templateData.Title = "User Profile"
-	// Pass the user object or individual fields. Passing the object is convenient.
-	templateData.User = user // Make sure User field is in TemplateData struct
-	// Initialize FormData for profile form (if not already populated from a previous error)
+	templateData.User = user
 	if templateData.FormData == nil {
 		templateData.FormData = make(map[string]string)
 	}
@@ -768,8 +896,13 @@ func (app *application) updateUserProfile(w http.ResponseWriter, r *http.Request
 
 	user, err := app.users.Get(userID)
 	if err != nil {
-		// Handle error, potentially log out if user not found
 		app.serverError(w, r, err)
+		return
+	}
+
+	if r.Method != http.MethodPost {
+		w.Header().Set("Allow", http.MethodPost)
+		app.clientError(w, http.StatusMethodNotAllowed)
 		return
 	}
 
@@ -779,15 +912,14 @@ func (app *application) updateUserProfile(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	originalEmail := user.Email // Keep original for comparison if email changes
+	originalEmail := user.Email
 
+	// Update user fields from form
 	user.Name = r.PostForm.Get("name")
 	user.Email = r.PostForm.Get("email")
-	// Note: user.Password and user.Activated are NOT changed here.
-	// We are updating the fetched `user` object in place.
 
 	v := validator.NewValidator()
-	// Validate only the fields being changed
+	// Re-validate the updated fields
 	v.Check(validator.NotBlank(user.Name), "name", "Name must be provided")
 	v.Check(validator.MaxLength(user.Name, 100), "name", "Name must not be more than 100 characters")
 	v.Check(validator.NotBlank(user.Email), "email", "Email must be provided")
@@ -797,9 +929,9 @@ func (app *application) updateUserProfile(w http.ResponseWriter, r *http.Request
 	if !v.ValidData() {
 		templateData := app.newTemplateData(r)
 		templateData.Title = "User Profile (Error)"
-		templateData.User = user // Pass user with attempted changes
+		templateData.User = user // Pass user with attempted changes but validation errors
 		templateData.FormErrors = v.Errors
-		templateData.FormData = map[string]string{
+		templateData.FormData = map[string]string{ // Repopulate form with submitted data
 			"name":  user.Name,
 			"email": user.Email,
 		}
@@ -811,18 +943,18 @@ func (app *application) updateUserProfile(w http.ResponseWriter, r *http.Request
 	}
 
 	// Call the UserModel's Update method
-	err = app.users.Update(user) // This will update name, email, language
+	err = app.users.Update(user)
 	if err != nil {
 		if errors.Is(err, data.ErrDuplicateEmail) {
 			v.AddError("email", "Email address is already in use")
 			templateData := app.newTemplateData(r)
 			templateData.Title = "User Profile (Error)"
-			user.Email = originalEmail // Revert email in the struct for display if it was the duplicate
+			user.Email = originalEmail // Revert email in struct before passing to template
 			templateData.User = user
 			templateData.FormErrors = v.Errors
 			templateData.FormData = map[string]string{
-				"name":  user.Name,
-				"email": user.Email, // Show the problematic email or original? Let's show what they typed.
+				"name":  r.PostForm.Get("name"),  // Show what user typed
+				"email": r.PostForm.Get("email"), // Show problematic email
 			}
 			errRender := app.render(w, http.StatusUnprocessableEntity, "profile.tmpl", templateData)
 			if errRender != nil {
@@ -851,6 +983,12 @@ func (app *application) changeUserPassword(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
+	if r.Method != http.MethodPost {
+		w.Header().Set("Allow", http.MethodPost)
+		app.clientError(w, http.StatusMethodNotAllowed)
+		return
+	}
+
 	err = r.ParseForm()
 	if err != nil {
 		app.clientError(w, http.StatusBadRequest)
@@ -864,11 +1002,13 @@ func (app *application) changeUserPassword(w http.ResponseWriter, r *http.Reques
 	v := validator.NewValidator()
 	data.ValidatePasswordUpdate(v, currentPassword, newPassword, confirmPassword)
 
-	if !v.ValidData() {
+	// Render error page helper
+	renderPasswordError := func(errors map[string]string) {
 		templateData := app.newTemplateData(r)
 		templateData.Title = "User Profile (Password Error)"
-		templateData.User = user
-		templateData.FormErrors = v.Errors
+		templateData.User = user // Pass existing user info
+		templateData.FormErrors = errors
+		// Don't repopulate password fields, but keep name/email for context
 		templateData.FormData = make(map[string]string)
 		templateData.FormData["name"] = user.Name
 		templateData.FormData["email"] = user.Email
@@ -877,9 +1017,14 @@ func (app *application) changeUserPassword(w http.ResponseWriter, r *http.Reques
 		if errRender != nil {
 			app.serverError(w, r, errRender)
 		}
+	}
+
+	if !v.ValidData() {
+		renderPasswordError(v.Errors)
 		return
 	}
 
+	// Check if current password matches
 	match, err := user.Password.Matches(currentPassword)
 	if err != nil {
 		app.serverError(w, r, err)
@@ -887,29 +1032,19 @@ func (app *application) changeUserPassword(w http.ResponseWriter, r *http.Reques
 	}
 	if !match {
 		v.AddError("current_password", "Current password incorrect")
-		templateData := app.newTemplateData(r)
-		templateData.Title = "User Profile (Password Error)"
-		templateData.User = user
-		templateData.FormErrors = v.Errors
-		templateData.FormData = make(map[string]string)
-		templateData.FormData["name"] = user.Name
-		templateData.FormData["email"] = user.Email
-
-		errRender := app.render(w, http.StatusUnprocessableEntity, "profile.tmpl", templateData)
-		if errRender != nil {
-			app.serverError(w, r, errRender)
-		}
+		renderPasswordError(v.Errors)
 		return
 	}
 
-	err = user.Password.Set(newPassword) // This updates the user.Password.hash internally
+	// Set the new password (updates hash in the user struct)
+	err = user.Password.Set(newPassword)
 	if err != nil {
 		app.serverError(w, r, err)
 		return
 	}
 
-	// Now use the exported Hash() method to get the new hash
-	err = app.users.UpdatePassword(user.ID, user.Password.Hash()) // <-- CORRECTED LINE
+	// Update the password in the database
+	err = app.users.UpdatePassword(user.ID, user.Password.Hash())
 	if err != nil {
 		app.serverError(w, r, err)
 		return
@@ -926,7 +1061,6 @@ func (app *application) resetUserEntries(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	// No form parsing needed if just a button click, but ensure it's POST
 	if r.Method != http.MethodPost {
 		app.clientError(w, http.StatusMethodNotAllowed)
 		return
@@ -954,28 +1088,27 @@ func (app *application) deleteUserAccount(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	// 1. Delete the user (moods should cascade delete due to FK constraint)
+	// Delete the user (moods should cascade delete)
 	err := app.users.Delete(userID)
 	if err != nil {
-		// If user not found, it might be a stale session, log out anyway
 		if errors.Is(err, data.ErrRecordNotFound) {
 			app.logger.Warn("Attempt to delete non-existent user account", "userID", userID)
 		} else {
 			app.serverError(w, r, err)
-			return // Don't proceed if there was a real DB error
+			return
 		}
 	}
 
-	// 2. Log the user out by removing their session
+	// Log the user out
 	app.session.Remove(r, "authenticatedUserID")
 	app.session.Put(r, "flash", "Your account has been successfully deleted.")
-	http.Redirect(w, r, "/landing", http.StatusSeeOther) // Redirect to landing page
+	http.Redirect(w, r, "/landing", http.StatusSeeOther)
 }
 
 /*
 ==========================================================================
 
-	Error Handlers (Unchanged)
+	Error Handlers
 	==========================================================================
 */
 func (app *application) serverError(w http.ResponseWriter, r *http.Request, err error) {

@@ -8,101 +8,147 @@
     <link rel="stylesheet" href="/static/styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css">
 </head>
-<body class="dashboard-page stats-page-background"> <!-- Added a specific class for potential background override -->
+<body class="dashboard-page stats-page-background">
 
-    <!-- Main container for stats content -->
-    <div class="stats-container"
+    <!-- Add is-loading class to the main container initially -->
+    <div class="stats-container is-loading"
          id="stats-data-container"
          data-emotion-counts='{{.EmotionCountsJSON}}'
-         data-monthly-counts='{{.MonthlyCountsJSON}}'
+         data-weekly-counts='{{.WeeklyCountsJSON}}'
          data-has-data="{{gt .Stats.TotalEntries 0}}">
 
         <header class="stats-header">
             <h1>Your Mood Statistics</h1>
         </header>
 
-        {{if gt .Stats.TotalEntries 0}}
-            <!-- Summary Section - Now includes 4 cards -->
-            <section class="stats-summary">
-                <!-- Total Entries Card -->
-                <div class="summary-card">
-                    <h3>Total Entries</h3>
-                    <p>{{.Stats.TotalEntries}}</p>
+        <!-- Optional: Loading Indicator -->
+        <div class="stats-loading-indicator">
+            <p>Loading statistics...</p>
+        </div>
+
+        <!-- **** WRAPPER for main stats content **** -->
+        <div class="stats-main-content"> <!-- NO is-loading here -->
+
+            {{if gt .Stats.TotalEntries 0}} <!-- Check if there's data -->
+
+                <!-- Page 1 Content: Summary + Bar + Pie -->
+                <div id="stats-page-1" class="stats-page active-stats-page">
+                    <section class="stats-top-grid">
+
+                        <!-- =================================== -->
+                        <!-- == Column 1: Summary Cards - ADD THIS BACK == -->
+                        <!-- =================================== -->
+                        <div class="stats-summary-column">
+                            <div class="summary-card">
+                                <h3>Total Entries</h3>
+                                <p>{{.Stats.TotalEntries}}</p>
+                            </div>
+                            {{with .Stats.MostCommonEmotion}}
+                            <div class="summary-card">
+                                <h3>Most Common</h3>
+                                <p>
+                                    <span class="emoji" style="color: {{.Color}};">{{.Emoji}}</span> {{.Name}}
+                                    <span class="summary-card-detail">({{.Count}} times)</span>
+                                </p>
+                            </div>
+                            {{else}}
+                            <div class="summary-card"><h3>Most Common</h3><p>-</p></div>
+                            {{end}}
+                            {{with .Stats.LatestMood}}
+                            <div class="summary-card">
+                                <h3>Latest Mood</h3>
+                                <p class="latest-mood-info">
+                                    <span class="emoji" style="color: {{.Color}};">{{.Emoji}}</span> {{.Title}}
+                                    <span class="summary-card-detail latest-mood-date">{{.CreatedAt | HumanDate}}</span>
+                                </p>
+                            </div>
+                            {{else}}
+                            <div class="summary-card"><h3>Latest Mood</h3><p>-</p></div>
+                            {{end}}
+                            <div class="summary-card">
+                                <h3>Avg. Entries / Week</h3>
+                                <p>{{printf "%.1f" .Stats.AvgEntriesPerWeek}}</p>
+                            </div>
+                        </div>
+                        <!-- =================================== -->
+                        <!-- == END Summary Cards Column ======== -->
+                        <!-- =================================== -->
+
+
+                        <!-- Column 2: Bar Chart -->
+                        <div class="stats-chart-column">
+                            <div class="chart-container">
+                                <h3>Emotion Frequency</h3>
+                                <!-- ============================= -->
+                                <!-- == ADD CANVAS BACK ========= -->
+                                <canvas id="emotionBarChart"></canvas>
+                                <!-- ============================= -->
+                            </div>
+                        </div>
+
+                        <!-- Column 3: Pie Chart -->
+                        <div class="stats-chart-column">
+                            <div class="chart-container">
+                                <h3>Emotion Breakdown</h3>
+                                <!-- ============================= -->
+                                <!-- == ADD CANVAS BACK ========= -->
+                                <canvas id="emotionPieChart"></canvas>
+                                <!-- ============================= -->
+                            </div>
+                        </div>
+                    </section>
                 </div>
 
-                <!-- Most Common Emotion Card -->
-                {{with .Stats.MostCommonEmotion}}
-                <div class="summary-card">
-                    <h3>Most Common</h3>
-                    <p>
-                        <span class="emoji" style="color: {{.Color}};">{{.Emoji}}</span> {{.Name}}
-                        <span class="summary-card-detail">({{.Count}} times)</span>
-                    </p>
+                <!-- Page 2 Content: Line Chart -->
+                <div id="stats-page-2" class="stats-page">
+                    <section class="stats-line-chart-section">
+                         <div class="chart-container chart-full-width">
+                            <h3>Entries per Week</h3>
+                            <!-- ============================= -->
+                            <!-- == ADD CANVAS BACK ========= -->
+                            <canvas id="weeklyLineChart"></canvas>
+                             <!-- ============================= -->
+                            <p class="chart-description">Total mood entries logged per week.</p>
+                         </div>
+                    </section>
                 </div>
-                {{end}}
 
-                <!-- Latest Mood Card -->
-                {{with .Stats.LatestMood}}
-                <div class="summary-card">
-                    <h3>Latest Mood</h3>
-                    <p class="latest-mood-info">
-                        <span class="emoji" style="color: {{.Color}};">{{.Emoji}}</span> {{.Title}}
-                        <span class="summary-card-detail latest-mood-date">{{.CreatedAt | HumanDate}}</span>
-                    </p>
+            {{else}} <!-- If no data -->
+
+                <!-- No Stats Message -->
+                <div class="no-stats">
+                    <p>You haven't logged enough moods to generate statistics yet. Keep tracking!</p>
+                     <a href="/dashboard" class="back-link">← Back to Dashboard</a>
                 </div>
-                {{else}}
-                 <!-- Optional: Placeholder if no latest mood (shouldn't happen if Total > 0) -->
-                 <div class="summary-card">
-                    <h3>Latest Mood</h3>
-                    <p>-</p>
-                </div>
-                {{end}}
 
-                <!-- Average Entries Per Week Card -->
-                <div class="summary-card">
-                    <h3>Avg. Entries / Week</h3>
-                    <!-- Format float to 1 decimal place -->
-                    <p>{{printf "%.1f" .Stats.AvgEntriesPerWeek}}</p>
-                </div>
-            </section>
+            {{end}} <!-- End check for data -->
 
-            <!-- Charts Section (Canvas elements only) -->
-            <section class="charts-grid">
-                <div class="chart-container">
-                    <h3>Emotion Frequency</h3>
-                    <canvas id="emotionBarChart"></canvas>
-                </div>
-                <div class="chart-container">
-                    <h3>Emotion Breakdown</h3>
-                    <canvas id="emotionPieChart"></canvas>
-                </div>
-                 <div class="chart-container chart-full-width"> <!-- Use class for styling span -->
-                    <h3>Entries Over Time</h3>
-                    <canvas id="monthlyLineChart"></canvas>
-                    <!-- *** ADDED DESCRIPTION BELOW CANVAS *** -->
-                    <p class="chart-description">Total mood entries logged per month.</p>
-                 </div>
-            </section>
+        </div> <!-- **** END WRAPPER for main stats content **** -->
 
-            <!-- Footer Quote -->
-            <footer class="stats-footer">
-                 <!-- Ensure you have the desired quote/emoji here from your handler -->
-                <p>{{.Quote}}</p>
-            </footer>
+        <!-- Quote, Controls, Footer are OUTSIDE the wrapper that gets hidden/shown -->
+        <p class="stats-quote">{{.Quote}}</p>
 
-        {{else}}
-            <!-- No Stats Message -->
-            <div class="no-stats">
-                <p>You haven't logged enough moods to generate statistics yet. Keep tracking!</p>
-            </div>
-        {{end}}
-         <a href="/dashboard" class="back-link">← Back to Dashboard</a>
+        <div class="stats-controls-row">
+            <a href="/dashboard" class="back-link stats-back-link">← Back to Dashboard</a>
+            <!-- Pagination will be hidden by JS if only 1 page or no data -->
+            <nav class="stats-custom-pagination">
+                <button id="stats-prev-page" class="btn" disabled>< Previous</button>
+                <span id="stats-page-indicator">Page 1 of 2</span>
+                <button id="stats-next-page" class="btn">Next ></button>
+            </nav>
+            <div class="back-link-placeholder"></div>
+        </div>
 
-    </div> <!-- Closing stats-container div -->
+        <footer class="stats-footer">
+             <!-- Footer content -->
+        </footer>
 
+    </div> <!-- End stats-container -->
+
+    <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
-    <!-- Ensure defer is used so JS runs after HTML is parsed -->
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chroma-js/2.4.2/chroma.min.js"></script>
     <script src="/static/js/stats_charts.js" defer></script>
 
 </body>

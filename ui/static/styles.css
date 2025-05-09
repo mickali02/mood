@@ -4,7 +4,7 @@
 
    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Poppins:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,700;1,400&display=swap');
    @import url('https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css');
-
+   
    *,
    *::before,
    *::after {
@@ -12,72 +12,72 @@
        margin: 0;
        padding: 0;
    }
-
-
+   
+   
    /* ==========================================================================
-      2. Core Application Styles (Defaults - Theme 2: Dashboard Look)
+      2. Core Application Styles
       ========================================================================== */
-
-   /* --- Default Body Styles --- */
-
+   
+   /* --- Body Styles --- */
    body {
        font-family: 'Poppins', sans-serif;
        background: url('/static/resources/dashboard.png') no-repeat center center fixed;
        background-size: cover;
        color: #e0e0e0;
        line-height: 1.6;
-       min-height: 100vh; /* Use min-height instead of height */
+       min-height: 100vh;
        width: 100vw;
        display: flex;
        flex-direction: column;
        position: relative;
        overflow-x: hidden;
    }
-
-
+   
    /* --- Base Typography --- */
-
-   h1, h2, h3, h4, h5, h6 { /* Grouped heading styles */
+   h1,
+   h2,
+   h3,
+   h4,
+   h5,
+   h6 {
        font-family: 'Playfair Display', serif;
        color: #ffffff;
        margin-bottom: 0.75em;
        line-height: 1.3;
        font-weight: 600;
    }
-
+   
    p {
        font-family: 'Poppins', sans-serif;
        margin-bottom: 1em;
        color: #d0d0e0;
    }
-
+   
    a {
        color: #c8a2c8;
        text-decoration: none;
        transition: color 0.3s ease;
    }
-
+   
    a:hover {
        color: #e6d29e;
    }
-
+   
    ul {
        list-style: none;
        padding: 0;
        margin: 0;
    }
-
-
+   
    /* --- Base Button Styles --- */
-
    .btn {
        font-family: 'Poppins', sans-serif;
        display: inline-block;
        padding: 10px 25px;
-       background-color: #A074B5; /* Primary Purple */
+       background-color: #A074B5;
        color: #FFFFFF;
        text-decoration: none;
-       border-radius: 25px; /* Default Pill Shape */
+       border-radius: 25px;
        border: none;
        cursor: pointer;
        transition: background-color 0.3s, transform 0.1s, box-shadow 0.2s;
@@ -89,52 +89,48 @@
        letter-spacing: 0.5px;
        box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
    }
-
+   
    .btn:hover {
-       background-color: #8a6aaf; /* Darker purple */
+       background-color: #8a6aaf;
        transform: translateY(-2px);
        box-shadow: 0 5px 12px rgba(0, 0, 0, 0.25);
    }
-
+   
    .btn:active {
        transform: translateY(0px);
        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
    }
-
-
+   
    /* --- Button Variants --- */
-
-   .btn.dashboard-add-btn { /* Specific style for Add buttons */
+   .btn.dashboard-add-btn {
        padding: 12px 30px;
        font-size: 1.05rem;
        background-color: rgba(160, 116, 181, 0.9);
        box-shadow: 0 5px 15px rgba(160, 116, 181, 0.3);
    }
-
+   
    .btn.dashboard-add-btn:hover {
        background-color: rgba(160, 116, 181, 1);
        transform: translateY(-3px);
        box-shadow: 0 8px 20px rgba(160, 116, 181, 0.5);
    }
-
-   .btn.cancel-btn { /* Cancel/Clear buttons */
+   
+   .btn.cancel-btn {
        background-color: rgba(255, 255, 255, 0.15);
        color: #bdc1c6;
        border: 1px solid rgba(255, 255, 255, 0.2);
        font-weight: 400;
        text-transform: none;
    }
-
+   
    .btn.cancel-btn:hover {
        background-color: rgba(255, 255, 255, 0.25);
        color: #ffffff;
        transform: translateY(-2px);
    }
-
-
-   /* Small Edit/Delete buttons - Positioned via .edit-delete-buttons rule later */
-
-   .edit-delete-buttons .btn { /* Base style for small buttons */
+   
+   /* Edit/Delete buttons */
+   .edit-delete-buttons .btn {
        margin-left: 8px;
        padding: 6px 15px;
        font-size: 0.85rem;
@@ -144,39 +140,37 @@
        border-radius: 15px;
        box-shadow: none;
    }
-
-   .edit-delete-buttons form { /* Ensure form doesn't add extra space */
+   
+   .edit-delete-buttons form {
        display: inline-block;
        margin: 0;
        padding: 0;
        vertical-align: middle;
    }
-
-   .edit-delete-buttons .btn.edit-btn { /* Edit button color */
+   
+   .edit-delete-buttons .btn.edit-btn {
        background-color: rgba(100, 149, 237, 0.7);
        color: #fff;
    }
-
+   
    .edit-delete-buttons .btn.edit-btn:hover {
        background-color: rgba(100, 149, 237, 0.9);
    }
-
-   .edit-delete-buttons .btn.delete-btn { /* Delete button color */
+   
+   .edit-delete-buttons .btn.delete-btn {
        background-color: rgba(220, 20, 60, 0.7);
        color: #fff;
    }
-
+   
    .edit-delete-buttons .btn.delete-btn:hover {
        background-color: rgba(220, 20, 60, 0.9);
    }
-
-
+   
    /* --- Base Form Styling (Dark Theme) --- */
-
    .form-group {
        margin-bottom: 25px;
    }
-
+   
    label {
        display: block;
        margin-bottom: 10px;
@@ -185,11 +179,13 @@
        font-weight: 500;
        font-size: 1rem;
    }
-
-   /* Group common input/textarea styles */
+   
    input[type="text"],
    input[type="email"],
+   input[type="password"], /* Added password */
    input[type="search"],
+   input[type="date"],  /* Added date */
+   select,              /* Added select */
    textarea {
        width: 100%;
        padding: 14px 18px;
@@ -202,31 +198,35 @@
        background-color: rgba(20, 22, 34, 0.5);
        color: #e0e0e0;
        transition: border-color 0.3s, background-color 0.3s, box-shadow 0.3s;
-       outline: none; /* Added to remove default outline */
+       outline: none;
    }
-
+   
    input[type="text"]::placeholder,
+   input[type="email"]::placeholder,
+   input[type="password"]::placeholder,
    input[type="search"]::placeholder,
    textarea::placeholder {
        color: #888dac;
        opacity: 0.8;
    }
-
-   /* General input focus (excluding specific search wrapper) */
+   
    input[type="text"]:focus,
    input[type="email"]:focus,
+   input[type="password"]:focus,
+   input[type="search"]:focus,
+   input[type="date"]:focus,
+   select:focus,
    textarea:focus {
        border-color: #a074b5;
        background-color: rgba(30, 32, 44, 0.6);
        box-shadow: 0 0 0 3px rgba(160, 116, 181, 0.3);
    }
-
+   
    textarea {
        min-height: 140px;
        resize: vertical;
    }
-
-   /* Button layout group */
+   
    .button-group {
        display: flex;
        justify-content: center;
@@ -234,10 +234,8 @@
        margin-top: 30px;
        padding-top: 10px;
    }
-
-
+   
    /* --- Error Handling --- */
-
    .error-message {
        color: #f87c7c;
        font-size: 0.9em;
@@ -245,144 +243,140 @@
        margin-top: 6px;
        font-weight: 400;
    }
-
+   
    input.invalid,
+   select.invalid,
    textarea.invalid {
        border-color: #e74c3c !important;
        background-color: rgba(50, 20, 20, 0.5) !important;
    }
-
-   .emotion-selector.has-error { /* Border around emotion pills if invalid */
+   
+   .emotion-selector.has-error {
        border: 1px solid #e74c3c;
        padding: 10px;
-       margin: -5px;
+       margin: -10px -10px 5px -10px; /* Adjust negative margins */
        border-radius: 8px;
    }
-
-   .emotion-group-error { /* Error message specific to emotion group */
+   
+   .emotion-group-error {
+       /* This specific error might not be needed if individual fields show errors */
        margin-bottom: 10px;
    }
-
-
+   
+   
    /* ==========================================================================
       3. Landing & About Page Styles
       ========================================================================== */
-
-   /* --- Shared Background and Text --- */
-
+   
    body.landing-specific-background,
-   body.about-page-background {
+   body.about-page-background { /* Added about class */
        background: url('/static/resources/landing.png') no-repeat center center fixed;
        background-size: cover;
-       color: #f0f0f0; /* Light text for landing/about */
+       color: #f0f0f0;
    }
-
-
-   /* --- Header Shared by Landing/About --- */
-
+   
+   
    .landing-specific-header {
        display: flex;
+       justify-content: space-between; /* Space logo and nav */
        align-items: center;
        padding: 1.5rem 5%;
        width: 100%;
-       position: relative;
+       position: relative; /* Keep for potential absolute elements */
        z-index: 10;
    }
-
+   
    .landing-specific-logo {
        display: flex;
        align-items: center;
    }
-
+   
    .landing-specific-logo img {
-       height: 180px; /* Kept larger logo */
+       height: 60px; /* Adjusted height */
        width: auto;
-       margin-top: 10px; /* Adjust as needed */
+       /* Removed margin-top */
    }
-
+   
    .landing-specific-nav {
        display: flex;
        align-items: center;
    }
-
+   
    .landing-specific-nav ul {
        display: flex;
        list-style: none;
-       gap: 2.2rem; /* Spacing between nav items */
+       gap: 2.2rem;
        align-items: center;
    }
-
+   
    .landing-specific-nav a {
-       color: #fff; /* White nav links */
+       color: #fff;
        text-decoration: none;
-       font-size: 1.4rem;
+       font-size: 1.1rem; /* Adjusted size */
        font-weight: 500;
        transition: all 0.3s ease;
    }
-
+   
    .landing-specific-nav a:hover {
-       color: #e6d29e; /* Light yellow hover */
+       color: #e6d29e;
        text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
    }
-
-   .landing-specific-nav .signup-button { /* Style specific sign up button */
-       background-color: #a074b5; /* Solid purple */
+   
+   .landing-specific-nav .signup-button {
+       background-color: #a074b5;
        border-radius: 25px;
        padding: 0.6rem 1.8rem;
        font-weight: 600;
-       font-size: 0.9rem; /* Match previous */
-       letter-spacing: 0.5px; /* Match previous */
-       text-transform: uppercase; /* Match previous */
+       font-size: 0.9rem;
+       letter-spacing: 0.5px;
+       text-transform: uppercase;
        box-shadow: 0 0 15px rgba(177, 156, 217, 0.5);
        transition: all 0.3s ease;
    }
-
+   
    .landing-specific-nav .signup-button:hover {
-       background-color: #e6d29e; /* Yellow hover */
-       color: #fff; /* Keep text white */
+       background-color: #e6d29e;
+       color: #fff;
        transform: translateY(-2px);
        box-shadow: 0 0 20px rgba(177, 156, 217, 0.7);
    }
-
-
-   /* --- Landing Page Specific Content --- */
-
+   
+   
    .landing-main-content {
        display: flex;
        flex-direction: column;
-       justify-content: flex-start;
-       align-items: flex-start;
+       justify-content: center; /* Center vertically */
+       align-items: center; /* Center horizontally */
        padding: 5vh 8%;
        flex-grow: 1;
        position: relative;
        z-index: 5;
-       min-height: calc(100vh - 150px); /* Adjust 150px based on actual header height */
+       text-align: center; /* Center text within */
+       /* Removed min-height */
    }
-
+   
    .landing-content-wrapper {
        max-width: 600px;
-       text-align: center;
-       margin-left: 0;
-       margin-right: auto;
+       /* Removed margins */
    }
-
+   
    .landing-content-wrapper h1 {
        color: #ffffff;
        font-size: 3.2rem;
        text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
-       text-align: center;
        margin-bottom: 1rem;
    }
-
+   
    .landing-content-wrapper p {
        color: #d8d8e0;
        font-size: 1.1rem;
        line-height: 1.7;
        margin-bottom: 2.5rem;
-       text-align: center;
-       max-width: 550px;
+       max-width: 550px; /* Limit paragraph width */
+       margin-left: auto; /* Center paragraph block */
+       margin-right: auto;
    }
-
+   
    .read-more-button {
        display: inline-flex;
        align-items: center;
@@ -400,78 +394,57 @@
        box-shadow: 0 0 15px rgba(177, 156, 217, 0.5);
        transition: all 0.3s ease;
    }
-
+   
    .read-more-button:hover {
        background-color: #e6d29e;
        transform: translateY(-2px);
        box-shadow: 0 0 15px rgba(177, 156, 217, 0.5);
        color: #ffffff;
    }
-
-
-   /* --- About Page Specific Content --- */
-
-   .about-main-content {
-       display: flex;
-       justify-content: center;
-       align-items: flex-start;
-       padding: 40px 20px;
-       flex-grow: 1;
-       width: 100%;
+   
+   /* About Page Specific Container - Reuse landing structure */
+   .about-page-background .landing-main-content {
+       align-items: center; /* Center content wrapper */
    }
-
-   .about-content-wrapper {
-       background-color: rgba(255, 255, 255, 0.85);
-       backdrop-filter: blur(8px);
-       padding: 35px 45px;
-       border-radius: 10px;
-       box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
-       max-width: 850px;
-       width: 100%;
-       text-align: center;
-       margin-top: 20px;
-       border: 1px solid rgba(255, 255, 255, 0.1);
+   
+   .about-page-background .landing-content-wrapper {
+       text-align: left; /* Align text left inside wrapper */
    }
-
-   .about-content-wrapper h1 {
-       color: #4a0e6c;
-       border-bottom: 2px solid #d8c1e3;
-       padding-bottom: 10px;
-       font-size: 2.4rem;
-       text-align: left;
+   
+   .about-page-background .landing-content-wrapper h1 {
+       text-align: left; /* Align h1 left */
+       width: 100%; /* Ensure h1 takes full width */
    }
-
-   .about-content-wrapper p {
-       color: #444;
-       font-size: 1rem;
-       line-height: 1.8;
-       text-align: left;
+   .about-page-background .landing-content-wrapper p {
+       text-align: left; /* Align p left */
+       max-width: none; /* Allow paragraph full width */
    }
-
-
+   
+   
    /* ==========================================================================
-      4. Dashboard Page Styles (/dashboard)
+      4. Dashboard Page Styles
       ========================================================================== */
-
+   body.dashboard-page {
+       background: url('/static/resources/dashboard.png') no-repeat center center fixed;
+       background-size: cover;
+   }
+   
    .dashboard-container {
        display: flex;
        width: 92%;
-       max-width: 1500px;
-       margin: 130px auto 50px auto; /* <<< ADJUSTED MARGIN */
-       min-height: 70vh;
-       padding: 20px;
+       max-width: 1600px; /* Increased max width */
+       margin: 40px auto 50px auto; /* Adjusted top margin */
+       padding: 0; /* Removed padding */
        gap: 30px;
        position: relative;
        z-index: 2;
    }
-
-
-   /* --- Dashboard Sidebar --- */
-
+   
+   
    .dashboard-sidebar {
        width: 80px;
        height: fit-content;
-       max-height: calc(100vh - 80px); /* Keeps sidebar scroll if needed */
+       max-height: calc(100vh - 80px); /* Ensure it doesn't overflow */
        background-color: rgba(40, 42, 54, 0.7);
        backdrop-filter: blur(12px);
        -webkit-backdrop-filter: blur(12px);
@@ -482,33 +455,115 @@
        border-radius: 20px;
        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
        border: 1px solid rgba(255, 255, 255, 0.1);
-       margin: auto 0;
-       align-self: center;
+       margin: 0; /* Remove auto margin */
+       align-self: flex-start; /* Align to top */
        position: sticky;
-       top: 40px;
+       top: 40px; /* Stick below potential top nav */
        z-index: 5;
    }
-
-   /* ... Sidebar Nav Styles (Unchanged) ... */
-   .sidebar-nav ul { width: 100%; display: flex; flex-direction: column; gap: 15px; align-items: center; }
-   .sidebar-nav li { width: 100%; position: relative; display: flex; justify-content: center; }
-   .sidebar-nav a { display: flex; align-items: center; justify-content: center; width: 50px; height: 50px; color: #bdc1c6; text-decoration: none; transition: all 0.3s ease; border-radius: 50%; background-color: rgba(255, 255, 255, 0.08); position: relative; }
-   .sidebar-nav a:hover, .sidebar-nav a.active { background-color: rgba(255, 255, 255, 0.2); color: #ffffff; transform: scale(1.1); box-shadow: 0 0 15px rgba(160, 116, 181, 0.5); }
-   .sidebar-nav a::after { content: attr(data-title); position: absolute; left: 110%; top: 50%; transform: translateY(-50%); background-color: rgba(50, 52, 64, 0.95); color: white; padding: 6px 12px; border-radius: 6px; font-size: 0.85rem; white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity 0.3s ease, left 0.3s ease; z-index: 10; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3); visibility: hidden; }
-   .sidebar-nav a:hover::after { opacity: 1; visibility: visible; left: 120%; }
-   .nav-icon { font-size: 22px; line-height: 1; color: inherit; transition: all 0.3s ease; }
-   .sidebar-nav a:hover .nav-icon { transform: scale(1.1); }
-   .nav-separator { width: 60%; height: 1px; background-color: rgba(255, 255, 255, 0.15); margin: 10px auto; }
-   .sidebar-nav a.disabled-link { opacity: 0.4; pointer-events: none; cursor: default; }
-   .sidebar-nav a.disabled-link:hover { background-color: rgba(255, 255, 255, 0.08); transform: none; box-shadow: none; color: #bdc1c6; }
-   .sidebar-nav a.disabled-link:hover::after { opacity: 0; visibility: hidden; }
-
-
-   /* --- Dashboard Main Area --- */
-
+   
+   .sidebar-nav ul {
+       width: 100%;
+       display: flex;
+       flex-direction: column;
+       gap: 15px;
+       align-items: center;
+   }
+   .sidebar-nav li {
+       width: 100%;
+       position: relative;
+       display: flex;
+       justify-content: center;
+   }
+   .sidebar-nav a,
+   .sidebar-nav .logout-button { /* Combine styles */
+       display: flex;
+       align-items: center;
+       justify-content: center;
+       width: 50px;
+       height: 50px;
+       color: #bdc1c6;
+       text-decoration: none;
+       transition: all 0.3s ease;
+       border-radius: 50%;
+       background-color: rgba(255, 255, 255, 0.08);
+       position: relative;
+       border: none; /* Ensure buttons have no border */
+       padding: 0; /* Ensure buttons have no padding */
+       cursor: pointer; /* Ensure buttons have pointer */
+       outline: none; /* Remove default outline */
+       font-family: inherit; /* Inherit font */
+   }
+   
+   .sidebar-nav a:hover,
+   .sidebar-nav a.active,
+   .sidebar-nav .logout-button:hover,
+   .sidebar-nav .logout-button:focus {
+       background-color: rgba(255, 255, 255, 0.2);
+       color: #ffffff;
+       transform: scale(1.1);
+       box-shadow: 0 0 15px rgba(160, 116, 181, 0.5);
+   }
+   .sidebar-nav a::after,
+   .sidebar-nav .logout-button::after { /* Tooltip for both */
+       content: attr(data-title);
+       position: absolute;
+       left: 110%;
+       top: 50%;
+       transform: translateY(-50%);
+       background-color: rgba(50, 52, 64, 0.95);
+       color: white;
+       padding: 6px 12px;
+       border-radius: 6px;
+       font-size: 0.85rem;
+       white-space: nowrap;
+       opacity: 0;
+       pointer-events: none;
+       transition: opacity 0.3s ease, left 0.3s ease;
+       z-index: 10;
+       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+       visibility: hidden;
+   }
+   .sidebar-nav a:hover::after,
+   .sidebar-nav .logout-button:hover::after {
+       opacity: 1;
+       visibility: visible;
+       left: 120%;
+   }
+   .nav-icon {
+       font-size: 22px;
+       line-height: 1;
+       color: inherit;
+       transition: all 0.3s ease;
+   }
+   .sidebar-nav a:hover .nav-icon,
+   .sidebar-nav .logout-button:hover .nav-icon {
+       transform: scale(1.1);
+   }
+   .nav-separator {
+       width: 60%;
+       height: 1px;
+       background-color: rgba(255, 255, 255, 0.15);
+       margin: 10px auto;
+   }
+   .sidebar-nav a.disabled-link {
+       opacity: 0.4;
+       pointer-events: none;
+       cursor: default;
+   }
+   .sidebar-nav a.disabled-link:hover {
+       background-color: rgba(255, 255, 255, 0.08);
+       transform: none;
+       box-shadow: none;
+       color: #bdc1c6;
+   }
+   .sidebar-nav a.disabled-link:hover::after {
+       opacity: 0;
+       visibility: hidden;
+   }
+   
    .dashboard-main {
        flex-grow: 1;
-       /* REMOVED max-height and overflow-y */
        padding: 25px 35px;
        display: flex;
        flex-direction: column;
@@ -517,56 +572,158 @@
        -webkit-backdrop-filter: blur(10px);
        border-radius: 20px;
        border: 1px solid rgba(255, 255, 255, 0.1);
-       align-self: stretch; /* Let it stretch vertically */
+       /* Removed align-self */
    }
-
+   
    .dashboard-header {
        margin-bottom: 25px;
        padding-bottom: 15px;
        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
        flex-shrink: 0;
        display: flex;
-       justify-content: center;
+       justify-content: space-between; /* Space title and indicator */
        align-items: center;
        gap: 15px;
        width: 100%;
    }
-
+   
    .dashboard-header h1 {
        font-size: 2.1rem;
        margin: 0;
+       text-align: left; /* Align title left */
    }
-
-
-   /* --- Dashboard Filter Bar --- */
-   /* ... Filter Bar Styles (Unchanged) ... */
-   .dashboard-filter-bar { margin-bottom: 30px; padding: 15px 20px; background-color: rgba(40, 42, 54, 0.75); border-radius: 15px; border: 1px solid rgba(255, 255, 255, 0.1); box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); flex-shrink: 0; }
-   .filter-form { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 15px 20px; justify-content: center; }
-   .filter-group { display: flex; flex-direction: column; align-items: flex-start; gap: 5px; }
-   .text-search-group { flex-grow: 1; min-width: 220px; align-self: stretch; justify-content: flex-end; }
-   .search-input-wrapper { display: flex; width: 100%; background-color: rgba(20, 22, 34, 0.6); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 20px; overflow: hidden; transition: border-color 0.2s, box-shadow 0.2s; }
-   .search-input-wrapper:focus-within { border-color: #a074b5; box-shadow: 0 0 0 2px rgba(160, 116, 181, 0.3); }
-   .search-input-wrapper input[type="search"] { flex-grow: 1; padding: 10px 18px; border: none; background: none; color: #e0e0e0; font-size: 0.95rem; outline: none; font-family: 'Poppins', sans-serif; }
-   .search-input-wrapper input[type="search"]:focus{ box-shadow: none; }
-   input[type="search"]::placeholder { color: #9aabbc; opacity: 0.8; }
-   input[type="search"]::-webkit-search-cancel-button, input[type="search"]::-webkit-search-decoration { -webkit-appearance: none; appearance: none; }
-   .emotion-filter-group, .date-filter-group { align-self: stretch; justify-content: flex-end; }
-   .filter-group label { margin-bottom: 0; color: #bdc1c6; font-size: 0.85rem; font-weight: 400; padding-left: 5px; }
-   .filter-group select, .filter-group input[type="date"] { padding: 9px 12px; background-color: rgba(20, 22, 34, 0.6); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 6px; color: #e0e0e0; font-family: 'Poppins', sans-serif; font-size: 0.9rem; outline: none; transition: border-color 0.2s, box-shadow 0.2s; height: 40px; line-height: normal; width: 160px; }
-   .filter-group select:focus, .filter-group input[type="date"]:focus { border-color: #a074b5; box-shadow: 0 0 0 2px rgba(160, 116, 181, 0.3); }
-   .filter-group select { appearance: none; -webkit-appearance: none; -moz-appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23bdc1c6' viewBox='0 0 16 16'%3E%3Cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 10px center; padding-right: 35px; cursor: pointer; }
-   .filter-group input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(0.8); cursor: pointer; }
-   .filter-button-group { display: flex; gap: 10px; align-self: flex-end; padding-bottom: 1px; }
-   .filter-apply-btn, .clear-filters-btn { text-transform: none; padding: 9px 20px; font-size: 0.95rem; height: 40px; }
-
-
-   /* --- Dashboard Mood List --- */
-
+   
+   /* Filter Bar */
+   .dashboard-filter-bar {
+       margin-bottom: 30px;
+       padding: 15px 20px;
+       background-color: rgba(40, 42, 54, 0.75);
+       border-radius: 15px;
+       border: 1px solid rgba(255, 255, 255, 0.1);
+       box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+       flex-shrink: 0;
+   }
+   .filter-form {
+       display: flex;
+       flex-wrap: wrap;
+       align-items: flex-end; /* Align items bottom */
+       gap: 15px 20px;
+       /* Removed justify-content center */
+   }
+   .filter-group {
+       display: flex;
+       flex-direction: column;
+       align-items: flex-start;
+       gap: 5px;
+   }
+   .text-search-group {
+       flex-grow: 1;
+       min-width: 220px;
+       /* Removed align-self/justify-content */
+   }
+   .search-input-wrapper {
+       display: flex;
+       width: 100%;
+       background-color: rgba(20, 22, 34, 0.6);
+       border: 1px solid rgba(255, 255, 255, 0.2);
+       border-radius: 20px; /* Rounded search */
+       overflow: hidden;
+       transition: border-color 0.2s, box-shadow 0.2s;
+   }
+   .search-input-wrapper:focus-within {
+       border-color: #a074b5;
+       box-shadow: 0 0 0 2px rgba(160, 116, 181, 0.3);
+   }
+   .search-input-wrapper input[type="search"] {
+       flex-grow: 1;
+       padding: 10px 18px;
+       border: none;
+       background: none;
+       color: #e0e0e0;
+       font-size: 0.95rem;
+       outline: none;
+       font-family: 'Poppins', sans-serif;
+       margin-bottom: 0; /* Override base input margin */
+   }
+   .search-input-wrapper input[type="search"]:focus{
+       box-shadow: none; /* Override base focus */
+   }
+   input[type="search"]::placeholder {
+       color: #9aabbc;
+       opacity: 0.8;
+   }
+   input[type="search"]::-webkit-search-cancel-button,
+   input[type="search"]::-webkit-search-decoration {
+       -webkit-appearance: none;
+       appearance: none;
+   }
+   .emotion-filter-group,
+   .date-filter-group {
+       /* Removed align-self/justify-content */
+   }
+   .filter-group label {
+       margin-bottom: 0;
+       color: #bdc1c6;
+       font-size: 0.85rem;
+       font-weight: 400;
+       padding-left: 5px;
+   }
+   .filter-group select,
+   .filter-group input[type="date"] {
+       padding: 9px 12px; /* Slightly less padding */
+       background-color: rgba(20, 22, 34, 0.6);
+       border: 1px solid rgba(255, 255, 255, 0.2);
+       border-radius: 6px; /* Less rounded */
+       color: #e0e0e0;
+       font-family: 'Poppins', sans-serif;
+       font-size: 0.9rem;
+       outline: none;
+       transition: border-color 0.2s, box-shadow 0.2s;
+       height: 40px; /* Fixed height */
+       line-height: normal;
+       width: 160px; /* Fixed width */
+       margin-bottom: 0; /* Override base input margin */
+   }
+   .filter-group select:focus,
+   .filter-group input[type="date"]:focus {
+       border-color: #a074b5;
+       box-shadow: 0 0 0 2px rgba(160, 116, 181, 0.3);
+   }
+   .filter-group select {
+       appearance: none;
+       -webkit-appearance: none;
+       -moz-appearance: none;
+       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23bdc1c6' viewBox='0 0 16 16'%3E%3Cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3E%3C/svg%3E");
+       background-repeat: no-repeat;
+       background-position: right 10px center;
+       padding-right: 35px; /* Space for arrow */
+       cursor: pointer;
+   }
+   .filter-group input[type="date"]::-webkit-calendar-picker-indicator {
+       filter: invert(0.8);
+       cursor: pointer;
+   }
+   .filter-button-group {
+       display: flex;
+       gap: 10px;
+       margin-left: auto; /* Push buttons to the right */
+       /* Removed align-self/padding-bottom */
+   }
+   .filter-button-group .btn { /* Target buttons inside specifically */
+       text-transform: none;
+       padding: 9px 20px;
+       font-size: 0.95rem;
+       height: 40px; /* Match input height */
+   }
+   
+   
+   /* Mood List Section */
    .dashboard-mood-list {
-       flex-grow: 1; /* Allow list area to grow */
-       /* Removed overflow-y, padding-right, margin-right */
+       flex-grow: 1;
+       overflow-y: auto; /* Allow scrolling if content exceeds */
+       padding-right: 5px; /* Prevent scrollbar overlap */
    }
-
+   
    .dashboard-mood-list .mood-list {
        padding: 0;
        margin: 0;
@@ -574,23 +731,23 @@
        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
        gap: 25px;
    }
-
-   /* --- Individual Mood Item Card --- */
+   
    .dashboard-main .mood-item {
        width: auto;
-       margin-bottom: 0;
+       margin-bottom: 0; /* Handled by grid gap */
        background-color: rgba(55, 58, 80, 0.7);
        padding: 20px 24px;
        border-radius: 14px;
        border: 1px solid rgba(255, 255, 255, 0.1);
        border-left-width: 5px;
-       border-left-style: solid;
+       border-left-style: solid; /* Color set inline */
        transition: box-shadow 0.3s ease, transform 0.3s ease, border-color 0.2s;
        color: #e0e0e0;
        display: flex;
        flex-direction: column;
-       height: 250px;       /* <<< Fixed height */
-       overflow: hidden;    /* <<< Clip overflow */
+       /* height: 250px; --- Removed fixed height */
+       min-height: 220px; /* Set minimum height */
+       overflow: hidden; /* Keep hidden */
        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
        text-align: left;
        position: relative;
@@ -600,9 +757,8 @@
        transform: translateY(-3px);
        border-color: rgba(255, 255, 255, 0.2);
    }
-
-   /* --- Styles for elements INSIDE the mood item card --- */
-   .dashboard-main .mood-item-header { /* Optional wrapper class from template */
+   
+   .dashboard-main .mood-item-header {
         flex-shrink: 0;
         margin-bottom: 8px;
    }
@@ -621,32 +777,51 @@
         line-height: 1;
         flex-shrink: 0;
    }
-   /* Container for the text content and 'View More' link */
    .dashboard-main .mood-item-content {
-        flex-grow: 1;       /* <<< CRITICAL: Allows this div to expand vertically */
-        overflow: hidden;   /* Needed for text truncation child */
-        display: flex;        /* Use flex to manage children */
-        flex-direction: column; /* Stack text and view more link */
-        min-height: 0;      /* Prevents flex blow-out */
-        margin-bottom: 10px; /* Space between content area and meta */
+        flex-grow: 1; /* Allow content to take space */
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        min-height: 0; /* Allow shrinking */
+        margin-bottom: 10px;
    }
-   /* The actual text content - APPLY TRUNCATION HERE */
    .dashboard-main .mood-item .quill-rendered-content {
         overflow: hidden;
         text-overflow: ellipsis;
         display: -webkit-box;
         -webkit-box-orient: vertical;
-        -webkit-line-clamp: 4; /* Adjust number of lines */
+        -webkit-line-clamp: 4; /* Limit lines */
         line-clamp: 4;
         color: #c8c8d8;
         font-size: 0.95rem;
         line-height: 1.5;
         font-family: 'Lora', serif;
+        margin-bottom: 5px; /* Space before view more */
    }
-   .quill-rendered-content > p { margin-bottom: 0.5em; }
-   .quill-rendered-content > *:last-child { margin-bottom: 0; }
-
-   /* --- Metadata - Positioned normally below content --- */
+   .quill-rendered-content > p {
+       margin-bottom: 0.5em; /* Space between paragraphs */
+   }
+   .quill-rendered-content > *:last-child {
+       margin-bottom: 0;
+   }
+   
+   .dashboard-main .mood-item .view-more-link {
+       display: inline;
+       font-size: 0.8rem;
+       font-weight: 500;
+       color: #ffffff;
+       cursor: pointer;
+       text-decoration: none;
+       margin-top: auto; /* Push to bottom of content area */
+       padding-top: 5px;
+       align-self: flex-start;
+       transition: color 0.2s ease;
+   }
+   
+   .dashboard-main .mood-item .view-more-link:hover {
+       color: #e6d29e;
+   }
+   
    .dashboard-main .mood-item .mood-meta {
         font-size: 0.75em;
         opacity: 0.8;
@@ -656,21 +831,20 @@
         border-top: 1px solid rgba(255, 255, 255, 0.08);
         flex-shrink: 0;
         width: 100%;
+        margin-top: 10px; /* Space above meta */
    }
-   /* --- Buttons - Pushed to the bottom --- */
    .edit-delete-buttons {
-        margin-top: auto;   /* <<< CRITICAL: Pushes this block down */
+        /* margin-top: auto; Remove auto margin */
         padding-top: 10px;
         flex-shrink: 0;
         align-self: flex-end;
         width: 100%;
         text-align: right;
         white-space: nowrap;
+        margin-top: 5px; /* Space between meta and buttons */
    }
-   /* --- End Styles for elements INSIDE the mood item card --- */
-
-
-   /* --- No results message --- */
+   
+   /* Centered content (No Moods Message) */
    .dashboard-content-centered {
        display: flex;
        flex-direction: column;
@@ -685,214 +859,626 @@
        color: #bdc1c6;
        margin-bottom: 25px;
    }
-
-
+   
+   
    /* ==========================================================================
       5. Mood Form Page Styles (/mood/new, /mood/edit/*)
       ========================================================================== */
-    /* ... Mood Form Styles (Unchanged) ... */
-   body.mood-form-page { display: flex; justify-content: center; align-items: center; padding: 30px 15px; background-image: url('/static/resources/form.png'); background-size: cover; background-position: center center; background-repeat: no-repeat; background-attachment: fixed; }
-   .mood-form-page .form-container { width: 90%; max-width: 700px; padding: 35px 45px; background-color: rgba(40, 42, 54, 0.8); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-radius: 15px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2); border: 1px solid rgba(255, 255, 255, 0.1); text-align: left; margin: 0 auto; }
-   .mood-form-page h1 { font-size: 2rem; text-align: center; margin-bottom: 30px; border-bottom: 1px solid rgba(255, 255, 255, 0.1); padding-bottom: 15px; }
+   body.mood-form-page {
+       display: flex;
+       justify-content: center;
+       align-items: center;
+       padding: 30px 15px;
+       background-image: url('/static/resources/form.png'); /* Specific background */
+       background-size: cover;
+       background-position: center center;
+       background-repeat: no-repeat;
+       background-attachment: fixed;
+   }
+   
+   .mood-form-page .form-container {
+       width: 90%;
+       max-width: 700px;
+       padding: 35px 45px;
+       background-color: rgba(40, 42, 54, 0.8);
+       backdrop-filter: blur(10px);
+       -webkit-backdrop-filter: blur(10px);
+       border-radius: 15px;
+       box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+       border: 1px solid rgba(255, 255, 255, 0.1);
+       text-align: left;
+       margin: 0 auto; /* Center form container */
+   }
+   
+   .mood-form-page h1 {
+       font-size: 2rem;
+       text-align: center;
+       margin-bottom: 30px;
+       border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+       padding-bottom: 15px;
+   }
+   
    /* Emotion Selector */
-   .emotion-selector { display: flex; flex-wrap: wrap; gap: 10px; padding-top: 5px; }
-   .hidden-radio { position: absolute; opacity: 0; pointer-events: none; width: 0; height: 0; }
-   .emotion-option { display: inline-flex; align-items: center; gap: 8px; padding: 8px 16px; background-color: rgba(255, 255, 255, 0.1); color: #bdc1c6; border-radius: 20px; cursor: pointer; transition: all 0.3s ease; border: 1px solid rgba(255, 255, 255, 0.2); font-size: 0.9rem; user-select: none; }
-   .emotion-option-emoji { font-size: 1.1em; line-height: 1; }
-   .emotion-option:hover { background-color: rgba(255, 255, 255, 0.2); color: #ffffff; border-color: rgba(255, 255, 255, 0.4); transform: translateY(-1px); }
-   .hidden-radio:checked + .emotion-option, .emotion-option.other-option.has-custom-value { background-color: #a074b5; color: #ffffff; border-color: #a074b5; box-shadow: 0 0 10px rgba(160, 116, 181, 0.4); }
-   .emotion-option.other-option.has-custom-value .emotion-option-emoji, .emotion-option.other-option.has-custom-value .emotion-option-name { color: #ffffff !important; }
-   .hidden-radio#emotion-other:not(:checked) + label.emotion-option.other-option:not(.has-custom-value) { background-color: rgba(255, 255, 255, 0.1); border-color: rgba(255, 255, 255, 0.2); color: #bdc1c6; box-shadow: none; }
-   .hidden-radio#emotion-other:not(:checked) + label.emotion-option.other-option:not(.has-custom-value) .emotion-option-emoji, .hidden-radio#emotion-other:not(:checked) + label.emotion-option.other-option:not(.has-custom-value) .emotion-option-name { color: #bdc1c6; }
-   .hidden-radio:focus + .emotion-option:not(.has-custom-value), .hidden-radio:focus + .emotion-option.other-option.has-custom-value { outline: none; box-shadow: 0 0 0 3px rgba(160, 116, 181, 0.5), 0 0 10px rgba(160, 116, 181, 0.4); }
-
-
+   .emotion-selector {
+       display: flex;
+       flex-wrap: wrap;
+       gap: 10px;
+       padding-top: 5px;
+   }
+   
+   .hidden-radio {
+       position: absolute;
+       opacity: 0;
+       pointer-events: none;
+       width: 0;
+       height: 0;
+   }
+   
+   .emotion-option-wrapper {
+       /* Wrapper for radio + label if needed */
+   }
+   
+   .emotion-option {
+       display: inline-flex;
+       align-items: center;
+       gap: 8px;
+       padding: 8px 16px;
+       background-color: rgba(255, 255, 255, 0.1);
+       color: #bdc1c6;
+       border-radius: 20px;
+       cursor: pointer;
+       transition: all 0.3s ease;
+       border: 1px solid rgba(255, 255, 255, 0.2);
+       font-size: 0.9rem;
+       user-select: none; /* Prevent text selection */
+   }
+   
+   .emotion-option-emoji {
+       font-size: 1.1em;
+       line-height: 1;
+   }
+   
+   .emotion-option-name {
+       /* Specific styles if needed */
+   }
+   
+   .emotion-option:hover {
+       background-color: rgba(255, 255, 255, 0.2);
+       color: #ffffff;
+       border-color: rgba(255, 255, 255, 0.4);
+       transform: translateY(-1px);
+   }
+   
+   .hidden-radio:checked + .emotion-option,
+   .emotion-option.other-option.has-custom-value { /* Style for selected or custom */
+       background-color: #a074b5;
+       color: #ffffff;
+       border-color: #a074b5;
+       box-shadow: 0 0 10px rgba(160, 116, 181, 0.4);
+   }
+   
+   /* Ensure custom option text is white when selected */
+   .emotion-option.other-option.has-custom-value .emotion-option-emoji,
+   .emotion-option.other-option.has-custom-value .emotion-option-name {
+       color: #ffffff !important;
+   }
+   
+   /* Style 'Other' option when *not* selected and *no* custom value is set */
+   .hidden-radio#emotion-other:not(:checked) + label.emotion-option.other-option:not(.has-custom-value) {
+       background-color: rgba(255, 255, 255, 0.1);
+       border-color: rgba(255, 255, 255, 0.2);
+       color: #bdc1c6;
+       box-shadow: none;
+   }
+   
+   .hidden-radio#emotion-other:not(:checked) + label.emotion-option.other-option:not(.has-custom-value) .emotion-option-emoji,
+   .hidden-radio#emotion-other:not(:checked) + label.emotion-option.other-option:not(.has-custom-value) .emotion-option-name {
+       color: #bdc1c6; /* Reset text color */
+   }
+   
+   /* Focus styles for accessibility */
+   .hidden-radio:focus + .emotion-option:not(.has-custom-value),
+   .hidden-radio:focus + .emotion-option.other-option.has-custom-value {
+       outline: none;
+       box-shadow: 0 0 0 3px rgba(160, 116, 181, 0.5), 0 0 10px rgba(160, 116, 181, 0.4);
+   }
+   
+   
    /* ==========================================================================
       6. Custom Emotion Modal Styles
       ========================================================================== */
-   /* ... Custom Emotion Modal Styles (Unchanged) ... */
-   .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0, 0, 0, 0.7); align-items: center; justify-content: center; opacity: 0; visibility: hidden; transition: opacity 0.3s ease, visibility 0s linear 0.3s; }
-   .modal.is-visible { opacity: 1; visibility: visible; transition-delay: 0s; }
-   .modal-content { background-color: #2f3241; margin: auto; padding: 30px 35px; border: 1px solid rgba(255, 255, 255, 0.15); width: 90%; max-width: 480px; border-radius: 12px; box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4); color: #e0e0e0; position: relative; transform: scale(0.95); transition: transform 0.3s ease; }
-   .modal.is-visible .modal-content { transform: scale(1); }
-   .modal-header { padding-bottom: 15px; border-bottom: 1px solid rgba(255, 255, 255, 0.1); margin-bottom: 25px; display: flex; justify-content: center; align-items: center; position: relative; }
-   .modal-header h2 { margin-bottom: 0; color: #fff; font-size: 1.4rem; font-family: 'Playfair Display', serif; }
-   .modal-close { color: #aaa; font-size: 2rem; font-weight: bold; line-height: 1; cursor: pointer; padding: 0 5px; margin: -5px -10px 0 10px; transition: color 0.2s; position: absolute; right: 30px; top: 50%; transform: translateY(-50%); }
-   .modal-close:hover, .modal-close:focus { color: #fff; text-decoration: none; }
-   .modal .form-group { margin-bottom: 20px; }
-   .modal label { font-size: 0.9rem; color: #bdc1c6; margin-bottom: 8px; display: block; }
-   .modal input[type="text"], .modal input[type="color"] { width: 100%; padding: 12px 15px; background-color: rgba(20, 22, 34, 0.7); border: 1px solid rgba(255, 255, 255, 0.2); color: #e0e0e0; border-radius: 6px; font-family: 'Poppins', sans-serif; font-size: 0.95rem; }
-   .modal input[type="text"]:focus, .modal input[type="color"]:focus { border-color: #a074b5; box-shadow: 0 0 0 2px rgba(160, 116, 181, 0.3); outline: none; }
-   .modal input[type="color"] { padding: 5px; height: 45px; cursor: pointer; width: 100%; }
-   .modal input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
-   .modal input[type="color"]::-webkit-color-swatch { border: none; border-radius: 4px; }
-   .emoji-suggestions { margin-top: 10px; display: flex; flex-wrap: wrap; gap: 8px; }
-   .emoji-suggestion-btn { background-color: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); color: #e0e0e0; padding: 5px 8px; border-radius: 5px; cursor: pointer; font-size: 1.3rem; line-height: 1; transition: background-color 0.2s, transform 0.1s; }
-   .emoji-suggestion-btn:hover { background-color: rgba(255, 255, 255, 0.2); transform: scale(1.1); }
-   .emoji-suggestion-btn:active { transform: scale(1.0); }
-   .modal-footer { margin-top: 25px; border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: 20px; gap: 10px; /* Uses .button-group */ }
-   .modal .btn { font-size: 0.9rem; padding: 8px 18px; text-transform: none; }
-   .modal .error-message { font-size: 0.85rem; margin-top: 4px; }
-
-
-   /* ==========================================================================
-      7. HTMX Indicator Styles
-      ========================================================================== */
-   /* ... HTMX Indicator Styles (Unchanged) ... */
-   .htmx-indicator { display: inline-block; opacity: 0; transition: opacity 200ms ease-in; margin-left: 15px; vertical-align: middle; width: 18px; height: 18px; border: 2px solid rgba(160, 116, 181, 0.3); border-radius: 50%; border-top-color: #A074B5; animation: spin 0.8s ease-in-out infinite; -webkit-animation: spin 0.8s ease-in-out infinite; }
-   .htmx-indicator span { display: none; }
-   @keyframes spin { to { transform: rotate(360deg); } }
-   @-webkit-keyframes spin { to { -webkit-transform: rotate(360deg); } }
-   body.htmx-request .htmx-indicator, .htmx-request .htmx-indicator { opacity: 1; }
-   body.htmx-request.htmx-indicator { opacity: 1; }
-   .htmx-swapping { opacity: 0.6; transition: opacity 250ms ease-out; }
-
-
-   /* ==========================================================================
-      8. Utility Classes
-      ========================================================================== */
-   /* ... Utility Classes (Unchanged) ... */
-   .visually-hidden { position: absolute !important; height: 1px; width: 1px; overflow: hidden; clip: rect(1px, 1px, 1px, 1px); white-space: nowrap; }
-
-
-   /* ==========================================================================
-      9. Responsive Adjustments (Grouped)
-      ========================================================================== */
-   /* ... Responsive Styles (Unchanged, but ensure mood-item height is handled) ... */
-   @media (max-width: 992px) {
-       .dashboard-mood-list .mood-list { grid-template-columns: 1fr; gap: 20px; }
-       .dashboard-main .mood-item { height: auto; min-height: 180px; } /* Allow auto height on smaller screens */
-       .dashboard-container { width: 95%; gap: 15px; }
-       .dashboard-main { padding: 20px; max-height: none; }
-       .filter-form { gap: 10px 15px; }
-       .text-search-group { min-width: 200px; }
-       .filter-group select, .filter-group input[type="date"] { width: 140px; }
-   }
-   @media (max-width: 768px) {
-       .dashboard-container { flex-direction: column; padding: 10px; width: 100%; gap: 15px; }
-       .dashboard-sidebar { position: static; width: 100%; max-height: none; flex-direction: row; justify-content: center; padding: 10px 0; border-radius: 15px; margin-bottom: 15px; overflow-x: auto; }
-       .sidebar-nav ul { flex-direction: row; gap: 10px; flex-wrap: nowrap; width: auto; }
-       .sidebar-nav a::after { display: none; }
-       .dashboard-main { padding: 15px; }
-       .filter-form { gap: 10px; }
-       .text-search-group, .emotion-filter-group, .date-filter-group { flex-basis: 45%; flex-grow: 1; }
-       .filter-button-group { flex-basis: 100%; justify-content: center; }
-       .filter-group select, .filter-group input[type="date"] { width: 100%; }
-       .landing-specific-header { padding: 1rem 5%; flex-direction: column; gap: 1.5rem; }
-       .landing-specific-logo img { height: 60px; }
-       .landing-main-content { padding: 1.5rem 5%; }
-       .landing-content-wrapper h1 { font-size: 2.8rem; }
-   }
-   @media (max-width: 576px) {
-       .landing-specific-logo img { height: 50px; }
-       .landing-specific-nav ul { gap: 1rem; }
-       .landing-content-wrapper h1 { font-size: 2.3rem; }
-       .landing-content-wrapper p { font-size: 1rem; }
-       .btn, .signup-button, .read-more-button { padding: 0.6rem 1.5rem; font-size: 0.9rem; }
-       .edit-delete-buttons .btn { padding: 5px 12px; font-size: 0.8rem; }
-       .dashboard-main { padding: 10px; }
-       .dashboard-header h1 { font-size: 1.8rem; }
-       /* .filter-bar { padding: 10px; } REMOVED - Inherited from dashboard-filter-bar */
-       .text-search-group, .emotion-filter-group, .date-filter-group, .filter-button-group { flex-basis: 100%; }
-       .filter-button-group { justify-content: space-around; }
-       .modal-content { padding: 20px; } /* Affects both modals */
-       .modal-header h2 { font-size: 1.2rem; } /* Affects both modals */
-       .emoji-suggestion-btn { font-size: 1.1rem; }
-   }
-
-
-   /* ==========================================================================
-      10. Pagination Styles
-      ========================================================================== */
-   /* ... Pagination Styles (Unchanged) ... */
-   .pagination { margin-top: 30px; padding-top: 20px; border-top: 1px solid rgba(255, 255, 255, 0.1); display: flex; justify-content: center; align-items: center; width: 100%; }
-   .pagination ul { display: flex; align-items: center; gap: 10px; }
-   .pagination li { margin: 0; }
-   .pagination span, .pagination a { display: inline-block; padding: 8px 16px; color: #bdc1c6; text-decoration: none; border-radius: 6px; transition: background-color 0.2s, color 0.2s; font-size: 0.9rem; }
-   .pagination a { background-color: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); }
-   .pagination a:hover { background-color: rgba(160, 116, 181, 0.5); color: #ffffff; border-color: rgba(160, 116, 181, 0.7); }
-   .pagination li.disabled span { color: rgba(189, 193, 198, 0.4); cursor: default; background-color: transparent; border: 1px solid transparent; }
-   .pagination li span:not([class]) { background-color: transparent; border: none; color: #e0e0e0; font-weight: 500; }
-
-
-   /* ==========================================================================
-      11. Rich Editor (Quill) Styles
-      ========================================================================== */
-    /* ... Quill Styles (Unchanged) ... */
-   #editor-container { border-radius: 8px; transition: box-shadow 0.3s ease, border-color 0.3s ease; margin-bottom: 5px; overflow: hidden; width: 100%; position: relative; }
-   .mood-form-page .ql-toolbar.ql-snow { background-color: rgba(30, 32, 44, 0.6); border: 1px solid rgba(255, 255, 255, 0.2); border-bottom: none; padding: 8px 10px; font-family: 'Poppins', sans-serif; box-sizing: border-box; transition: border-color 0.3s ease; border-top-left-radius: 8px; border-top-right-radius: 8px; border-bottom-left-radius: 0; border-bottom-right-radius: 0; }
-   .mood-form-page .ql-container.ql-snow { border: 1px solid rgba(255, 255, 255, 0.2); border-top: none; color: #FFFFFF; font-family: 'Lora', serif; font-size: 1rem; box-sizing: border-box; transition: border-color 0.3s ease, background-color 0.3s ease; border-top-left-radius: 0; border-top-right-radius: 0; border-bottom-left-radius: 8px; border-bottom-right-radius: 8px; background-color: rgba(20, 22, 34, 0.5); }
-   .mood-form-page .ql-editor { padding: 14px 18px; min-height: 140px; box-sizing: border-box; line-height: 1.6; color: #FFFFFF; outline: none; background-color: rgba(20, 22, 34, 0.5); transition: background-color 0.3s ease; }
-   .mood-form-page .ql-editor.ql-blank::before { color: #888dac; opacity: 0.8; font-style: normal; font-family: 'Lora', serif; left: 18px; right: 18px; font-size: 1rem; pointer-events: none; }
-   #editor-container:focus-within .ql-toolbar.ql-snow, #editor-container:focus-within .ql-container.ql-snow { border-color: #a074b5; z-index: 1; }
-   #editor-container:focus-within { box-shadow: 0 0 0 3px rgba(160, 116, 181, 0.3); }
-   #editor-container:focus-within .ql-editor { background-color: rgba(30, 32, 44, 0.6); }
-   #editor-container.invalid-editor { box-shadow: 0 0 0 2px rgba(231, 76, 60, 0.5); }
-   body.mood-form-page #editor-container.invalid-editor .ql-toolbar.ql-snow { border-color: #e74c3c; z-index: 1; }
-   body.mood-form-page #editor-container.invalid-editor .ql-container.ql-snow { border-color: #e74c3c; background-color: transparent; }
-   body.mood-form-page #editor-container.invalid-editor .ql-editor { background-color: rgba(50, 20, 20, 0.5); }
-   .mood-form-page .ql-snow .ql-stroke { stroke: #bdc1c6; transition: stroke 0.2s ease; }
-   .mood-form-page .ql-snow .ql-fill { fill: #bdc1c6; transition: fill 0.2s ease; }
-   .mood-form-page .ql-snow .ql-picker-label { color: #bdc1c6; transition: color 0.2s ease; }
-   .mood-form-page .ql-snow.ql-toolbar button:hover .ql-stroke, .mood-form-page .ql-snow .ql-toolbar button:hover .ql-stroke, .mood-form-page .ql-snow.ql-toolbar button:focus .ql-stroke, .mood-form-page .ql-snow .ql-toolbar button:focus .ql-stroke, .mood-form-page .ql-snow.ql-toolbar button.ql-active .ql-stroke, .mood-form-page .ql-snow .ql-toolbar button.ql-active .ql-stroke, .mood-form-page .ql-snow.ql-toolbar .ql-picker-label:hover .ql-stroke, .mood-form-page .ql-snow .ql-toolbar .ql-picker-label.ql-active .ql-stroke, .mood-form-page .ql-snow.ql-toolbar .ql-picker-item:hover .ql-stroke, .mood-form-page .ql-snow .ql-toolbar .ql-picker-item.ql-selected .ql-stroke { stroke: #a074b5; }
-   .mood-form-page .ql-snow.ql-toolbar button:hover .ql-fill, .mood-form-page .ql-snow .ql-toolbar button:hover .ql-fill, .mood-form-page .ql-snow.ql-toolbar button:focus .ql-fill, .mood-form-page .ql-snow .ql-toolbar button:focus .ql-fill, .mood-form-page .ql-snow.ql-toolbar button.ql-active .ql-fill, .mood-form-page .ql-snow .ql-toolbar button.ql-active .ql-fill, .mood-form-page .ql-snow.ql-toolbar .ql-picker-label:hover .ql-fill, .mood-form-page .ql-snow .ql-toolbar .ql-picker-label.ql-active .ql-fill, .mood-form-page .ql-snow.ql-toolbar .ql-picker-item:hover .ql-fill, .mood-form-page .ql-snow .ql-toolbar .ql-picker-item.ql-selected .ql-fill { fill: #a074b5; }
-   .mood-form-page .ql-snow.ql-toolbar button:hover, .mood-form-page .ql-snow .ql-toolbar button:hover, .mood-form-page .ql-snow.ql-toolbar button:focus, .mood-form-page .ql-snow .ql-toolbar button:focus, .mood-form-page .ql-snow.ql-toolbar button.ql-active, .mood-form-page .ql-snow .ql-toolbar button.ql-active, .mood-form-page .ql-snow.ql-toolbar .ql-picker-label:hover, .mood-form-page .ql-snow.ql-toolbar .ql-picker-label.ql-active, .mood-form-page .ql-snow.ql-toolbar .ql-picker-item:hover, .mood-form-page .ql-snow.ql-toolbar .ql-picker-item.ql-selected { color: #a074b5; }
-
-
-   /* ==========================================================================
-      12. View More & Modal Styles (Added section)
-      ========================================================================== */
-
-   /* --- View More Link --- */
-   .view-more-link {
-       display: none; /* Hide by default - JS will show it */
-       font-size: 0.8rem;
-       font-weight: 500;
-       color: #ffffff; 
-       cursor: pointer;
-       text-decoration: none;
-       margin-top: 5px;
-       align-self: flex-start;
-       transition: color 0.2s ease;
-   }
-
-   .view-more-link:hover {
-       color: #e6d29e;
-   }
-
-
-   /* --- Mood Detail Modal --- */
-   .mood-detail-modal {
+   .modal {
        display: none; /* Hidden by default */
        position: fixed;
-       z-index: 1050; /* High z-index */
+       z-index: 1000;
        left: 0;
        top: 0;
        width: 100%;
        height: 100%;
-       overflow: hidden; /* Prevent body scrolling */
-       background-color: rgba(0, 0, 0, 0.8);
+       overflow: auto; /* Enable scroll if needed */
+       background-color: rgba(0, 0, 0, 0.7); /* Dim background */
+       align-items: center; /* Vertical center */
+       justify-content: center; /* Horizontal center */
+       opacity: 0;
+       visibility: hidden;
+       transition: opacity 0.3s ease, visibility 0s linear 0.3s;
+   }
+   
+   .modal.is-visible {
+       display: flex; /* Use flex to center content */
+       opacity: 1;
+       visibility: visible;
+       transition-delay: 0s;
+   }
+   
+   .modal-content {
+       background-color: #2f3241;
+       margin: auto; /* Centered */
+       padding: 30px 35px;
+       border: 1px solid rgba(255, 255, 255, 0.15);
+       width: 90%;
+       max-width: 480px;
+       border-radius: 12px;
+       box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+       color: #e0e0e0;
+       position: relative;
+       transform: scale(0.95);
+       transition: transform 0.3s ease;
+   }
+   
+   .modal.is-visible .modal-content {
+       transform: scale(1); /* Scale in effect */
+   }
+   
+   .modal-header {
+       padding-bottom: 15px;
+       border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+       margin-bottom: 25px;
+       display: flex;
+       justify-content: space-between; /* Space title and close */
+       align-items: center;
+       /* Removed position relative */
+   }
+   
+   .modal-header h2 {
+       margin-bottom: 0;
+       color: #fff;
+       font-size: 1.4rem;
+       font-family: 'Playfair Display', serif;
+   }
+   
+   .modal-close {
+       color: #aaa;
+       font-size: 2rem;
+       font-weight: bold;
+       line-height: 1;
+       cursor: pointer;
+       padding: 0 5px;
+       /* margin: -5px -10px 0 10px; Removed complex margin */
+       transition: color 0.2s;
+       background: none; /* Ensure button background is transparent */
+       border: none; /* Ensure no button border */
+       /* Removed position absolute */
+   }
+   
+   .modal-close:hover,
+   .modal-close:focus {
+       color: #fff;
+       text-decoration: none;
+       outline: none; /* Remove focus outline */
+   }
+   
+   .modal-body {
+       /* Container for form groups */
+   }
+   
+   .modal .form-group {
+       margin-bottom: 20px;
+   }
+   
+   .modal label {
+       font-size: 0.9rem;
+       color: #bdc1c6;
+       margin-bottom: 8px;
+       display: block;
+   }
+   
+   .modal input[type="text"],
+   .modal input[type="color"] {
+       width: 100%;
+       padding: 12px 15px;
+       background-color: rgba(20, 22, 34, 0.7);
+       border: 1px solid rgba(255, 255, 255, 0.2);
+       color: #e0e0e0;
+       border-radius: 6px;
+       font-family: 'Poppins', sans-serif;
+       font-size: 0.95rem;
+   }
+   
+   .modal input[type="text"]:focus,
+   .modal input[type="color"]:focus {
+       border-color: #a074b5;
+       box-shadow: 0 0 0 2px rgba(160, 116, 181, 0.3);
+       outline: none;
+   }
+   
+   .modal input[type="color"] {
+       padding: 5px; /* Specific padding for color input */
+       height: 45px;
+       cursor: pointer;
+       width: 100%; /* Ensure full width */
+   }
+   
+   .modal input[type="color"]::-webkit-color-swatch-wrapper {
+       padding: 0;
+   }
+   
+   .modal input[type="color"]::-webkit-color-swatch {
+       border: none;
+       border-radius: 4px;
+   }
+   
+   .emoji-suggestions {
+       margin-top: 10px;
+       display: flex;
+       flex-wrap: wrap;
+       gap: 8px;
+   }
+   
+   .emoji-suggestion-btn {
+       background-color: rgba(255, 255, 255, 0.1);
+       border: 1px solid rgba(255, 255, 255, 0.2);
+       color: #e0e0e0;
+       padding: 5px 8px;
+       border-radius: 5px;
+       cursor: pointer;
+       font-size: 1.3rem;
+       line-height: 1;
+       transition: background-color 0.2s, transform 0.1s;
+   }
+   
+   .emoji-suggestion-btn:hover {
+       background-color: rgba(255, 255, 255, 0.2);
+       transform: scale(1.1);
+   }
+   
+   .emoji-suggestion-btn:active {
+       transform: scale(1.0);
+   }
+   
+   .modal-footer {
+       margin-top: 25px;
+       border-top: 1px solid rgba(255, 255, 255, 0.1);
+       padding-top: 20px;
+       gap: 10px;
+       /* .button-group styles already applied */
+   }
+   
+   .modal .btn {
+       font-size: 0.9rem;
+       padding: 8px 18px;
+       text-transform: none;
+   }
+   
+   .modal .error-message {
+       font-size: 0.85rem;
+       margin-top: 4px;
+   }
+   
+   
+   /* ==========================================================================
+      7. HTMX Indicator Styles
+      ========================================================================== */
+   .htmx-indicator {
+       display: inline-block; /* Or block if needed */
+       opacity: 0;
+       transition: opacity 200ms ease-in;
+       margin-left: 15px;
+       vertical-align: middle;
+       width: 18px;
+       height: 18px;
+       border: 2px solid rgba(160, 116, 181, 0.3);
+       border-radius: 50%;
+       border-top-color: #A074B5;
+       animation: spin 0.8s linear infinite; /* Use linear for smooth spin */
+       -webkit-animation: spin 0.8s linear infinite;
+   }
+   
+   .htmx-indicator span { /* Hide fallback text */
+       display: none;
+   }
+   
+   @keyframes spin {
+       to {
+           transform: rotate(360deg);
+       }
+   }
+   
+   @-webkit-keyframes spin {
+       to {
+           -webkit-transform: rotate(360deg);
+       }
+   }
+   
+   body.htmx-request .htmx-indicator,
+   .htmx-request .htmx-indicator { /* Show during request */
+       opacity: 1;
+   }
+   
+   body.htmx-request.htmx-indicator { /* Just in case */
+       opacity: 1;
+   }
+   
+   .htmx-swapping { /* Element being replaced */
+       opacity: 0.6;
+       transition: opacity 250ms ease-out;
+   }
+   
+   
+   /* ==========================================================================
+      8. Utility Classes
+      ========================================================================== */
+   .visually-hidden { /* For screen readers */
+       position: absolute !important;
+       height: 1px;
+       width: 1px;
+       overflow: hidden;
+       clip: rect(1px, 1px, 1px, 1px);
+       white-space: nowrap; /* Keep on one line */
+   }
+   
+   
+   /* ==========================================================================
+      9. Pagination Styles (Shared between Dashboard & Stats)
+      ========================================================================== */
+   .pagination {
+       margin-top: 30px;
+       padding-top: 20px;
+       border-top: 1px solid rgba(255, 255, 255, 0.1);
+       display: flex;
+       justify-content: center;
+       align-items: center;
+       width: 100%;
+   }
+   
+   .pagination ul {
+       display: flex;
+       align-items: center;
+       gap: 10px;
+   }
+   
+   .pagination li {
+       margin: 0; /* Reset list item margin */
+   }
+   
+   .pagination span,
+   .pagination a {
+       display: inline-block;
+       padding: 8px 16px;
+       color: #bdc1c6;
+       text-decoration: none;
+       border-radius: 6px;
+       transition: background-color 0.2s, color 0.2s;
+       font-size: 0.9rem;
+   }
+   
+   .pagination a {
+       background-color: rgba(255, 255, 255, 0.1);
+       border: 1px solid rgba(255, 255, 255, 0.2);
+   }
+   
+   .pagination a:hover {
+       background-color: rgba(160, 116, 181, 0.5);
+       color: #ffffff;
+       border-color: rgba(160, 116, 181, 0.7);
+   }
+   
+   .pagination li.disabled span {
+       color: rgba(189, 193, 198, 0.4);
+       cursor: default;
+       background-color: transparent;
+       border: 1px solid transparent;
+   }
+   
+   .pagination li span:not([class]) { /* Style the "Page X of Y" text */
+       background-color: transparent;
+       border: none;
+       color: #e0e0e0;
+       font-weight: 500;
+   }
+   
+   
+   /* ==========================================================================
+      10. Rich Editor (Quill) Styles
+      ========================================================================== */
+   #editor-container {
+       border-radius: 8px;
+       transition: box-shadow 0.3s ease, border-color 0.3s ease;
+       margin-bottom: 5px;
+       overflow: hidden; /* Important for rounded corners */
+       width: 100%;
+       position: relative; /* For potential absolute elements */
+   }
+   
+   .mood-form-page .ql-toolbar.ql-snow {
+       background-color: rgba(30, 32, 44, 0.6);
+       border: 1px solid rgba(255, 255, 255, 0.2);
+       border-bottom: none; /* Only bottom border on container */
+       padding: 8px 10px;
+       font-family: 'Poppins', sans-serif; /* Match rest of UI */
+       box-sizing: border-box;
+       transition: border-color 0.3s ease;
+       border-top-left-radius: 8px; /* Round top corners */
+       border-top-right-radius: 8px;
+       /* Removed bottom radius */
+   }
+   
+   .mood-form-page .ql-container.ql-snow {
+       border: 1px solid rgba(255, 255, 255, 0.2);
+       border-top: none; /* Toolbar has top border */
+       color: #FFFFFF; /* Text color */
+       font-family: 'Lora', serif; /* Content font */
+       font-size: 1rem;
+       box-sizing: border-box;
+       transition: border-color 0.3s ease, background-color 0.3s ease;
+       /* Removed top radius */
+       border-bottom-left-radius: 8px; /* Round bottom corners */
+       border-bottom-right-radius: 8px;
+       background-color: rgba(20, 22, 34, 0.5); /* Base background */
+   }
+   
+   .mood-form-page .ql-editor {
+       padding: 14px 18px; /* Match input padding */
+       min-height: 140px;
+       box-sizing: border-box;
+       line-height: 1.6;
+       color: #FFFFFF;
+       outline: none; /* Remove focus outline */
+       background-color: transparent; /* Inherit from container */
+       transition: background-color 0.3s ease;
+   }
+   
+   .mood-form-page .ql-editor.ql-blank::before { /* Placeholder text */
+       color: #888dac;
+       opacity: 0.8;
+       font-style: normal; /* Not italic */
+       font-family: 'Lora', serif;
+       left: 18px; /* Match padding */
+       right: 18px;
+       font-size: 1rem;
+       pointer-events: none;
+   }
+   
+   /* Focus state for the whole editor */
+   #editor-container:focus-within .ql-toolbar.ql-snow,
+   #editor-container:focus-within .ql-container.ql-snow {
+       border-color: #a074b5;
+       z-index: 1; /* Ensure toolbar is above content */
+   }
+   
+   #editor-container:focus-within {
+       box-shadow: 0 0 0 3px rgba(160, 116, 181, 0.3); /* Outer glow */
+   }
+   
+   #editor-container:focus-within .ql-container.ql-snow {
+       background-color: rgba(30, 32, 44, 0.6); /* Darker background on focus */
+   }
+   
+   /* Invalid state */
+   #editor-container.invalid-editor {
+       box-shadow: 0 0 0 2px rgba(231, 76, 60, 0.5); /* Red glow */
+   }
+   
+   #editor-container.invalid-editor .ql-toolbar.ql-snow,
+   #editor-container.invalid-editor .ql-container.ql-snow {
+       border-color: #e74c3c !important; /* Red border */
+       z-index: 1;
+   }
+   
+   #editor-container.invalid-editor .ql-container.ql-snow {
+       background-color: rgba(50, 20, 20, 0.5) !important; /* Reddish background */
+   }
+   
+   /* Quill UI element theming (dark theme) */
+   .mood-form-page .ql-snow .ql-stroke {
+       stroke: #bdc1c6;
+       transition: stroke 0.2s ease;
+   }
+   .mood-form-page .ql-snow .ql-fill {
+       fill: #bdc1c6;
+       transition: fill 0.2s ease;
+   }
+   .mood-form-page .ql-snow .ql-picker-label {
+       color: #bdc1c6;
+       transition: color 0.2s ease;
+   }
+   
+   /* Hover/Active states for toolbar items */
+   .mood-form-page .ql-snow.ql-toolbar button:hover .ql-stroke,
+   .mood-form-page .ql-snow .ql-toolbar button:hover .ql-stroke,
+   .mood-form-page .ql-snow.ql-toolbar button:focus .ql-stroke,
+   .mood-form-page .ql-snow .ql-toolbar button:focus .ql-stroke,
+   .mood-form-page .ql-snow.ql-toolbar button.ql-active .ql-stroke,
+   .mood-form-page .ql-snow .ql-toolbar button.ql-active .ql-stroke,
+   .mood-form-page .ql-snow.ql-toolbar .ql-picker-label:hover .ql-stroke,
+   .mood-form-page .ql-snow .ql-toolbar .ql-picker-label.ql-active .ql-stroke,
+   .mood-form-page .ql-snow.ql-toolbar .ql-picker-item:hover .ql-stroke,
+   .mood-form-page .ql-snow .ql-toolbar .ql-picker-item.ql-selected .ql-stroke {
+       stroke: #a074b5; /* Highlight color */
+   }
+   
+   .mood-form-page .ql-snow.ql-toolbar button:hover .ql-fill,
+   .mood-form-page .ql-snow .ql-toolbar button:hover .ql-fill,
+   .mood-form-page .ql-snow.ql-toolbar button:focus .ql-fill,
+   .mood-form-page .ql-snow .ql-toolbar button:focus .ql-fill,
+   .mood-form-page .ql-snow.ql-toolbar button.ql-active .ql-fill,
+   .mood-form-page .ql-snow .ql-toolbar button.ql-active .ql-fill,
+   .mood-form-page .ql-snow.ql-toolbar .ql-picker-label:hover .ql-fill,
+   .mood-form-page .ql-snow .ql-toolbar .ql-picker-label.ql-active .ql-fill,
+   .mood-form-page .ql-snow.ql-toolbar .ql-picker-item:hover .ql-fill,
+   .mood-form-page .ql-snow .ql-toolbar .ql-picker-item.ql-selected .ql-fill {
+       fill: #a074b5; /* Highlight color */
+   }
+   
+   .mood-form-page .ql-snow.ql-toolbar button:hover,
+   .mood-form-page .ql-snow .ql-toolbar button:hover,
+   .mood-form-page .ql-snow.ql-toolbar button:focus,
+   .mood-form-page .ql-snow .ql-toolbar button:focus,
+   .mood-form-page .ql-snow.ql-toolbar button.ql-active,
+   .mood-form-page .ql-snow .ql-toolbar button.ql-active,
+   .mood-form-page .ql-snow.ql-toolbar .ql-picker-label:hover,
+   .mood-form-page .ql-snow.ql-toolbar .ql-picker-label.ql-active,
+   .mood-form-page .ql-snow.ql-toolbar .ql-picker-item:hover,
+   .mood-form-page .ql-snow .ql-toolbar .ql-picker-item.ql-selected {
+       color: #a074b5; /* Highlight color */
+   }
+   
+   /* Content rendered from Quill */
+   .quill-rendered-content {
+        /* Styles defined in .dashboard-main .mood-item section */
+        /* And .mood-detail-modal-body section */
+   }
+   
+   
+   /* ==========================================================================
+      11. View More & Mood Detail Modal Styles (Dashboard)
+      ========================================================================== */
+   
+   .view-more-link {
+       /* Defined within .dashboard-main .mood-item styles */
+   }
+   
+   .mood-detail-modal {
+       display: none;
+       position: fixed;
+       z-index: 9999 !important; /* High z-index */
+       left: 0;
+       top: 0;
+       width: 100%;
+       height: 100%;
+       overflow: hidden; /* Prevent body scroll when modal open */
+       background-color: rgba(0, 0, 0, 0.8); /* Dark overlay */
        align-items: center;
        justify-content: center;
        opacity: 0;
        visibility: hidden;
        transition: opacity 0.3s ease, visibility 0s linear 0.3s;
    }
-
+   
    .mood-detail-modal.is-visible {
        display: flex; /* Use flex for centering */
        opacity: 1;
        visibility: visible;
        transition-delay: 0s;
    }
-
+   
    .mood-detail-modal-content {
        background-color: #2f3241; /* Dark background */
        margin: auto;
        padding: 25px 35px;
        border: 1px solid rgba(255, 255, 255, 0.15);
        width: 90%;
-       max-width: 650px; /* Adjust as needed */
+       max-width: 650px;
        max-height: 85vh; /* Limit height */
        border-radius: 12px;
        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
@@ -903,11 +1489,11 @@
        transform: scale(0.95);
        transition: transform 0.3s ease;
    }
-
+   
    .mood-detail-modal.is-visible .mood-detail-modal-content {
        transform: scale(1);
    }
-
+   
    .mood-detail-modal-header {
        padding-bottom: 15px;
        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
@@ -915,19 +1501,19 @@
        display: flex;
        justify-content: space-between;
        align-items: center;
-       flex-shrink: 0;
+       flex-shrink: 0; /* Prevent header shrinking */
    }
-
-   .mood-detail-modal-header h2 { /* Title inside modal */
+   
+   .mood-detail-modal-header h2 {
        margin: 0;
        color: #fff;
        font-size: 1.5rem;
        font-family: 'Playfair Display', serif;
-       word-break: break-word;
-       padding-right: 15px;
+       word-break: break-word; /* Wrap long titles */
+       padding-right: 15px; /* Space before close button */
    }
-
-   .mood-detail-modal-close { /* Close button (X) */
+   
+   .mood-detail-modal-close {
        color: #aaa;
        font-size: 2.2rem;
        font-weight: bold;
@@ -937,25 +1523,25 @@
        transition: color 0.2s;
        background: none;
        border: none;
-       flex-shrink: 0;
+       flex-shrink: 0; /* Prevent button shrinking */
    }
-
+   
    .mood-detail-modal-close:hover,
    .mood-detail-modal-close:focus {
        color: #fff;
        text-decoration: none;
        outline: none;
    }
-
+   
    .mood-detail-modal-body {
-       overflow-y: auto; /* Allow scrolling ONLY for the body */
+       overflow-y: auto; /* Enable scrolling for long content */
        margin-bottom: 20px;
-       flex-grow: 1; /* Allow body to take remaining space */
+       flex-grow: 1; /* Allow body to take up space */
        font-family: 'Lora', serif;
        line-height: 1.6;
        color: #e0e0e0;
    }
-
+   
    .mood-detail-modal-body .modal-emotion-info {
        display: flex;
        align-items: center;
@@ -964,576 +1550,858 @@
        padding-bottom: 15px;
        border-bottom: 1px dashed rgba(255, 255, 255, 0.15);
    }
-
+   
    .mood-detail-modal-body .modal-emotion-info span#modal-emoji {
-       font-size: 1.4rem; /* Larger emoji */
+       font-size: 1.4rem;
    }
    .mood-detail-modal-body .modal-emotion-info strong#modal-emotion-name {
        font-size: 1.1rem;
        font-family: 'Poppins', sans-serif;
        font-weight: 500;
    }
-
+   
    .mood-detail-modal-body .modal-date-info {
        font-size: 0.85rem;
        color: #b0a8b9;
        margin-bottom: 20px;
        opacity: 0.9;
    }
-
-   /* Style the Quill content within the modal */
+   
    .mood-detail-modal-body #modal-full-content {
        color: #e0e0e0;
+       /* Quill styles applied via .quill-render-content */
    }
-   .mood-detail-modal-body #modal-full-content p {
-       margin-bottom: 1em;
-       color: inherit;
-   }
-   .mood-detail-modal-body #modal-full-content strong {
-       font-weight: bold;
-       color: #fff;
-   }
-   .mood-detail-modal-body #modal-full-content em {
-       font-style: italic;
-       color: #d8c1e3;
-   }
-   /* Add more specific Quill styles (lists, code blocks, etc.) if needed */
-
-/* ==========================================================================
-   13. Flash Message Styles
-   ========================================================================== */
-
+   
+   
+   /* ==========================================================================
+      12. Flash Message Styles
+      ========================================================================== */
+   
    .flash-message {
-    padding: 15px 20px;
-    margin: 0 0 25px 0;
-    border-radius: 8px;
-    border: 1px solid transparent;
-    font-family: 'Poppins', sans-serif;
-    text-align: center;
-    font-size: 0.95rem;
-    font-weight: 500;
-    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
-    position: relative; /* Crucial for positioning the absolute button */
-    background-color: rgba(40, 42, 54, 0.8);
-    color: #e0e0e0;
-}
-
-/* ... (success, error styles remain the same) ... */
-.flash-message.success {
-    background-color: rgba(46, 139, 87, 0.85);
-    border-color: rgba(60, 179, 113, 0.9);
-    color: #ffffff;
-}
-.flash-message.error {
-    background-color: rgba(220, 20, 60, 0.85);
-    border-color: rgba(178, 34, 34, 0.9);
-    color: #ffffff;
-}
-
-.flash-message p {
-    margin: 0;
-    padding: 0 25px 0 0; /* Add padding-right to prevent text overlapping button */
-    line-height: 1.4;
-}
-
-/* --- CLOSE BUTTON (Top Right Corner) --- */
-.flash-message .flash-close-btn {
-    position: absolute;
-    top: 8px;               /* Position from the top edge */
-    right: 10px;              /* Position from the right edge */
-    /* transform: translateY(-50%); REMOVED - No longer needed */
-    background: none;
-    border: none;
-    color: inherit;           /* Takes color from parent (e.g., white) */
-    font-size: 1.5rem;        /* Adjust size if needed */
-    font-weight: bold;
-    line-height: 1;           /* Important to prevent extra spacing */
-    cursor: pointer;
-    opacity: 0.7;
-    transition: opacity 0.2s;
-    padding: 0 5px;           /* Gives a slightly larger click area */
-}
-.flash-message .flash-close-btn:hover {
-    opacity: 1;
-}
-/* --- END CLOSE BUTTON --- */
-/* Stats Container - Wider, relying on max-width and margin:auto */
-.stats-container {
-    max-width: 1900px; /* Keep your desired max-width */
-    /* width: 95%; REMOVED - Let max-width and margin:auto handle it */
-    margin: 80px auto;
-    padding: 40px 50px;
-    background-color: rgba(40, 42, 54, 0.75);
-    backdrop-filter: blur(12px);
-    border-radius: 20px;
-    color: #e0e0e0;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow: 0 10px 35px rgba(0, 0, 0, 0.2);
-}
-
-/* Header (Keep as is) */
-.stats-header {
-    text-align: center;
-    margin-bottom: 40px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
-    padding-bottom: 20px;
-}
-.stats-header h1 {
-    font-size: 2.2rem;
-    color: #fff;
-}
-
-/* Summary Section - NO WRAP on desktop */
-.stats-summary {
-    display: flex;
-    justify-content: center; /* Center the group of cards */
-    flex-wrap: nowrap; /* CORRECTED - Force single line on wide screens */
-    text-align: center;
-    margin-bottom: 50px;
-    gap: 25px; /* Spacing between cards */
-}
-
-/* Summary Card Styling (Keep as is, min-width removed is fine with flex) */
-.summary-card {
-    background-color: rgba(55, 58, 80, 0.75);
-    padding: 20px 25px;
-    border-radius: 12px;
-    flex: 1 1 200px; /* Allow grow/shrink from base 200px */
-    /* min-width: 200px; REMOVED - flex-basis handles this */
-    max-width: 280px; /* Keep max width */
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    gap: 10px;
-    min-height: 130px;
-}
-/* (Keep .summary-card:hover, h3, p styles as they were) */
-.summary-card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
-}
-.summary-card h3 {
-    /* Reset margin potentially inherited */
-    margin-top: 0;
-    margin-bottom: 0;
-    font-size: 1.1rem;
-    color: #bdc1c6;
-    font-family: 'Poppins', sans-serif;
-    font-weight: 500;
-    text-transform: none;
-    letter-spacing: 0;
-}
-.summary-card p {
-    font-size: 0.99rem;  /* << ADJUSTED: Slightly larger number */
-    font-weight: 450;   /* << REVERTED: Less bold number */
-    margin: 0;
-    color: #fff;
-    line-height: 1.2;
-}
-
-
-/* Chart Grid - Adjusted minmax for better fit */
-.charts-grid {
-    display: grid;
-    /* Adjusted minimum size for better 2-column layout on medium screens */
-    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-    gap: 35px;
-    margin-bottom: 50px;
-}
-
-/* Chart Container (Keep as is, width:100% is fine here) */
-.chart-container {
-    background-color: rgba(55, 58, 80, 0.75);
-    padding: 25px;
-    border-radius: 12px;
-    min-height: 380px;
-    display: flex;
-    flex-direction: column;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    width: 100%; /* Ensure it takes full width of its grid cell */
-}
-/* (Keep .chart-container h3 as is) */
-.chart-container h3 {
-    text-align: center;
-    margin-bottom: 20px;
-    font-size: 1.2rem;
-    font-weight: 500;
-    color: #eee;
-    flex-shrink: 0;
-    font-family: 'Playfair Display', serif;
-}
-
-/* Canvas - REMOVED !important */
-.chart-container canvas {
-    flex-grow: 1;
-    /* width: 100% !important; REMOVED */
-    /* height: auto !important; REMOVED */
-    /* Let Chart.js handle sizing based on container and options */
-    max-height: 450px; /* Keep max-height if desired */
-}
-
-/* Full width chart (Keep as is) */
-.chart-container.chart-full-width {
-    grid-column: 1 / -1;
-    min-height: 450px;
-}
-
-/* Add near the end of styles.css or near other chart styles */
-.chart-description {
-    font-size: 0.85rem;
-    color: #a0a8b4; /* Lighter, less prominent color */
-    text-align: center;
-    margin-top: 15px; /* Space between chart and text */
-    font-style: italic;
-    padding: 0 10px; /* Ensure it doesn't touch edges */
-}
-
-/* --- CONSOLIDATED & CORRECTED Media Queries --- */
-
-/* Adjust chart grid earlier if needed */
-@media (max-width: 1200px) { /* Example breakpoint */
-    .charts-grid {
-         /* Slightly smaller minimum for charts */
-        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+       padding: 15px 20px;
+       margin: 0 0 25px 0; /* Space below flash */
+       border-radius: 8px;
+       border: 1px solid transparent;
+       font-family: 'Poppins', sans-serif;
+       text-align: center;
+       font-size: 0.95rem;
+       font-weight: 500;
+       box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+       position: relative;
+       background-color: rgba(40, 42, 54, 0.8); /* Default dark background */
+       color: #e0e0e0;
+   }
+   
+   .flash-message.success {
+       background-color: rgba(46, 139, 87, 0.85); /* Green */
+       border-color: rgba(60, 179, 113, 0.9);
+       color: #ffffff;
+   }
+   
+   .flash-message.error {
+       background-color: rgba(220, 20, 60, 0.85); /* Red */
+       border-color: rgba(178, 34, 34, 0.9);
+       color: #ffffff;
+   }
+   
+   .flash-message p {
+       margin: 0;
+       padding: 0 25px 0 0; /* Space for close button */
+       line-height: 1.4;
+   }
+   
+   .flash-message .flash-close-btn {
+       position: absolute;
+       top: 50%; /* Vertically center */
+       right: 10px;
+       transform: translateY(-50%); /* Precise vertical centering */
+       background: none;
+       border: none;
+       color: inherit; /* Inherit color from parent */
+       font-size: 1.5rem;
+       font-weight: bold;
+       line-height: 1;
+       cursor: pointer;
+       opacity: 0.7;
+       transition: opacity 0.2s;
+       padding: 0 5px;
+   }
+   
+   .flash-message .flash-close-btn:hover {
+       opacity: 1;
+   }
+   
+   
+   /* ==========================================================================
+      13. Stats Page Styles
+      ========================================================================== */
+   body.stats-page-background { /* Specific background if needed */
+        background: url('/static/resources/dashboard.png') no-repeat center center fixed;
+        background-size: cover;
+   }
+   
+   .stats-container {
+       width: 90vw;
+       max-width: 1800px;
+       margin: 40px auto;
+       padding: 25px 30px;
+       background-color: rgba(35, 37, 49, 0.85);
+       backdrop-filter: blur(10px);
+       border-radius: 15px;
+       color: #e0e0e0;
+       border: 1px solid rgba(255, 255, 255, 0.1);
+       box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+   }
+   
+   .stats-header {
+       text-align: center;
+       margin-bottom: 30px;
+       padding-bottom: 15px;
+       border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+   }
+   
+   .stats-header h1 {
+       font-size: 2rem;
+       color: #fff;
+       margin-bottom: 0; /* Remove default margin */
+   }
+   
+   /* --- Loading State --- */
+   .stats-loading-indicator {
+       text-align: center;
+       padding: 40px 20px;
+       font-size: 1.1rem;
+       color: #bdc1c6;
+       display: none; /* Hidden by default */
+   }
+   
+   .stats-container.is-loading .stats-loading-indicator {
+       display: block; /* Show when loading */
+   }
+   
+   .stats-container.is-loading .stats-main-content {
+       display: none !important; /* Hide content when loading */
+   }
+   
+   .stats-main-content {
+       opacity: 0;
+       visibility: hidden;
+       transition: opacity 0.5s ease-in-out;
+       display: block; /* Default display */
+   }
+   
+   .stats-main-content.is-loaded {
+       opacity: 1;
+       visibility: visible;
+   }
+   
+   /* --- Page Structure --- */
+   .stats-page {
+       display: none; /* Hide pages by default */
+       margin-bottom: 35px; /* Space between page content and controls */
+   }
+   .stats-page.active-stats-page {
+       display: block; /* Show active page */
+   }
+   
+   
+   /* --- Top Grid (Page 1) --- */
+   .stats-top-grid {
+       display: grid;
+       grid-template-columns: 240px 1fr 1fr; /* Fixed summary, flexible charts */
+       gap: 25px;
+       align-items: stretch; /* Columns fill height */
+       width: 100%;
+       margin-bottom: 25px; /* Space below grid */
+   }
+   
+   /* --- Columns --- */
+   .stats-summary-column {
+       display: flex;
+       flex-direction: column;
+       gap: 15px;
+   }
+   
+   .stats-chart-column {
+       display: flex;
+       flex-direction: column;
+       min-width: 0; /* Prevent overflow */
+   }
+   
+   /* --- Summary Cards --- */
+   .stats-summary-column .summary-card {
+       width: 100%;
+       padding: 12px 15px;
+       background-color: rgba(50, 53, 70, 0.8);
+       border-radius: 8px;
+       min-height: 80px; /* Ensure cards have height */
+       box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+       border: 1px solid rgba(255, 255, 255, 0.07);
+       text-align: center;
+       display: flex;
+       flex-direction: column;
+       align-items: center;
+       justify-content: center; /* Center content vertically */
+   }
+   
+   .stats-summary-column .summary-card h3 {
+       margin-top: 0;
+       margin-bottom: 5px;
+       font-size: 0.9rem;
+       color: #bdc1c6;
+       font-family: 'Poppins', sans-serif;
+       font-weight: 500;
+   }
+   
+   .stats-summary-column .summary-card p {
+       font-size: 1.1rem;
+       font-weight: 500;
+       margin: 0;
+       color: #fff;
+       line-height: 1.1;
+       word-break: break-word; /* Prevent long text overflow */
+   }
+   
+   .stats-summary-column .summary-card .summary-card-detail {
+       font-size: 0.75rem;
+       color: #a0a8b4;
+       display: block;
+       margin-top: 3px;
+   }
+   .latest-mood-info {
+       line-height: 1.4; /* Better spacing for multiline */
+   }
+   
+   /* --- Chart Containers --- */
+   .chart-container {
+       display: flex;
+       flex-direction: column;
+       flex-grow: 1; /* Fill available space */
+       position: relative;
+       background-color: rgba(50, 53, 70, 0.7);
+       padding: 20px;
+       border-radius: 10px;
+       border: 1px solid rgba(255, 255, 255, 0.1);
+       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+       min-height: 350px; /* Ensure minimum drawing area */
+       overflow: hidden; /* Prevent canvas overflow */
+   }
+   
+   .chart-container h3 {
+       text-align: center;
+       margin-bottom: 15px;
+       font-size: 1.1rem;
+       font-weight: 500;
+       color: #eee;
+       flex-shrink: 0; /* Don't shrink title */
+       font-family: 'Playfair Display', serif;
+   }
+   
+   .chart-container canvas {
+       display: block;
+       box-sizing: border-box;
+       width: 100% !important; /* Force width */
+       /* height: auto !important; -- Let chart.js determine height based on aspect ratio */
+       max-width: 100%;
+   }
+   
+   /* Specifics for Line Chart section */
+   .stats-line-chart-section {
+       /* Container for the full-width line chart */
+   }
+   .stats-line-chart-section .chart-container.chart-full-width {
+       min-height: 380px; /* Slightly taller line chart */
+   }
+   
+   .chart-description {
+       font-size: 0.8rem;
+       color: #a0a8b4;
+       text-align: center;
+       margin-top: 10px;
+       font-style: italic;
+       padding: 0 10px;
+   }
+   
+   /* --- Quote --- */
+   .stats-quote {
+       text-align: center;
+       font-style: italic;
+       color: #bdc1c6;
+       font-size: 0.9rem;
+       margin-top: 15px; /* Reduced space above quote */
+       margin-bottom: 25px;
+       padding: 0 15px;
+   }
+   
+   /* --- Controls Row --- */
+   .stats-controls-row {
+       display: flex;
+       justify-content: space-between;
+       align-items: center;
+       padding: 15px 0;
+       margin-top: 0;
+       margin-bottom: 15px; /* Reduced space below controls */
+   }
+   
+   .back-link.stats-back-link { /* Back link specific to stats page */
+       margin: 0; /* Reset margin */
+       padding: 7px 15px;
+       font-size: 0.85rem;
+       text-transform: none;
+       background-color: rgba(255, 255, 255, 0.15); /* Use cancel style */
+       color: #bdc1c6;
+       border: 1px solid rgba(255, 255, 255, 0.2);
+   }
+   .back-link.stats-back-link:hover {
+       background-color: rgba(255, 255, 255, 0.25);
+       color: #ffffff;
+   }
+   
+   
+   .back-link-placeholder { /* To balance the flex layout */
+       min-width: 158px; /* Match typical width of back button */
+       visibility: hidden;
+   }
+   
+   /* --- Stats Pagination --- */
+   .stats-custom-pagination {
+       display: flex;
+       justify-content: center;
+       align-items: center;
+       gap: 12px;
+       margin: 0;
+       padding: 0;
+       border-top: none;
+       flex-grow: 1; /* Take up center space */
+       text-align: center;
+   }
+   
+   .stats-custom-pagination .btn {
+       padding: 7px 15px;
+       font-size: 0.85rem;
+       text-transform: none;
+   }
+   
+   .stats-custom-pagination .btn:disabled {
+       background-color: rgba(255, 255, 255, 0.08);
+       color: rgba(189, 193, 198, 0.3);
+       cursor: default;
+       border: 1px solid rgba(255, 255, 255, 0.15);
+       transform: none; /* No hover/active effects */
+       box-shadow: none;
+   }
+   
+   .stats-custom-pagination #stats-page-indicator {
+       font-size: 0.9rem;
+       color: #bdc1c6;
+       font-weight: 500;
+   }
+   
+   /* --- Footer --- */
+   .stats-footer {
+       text-align: center;
+       margin-top: 20px;
+       padding-top: 20px;
+       border-top: 1px solid rgba(255, 255, 255, 0.1);
+       min-height: 20px;
+       /* Add footer content styles if needed */
+   }
+   
+   /* --- No Stats Message --- */
+   .no-stats {
+       text-align: center;
+       padding: 40px 20px;
+       font-size: 1rem;
+       color: #bdc1c6;
+       min-height: 200px; /* Give it some minimum height */
+       display: flex;
+       flex-direction: column;
+       justify-content: center;
+       align-items: center;
+   }
+   
+   .no-stats .back-link { /* Ensure back link is styled */
+        font-family: 'Poppins', sans-serif;
+        display: block;
+        width: fit-content;
+        margin: 25px auto 0 auto;
+        padding: 9px 22px;
+        background-color: #A074B5;
+        color: #FFFFFF;
+        text-decoration: none;
+        border-radius: 22px;
+        font-size: 0.9rem;
+        border: none;
+        cursor: pointer;
+        transition: background-color 0.3s, transform 0.1s, box-shadow 0.2s;
+        font-weight: 500;
+        text-align: center;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
     }
-     .stats-container {
-        /* Slightly reduce padding on medium screens */
-        padding: 35px 40px;
+    .no-stats .back-link:hover {
+        background-color: #8a6aaf;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 12px rgba(0,0,0,0.2);
     }
-}
-
-/* Tablet and smaller */
-@media (max-width: 992px) { /* Or your preferred tablet breakpoint */
-    .stats-summary {
-        flex-wrap: wrap; /* ALLOW WRAP */
-        justify-content: center; /* Center items when wrapped */
-    }
-    .summary-card {
-         /* Aim for 2x2 layout */
-        flex-basis: 45%;
-        max-width: none; /* Remove max-width constraint when wrapping */
-    }
-     .charts-grid {
-        /* Still allow 2 columns if they fit */
-         grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-    }
-}
-
-/* Smaller Tablets / Large Phones */
-@media (max-width: 768px) {
-    .stats-container {
-        padding: 25px 20px; /* Reduce padding */
-        width: 95%; /* Slightly less width */
-        margin: 60px auto;
-    }
-    .charts-grid {
-        grid-template-columns: 1fr; /* Force single column */
-        gap: 25px;
-    }
-     .summary-card {
-        /* Already wrapping, adjust basis if needed */
-        flex-basis: 45%; /* Keep 2 columns */
-        min-height: 120px;
-    }
-     .summary-card p {
-        font-size: 1.4rem;
-    }
-    .chart-container {
-        min-height: 300px;
-    }
-    .stats-header h1 {
-        font-size: 1.8rem;
-    }
-}
-
-/* Small Phones */
-@media (max-width: 480px) {
-     .stats-container {
-        padding: 20px 15px;
-        margin: 40px auto;
-        border-radius: 15px;
-        width: 98%;
-    }
-    .summary-card {
-        flex-basis: 80%; /* Closer to 1 column */
-        max-width: none;
-        min-height: 110px;
-    }
-     .summary-card p {
-        font-size: 1.3rem;
-    }
-    .stats-header h1 {
-        font-size: 1.6rem;
-    }
-    .back-link {
-        margin-top: 25px;
-    }
-}
-
-/* --- KEEP Footer, No Stats, Back Link Styles --- */
-.stats-footer {
-    text-align: center;
-    margin-top: 40px;
-    padding-top: 25px;
-    border-top: 1px solid rgba(255, 255, 255, 0.15);
-    font-style: italic;
-    color: #bdc1c6;
-    font-size: 0.95rem;
-}
-
-.back-link{
-
-    font-family: 'Poppins', sans-serif;
-    display: inline-block;
-    padding: 10px 25px;
-    background-color: #A074B5; /* Primary Purple */
-    color: #FFFFFF;
-    text-decoration: none;
-    border-radius: 25px; /* Default Pill Shape */
-    border: none;
-    cursor: pointer;
-    transition: background-color 0.3s, transform 0.1s, box-shadow 0.2s;
-    font-size: 1rem;
-    font-weight: 500;
-    line-height: 1.4;
-    text-align: center;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
-    margin-top: 20px;
-}
-
-.back-link:hover {
-    background-color: #A074B5; /* Yellow hover */
-    color: #fff; /* Keep text white */
-    transform: translateY(-2px);
-    box-shadow: 0 0 20px rgba(177, 156, 217, 0.7);
-}
-
-/* --- Style the Logout Button in Sidebar to match Nav Links --- */
-
-.sidebar-nav .logout-button {
-    /* Reset default button styles */
-    border: none;
-    padding: 0;
-    background: none;
-    cursor: pointer;
-    outline: none;
-    font-family: inherit; /* Inherit font if needed */
-
-    /* Apply styles copied from .sidebar-nav a */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 50px;           /* Match anchor width */
-    height: 50px;          /* Match anchor height */
-    color: #bdc1c6;        /* Match anchor initial color */
-    text-decoration: none;
-    transition: all 0.3s ease;
-    border-radius: 50%;    /* Make it circular */
-    background-color: rgba(255, 255, 255, 0.08); /* Match anchor initial background */
-    position: relative;
-}
-
-/* Hover/Focus styles for the logout button */
-.sidebar-nav .logout-button:hover,
-.sidebar-nav .logout-button:focus {
-    background-color: rgba(255, 255, 255, 0.2); /* Match anchor hover background */
-    color: #ffffff;        /* Match anchor hover color */
-    transform: scale(1.1); /* Match anchor hover transform */
-    box-shadow: 0 0 15px rgba(160, 116, 181, 0.5); /* Match anchor hover shadow */
-}
-
-/* Ensure icon inside the button inherits color correctly */
-.sidebar-nav .logout-button .nav-icon {
-   color: inherit; /* Make sure icon takes button's color */
-   transition: all 0.3s ease; /* Add transition to icon if not already present */
-}
-
-/* Optional: Adjust icon hover scale if needed */
- .sidebar-nav .logout-button:hover .nav-icon {
-    transform: scale(1.1); /* Match anchor icon hover */
- }
-
- /* ==========================================================================
-   Profile Page Styles (for profile.tmpl as a full page)
-   ========================================================================== */
-
-/* Ensure body.dashboard-page (if used on profile.tmpl) provides a good base */
-/* body.dashboard-page {
-    display: flex; /* This might already be there from your main body styles */
-    /* flex-direction: column; */
-    /* align-items: center; /* Center .profile-container if body is flex */
-    /* padding-top: 40px; /* Add some top padding */
-    /* padding-bottom: 40px; */
-/* } */
-
-.profile-container {
-    width: 90%;
-    max-width: 800px; /* Adjust max-width as desired */
-    margin: 60px auto; /* Center the container on the page with top/bottom margin */
-    padding: 30px 40px;
-    background-color: rgba(40, 42, 54, 0.85); /* Darker, slightly more opaque than dashboard main */
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border-radius: 15px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    color: #e0e0e0;
-}
-
-.profile-container h1 {
-    text-align: center;
-    font-size: 2.2rem;
-    color: #ffffff;
-    margin-bottom: 35px;
-    padding-bottom: 15px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
-}
-
-.profile-section {
-    background-color: rgba(55, 58, 80, 0.7); /* Slightly lighter sections */
-    padding: 25px 30px;
-    margin-bottom: 30px;
-    border-radius: 10px;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-}
-
-.profile-section:last-of-type {
-    margin-bottom: 20px; /* Reduce margin for the last section before back button */
-}
-
-.profile-section h2 {
-    font-size: 1.5rem;
-    color: #f0f0f0; /* Accent color for section titles */
-    margin-top: 0;
-    margin-bottom: 25px;
-    padding-bottom: 10px;
-    border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
-    font-family: 'Playfair Display', serif; /* Consistent heading font */
-}
-
-/* Form group styling within profile sections */
-.profile-section .form-group {
-    margin-bottom: 20px;
-}
-
-.profile-section label {
-    font-weight: 500;
-    color: #bdc1c6;
-    font-size: 0.95rem;
-}
-
-.profile-section input[type="text"],
-.profile-section input[type="email"],
-.profile-section input[type="password"],
-.profile-section select {
-    background-color: rgba(20, 22, 34, 0.6);
-    border: 1px solid rgba(255, 255, 255, 0.25);
-    color: #e0e0e0;
-    padding: 12px 16px; /* Slightly less padding than main forms if desired */
-    font-size: 0.95rem;
-}
-
-.profile-section input[type="text"]:focus,
-.profile-section input[type="email"]:focus,
-.profile-section input[type="password"]:focus,
-.profile-section select:focus {
-    border-color: #c8a2c8; /* Your accent purple for focus */
-    background-color: rgba(30, 32, 44, 0.7);
-    box-shadow: 0 0 0 3px rgba(200, 162, 200, 0.3); /* Lighter purple shadow */
-}
-
-.profile-section select {
-    appearance: none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23bdc1c6' viewBox='0 0 16 16'%3E%3Cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 12px center;
-    padding-right: 35px;
-}
-
-.profile-section .form-hint {
-    font-size: 0.8em;
-    color: #a0a8b4;
-    display: block;
-    margin-top: 5px;
-}
-
-.profile-section .button-group {
-    margin-top: 25px;
-    justify-content: flex-start; /* Align buttons to the left within sections */
-}
-.profile-section .button-group .btn {
-    padding: 10px 22px;
-    font-size: 0.9rem;
-}
-
-
-/* Specific buttons for reset/delete */
-.profile-actions .btn.reset-btn {
-    background-color: #ffae42; /* Orange warning */
-    color: #2c3e50;
-}
-.profile-actions .btn.reset-btn:hover {
-    background-color: #ffc171;
-}
-
-.profile-actions .btn.delete-btn {
-    background-color: #e74c3c; /* Red danger */
-    color: #ffffff;
-}
-.profile-actions .btn.delete-btn:hover {
-    background-color: #c0392b;
-}
-
-.profile-section p {
-    color: #c8c8d8;
-    font-size: 0.9rem;
-    line-height: 1.7;
-    margin-bottom: 15px;
-}
-
-.profile-warning {
-    color: #f87c7c !important; /* Make warning text more prominent */
-    font-weight: 500;
-    border-left: 3px solid #e74c3c;
-    padding-left: 10px;
-}
-
-/* Back to Dashboard link at the very bottom */
-.profile-container > div[style*="text-align: center"] { /* Targets the specific div you have */
-    margin-top: 40px;
-    padding-top: 20px;
-    border-top: 1px solid rgba(255,255,255,0.1);
-}
-
-/* --- CLOSE BUTTON 'X' --- */
-.flash-message .flash-close-btn {
-    background: none;
-    border: none;
-    color: inherit; /* Inherits color from .flash-message (e.g., white for success/error) */
-    font-size: 1.6rem; /* Make X a bit larger */
-    font-weight: bold;
-    line-height: 1; /* Important for vertical alignment */
-    cursor: pointer;
-    opacity: 0.7;
-    transition: opacity 0.2s ease;
-    padding: 0 5px; /* Small padding for easier clicking */
-    margin-left: 15px; /* Space from the message text */
-}
-
-.flash-message .flash-close-btn:hover {
-    opacity: 1;
-}
-/* ==========================================================================
-   End of Styles
-   ========================================================================== */
+   
+   
+   /* ==========================================================================
+      14. Profile Page Styles
+      ========================================================================== */
+   body.profile-page { /* Add specific class if needed */
+       background: url('/static/resources/dashboard.png') no-repeat center center fixed;
+       background-size: cover;
+   }
+   
+   .profile-container {
+       width: 90%;
+       max-width: 800px;
+       margin: 60px auto;
+       padding: 30px 40px;
+       background-color: rgba(40, 42, 54, 0.85);
+       backdrop-filter: blur(10px);
+       -webkit-backdrop-filter: blur(10px);
+       border-radius: 15px;
+       box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+       border: 1px solid rgba(255, 255, 255, 0.1);
+       color: #e0e0e0;
+   }
+   
+   .profile-container h1 {
+       text-align: center;
+       font-size: 2.2rem;
+       color: #ffffff;
+       margin-bottom: 35px;
+       padding-bottom: 15px;
+       border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+   }
+   
+   .profile-section {
+       background-color: rgba(55, 58, 80, 0.7);
+       padding: 25px 30px;
+       margin-bottom: 30px;
+       border-radius: 10px;
+       border: 1px solid rgba(255, 255, 255, 0.08);
+       box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+   }
+   
+   .profile-section:last-of-type {
+       margin-bottom: 20px;
+   }
+   
+   .profile-section h2 {
+       font-size: 1.5rem;
+       color: #f0f0f0;
+       margin-top: 0;
+       margin-bottom: 25px;
+       padding-bottom: 10px;
+       border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
+       font-family: 'Playfair Display', serif;
+   }
+   
+   .profile-section .form-group {
+       margin-bottom: 20px;
+   }
+   
+   .profile-section label {
+       font-weight: 500;
+       color: #bdc1c6;
+       font-size: 0.95rem;
+   }
+   
+   /* Specific input styles for profile, inheriting from base */
+   .profile-section input[type="text"],
+   .profile-section input[type="email"],
+   .profile-section input[type="password"] {
+       /* Inherits most styles */
+       padding: 12px 16px;
+       font-size: 0.95rem;
+   }
+   
+   .profile-section input[type="text"]:focus,
+   .profile-section input[type="email"]:focus,
+   .profile-section input[type="password"]:focus {
+       border-color: #c8a2c8; /* Profile specific focus color? */
+       /* Inherits background and shadow */
+   }
+   
+   
+   .profile-section .form-hint {
+       font-size: 0.8em;
+       color: #a0a8b4;
+       display: block;
+       margin-top: 5px;
+   }
+   
+   .profile-section .button-group {
+       margin-top: 25px;
+       justify-content: flex-start; /* Align buttons left */
+   }
+   
+   .profile-section .button-group .btn {
+       padding: 10px 22px;
+       font-size: 0.9rem;
+       /* Use default .btn styles */
+   }
+   
+   /* Danger zone buttons */
+   .profile-actions {
+       /* Specific container for reset/delete if needed */
+   }
+   .profile-actions .btn.reset-btn {
+       background-color: #ffae42; /* Orange */
+       color: #2c3e50; /* Dark text for contrast */
+   }
+   .profile-actions .btn.reset-btn:hover {
+       background-color: #ffc171;
+   }
+   
+   .profile-actions .btn.delete-btn {
+       background-color: #e74c3c; /* Red */
+       color: #ffffff;
+   }
+   .profile-actions .btn.delete-btn:hover {
+       background-color: #c0392b;
+   }
+   
+   .profile-section p {
+       color: #c8c8d8;
+       font-size: 0.9rem;
+       line-height: 1.7;
+       margin-bottom: 15px;
+   }
+   
+   .profile-warning {
+       color: #f87c7c !important;
+       font-weight: 500;
+       border-left: 3px solid #e74c3c;
+       padding-left: 10px;
+       background-color: rgba(231, 76, 60, 0.1); /* Slight background tint */
+       margin-bottom: 20px !important; /* Ensure spacing */
+   }
+   
+   .profile-container .back-link {
+       display: block;
+       width: fit-content;
+       margin: 40px auto 0 auto; /* Center below sections */
+       padding-top: 20px;
+       border-top: 1px solid rgba(255,255,255,0.1);
+   }
+   
+   
+   /* ==========================================================================
+      15. Responsive Adjustments
+      ========================================================================== */
+   
+   /* --- Medium Screens (Tablets) --- */
+   @media (max-width: 1200px) {
+       /* Stats Page */
+       .stats-container {
+           width: 95vw;
+           padding: 20px 25px;
+       }
+       .stats-top-grid {
+           grid-template-columns: minmax(200px, 0.7fr) 1fr 1fr; /* Adjust grid */
+       }
+       .chart-container,
+       .stats-line-chart-section .chart-container.chart-full-width {
+           min-height: 330px; /* Adjust chart min height */
+       }
+   }
+   
+   @media (max-width: 992px) {
+       /* Dashboard Layout */
+       .dashboard-mood-list .mood-list {
+           grid-template-columns: 1fr; /* Stack mood items */
+           gap: 20px;
+       }
+       .dashboard-main .mood-item {
+           min-height: 180px; /* Adjust mood item height */
+       }
+       .dashboard-container {
+           width: 95%;
+           gap: 15px;
+           margin-top: 60px; /* Adjust top margin */
+       }
+       .dashboard-main {
+           padding: 20px;
+           /* max-height: none; */ /* Removed */
+       }
+       /* Filters */
+       .filter-form {
+           gap: 10px 15px;
+       }
+       .text-search-group {
+           min-width: 200px;
+       }
+       .filter-group select,
+       .filter-group input[type="date"] {
+           width: 140px;
+       }
+       .filter-button-group {
+           margin-left: 0; /* Center buttons */
+           width: 100%;
+           justify-content: center;
+       }
+   
+       /* Stats Page */
+       .stats-top-grid {
+           grid-template-columns: 1fr; /* Stack columns */
+           gap: 20px;
+       }
+       .stats-summary-column .summary-card {
+           min-height: 75px;
+       }
+       .chart-container,
+       .stats-line-chart-section .chart-container.chart-full-width {
+           min-height: 300px; /* Adjust chart height */
+       }
+       .stats-container {
+           padding: 20px 15px;
+           margin: 30px auto;
+       }
+       .stats-header h1 {
+           font-size: 1.8rem;
+       }
+       .stats-page {
+           margin-bottom: 35px;
+       }
+       .stats-controls-row {
+           flex-direction: column;
+           gap: 15px;
+           padding: 15px 0;
+           margin-top: 0;
+       }
+        .stats-custom-pagination {
+           border-top: 1px solid rgba(255, 255, 255, 0.08);
+           padding-top: 15px;
+           margin-top: 5px;
+           width: 100%;
+           justify-content: center;
+        }
+       .back-link.stats-back-link {
+           order: -1; /* Move back link above pagination */
+           margin: 0 auto;
+           border-top: none;
+           padding-top: 0;
+           width: auto; /* Don't force width */
+       }
+       .back-link-placeholder {
+           display: none;
+       }
+   }
+   
+   /* --- Small Screens (Portrait Tablets, Large Phones) --- */
+   @media (max-width: 768px) {
+       /* Dashboard Layout */
+       .dashboard-container {
+           flex-direction: column; /* Stack sidebar and main */
+           padding: 10px;
+           width: 100%;
+           margin-top: 20px; /* Adjust top margin */
+           gap: 15px;
+       }
+       .dashboard-sidebar {
+           position: static; /* Unstick sidebar */
+           width: 100%;
+           max-height: none;
+           flex-direction: row; /* Horizontal sidebar */
+           justify-content: center;
+           padding: 10px 0;
+           border-radius: 15px;
+           margin-bottom: 15px;
+           overflow-x: auto; /* Allow scrolling if icons overflow */
+           align-self: auto; /* Reset alignment */
+       }
+       .sidebar-nav ul {
+           flex-direction: row;
+           gap: 10px;
+           flex-wrap: nowrap; /* Prevent wrapping */
+           width: auto; /* Fit content */
+       }
+       .sidebar-nav a::after,
+       .sidebar-nav .logout-button::after {
+           display: none; /* Hide tooltips on mobile */
+       }
+       .dashboard-main {
+           padding: 15px;
+       }
+       /* Filters */
+       .filter-form {
+           gap: 10px;
+       }
+       .text-search-group,
+       .emotion-filter-group,
+       .date-filter-group {
+           flex-basis: 45%; /* Two columns approx */
+           flex-grow: 1;
+       }
+       .filter-button-group {
+           flex-basis: 100%; /* Full width buttons */
+           justify-content: center;
+       }
+       .filter-group select,
+       .filter-group input[type="date"] {
+           width: 100%; /* Full width inputs */
+       }
+       /* Landing Page */
+       .landing-specific-header {
+           padding: 1rem 5%;
+           flex-direction: column;
+           gap: 1.5rem;
+       }
+       .landing-specific-logo img {
+           height: 50px; /* Smaller logo */
+       }
+       .landing-specific-nav ul {
+            gap: 1.5rem; /* Adjust nav gap */
+       }
+        .landing-specific-nav a {
+           font-size: 1rem; /* Smaller nav links */
+       }
+       .landing-main-content {
+           padding: 1.5rem 5%;
+       }
+       .landing-content-wrapper h1 {
+           font-size: 2.8rem;
+       }
+   
+       /* Stats Page */
+       .chart-container,
+       .stats-line-chart-section .chart-container.chart-full-width {
+           min-height: 280px; /* Adjust chart height */
+       }
+       .stats-header h1 {
+           font-size: 1.6rem;
+       }
+   
+        /* Profile Page */
+       .profile-container {
+            margin: 30px auto;
+            padding: 20px;
+       }
+       .profile-section {
+           padding: 15px 20px;
+       }
+   }
+   
+   /* --- Extra Small Screens (Phones) --- */
+   @media (max-width: 576px) {
+       /* Landing/About */
+       .landing-specific-logo img {
+           height: 40px;
+       }
+       .landing-specific-nav ul {
+           gap: 1rem;
+       }
+        .landing-specific-nav a {
+           font-size: 0.9rem;
+       }
+       .landing-specific-nav .signup-button {
+           padding: 0.5rem 1.2rem;
+           font-size: 0.8rem;
+       }
+       .landing-content-wrapper h1 {
+           font-size: 2.3rem;
+       }
+       .landing-content-wrapper p {
+           font-size: 1rem;
+       }
+       .btn, /* General buttons smaller */
+       .read-more-button {
+           padding: 0.7rem 1.8rem;
+           font-size: 0.9rem;
+       }
+       /* Dashboard */
+       .edit-delete-buttons .btn {
+           padding: 5px 12px;
+           font-size: 0.8rem;
+       }
+       .dashboard-main {
+           padding: 10px;
+       }
+       .dashboard-header h1 {
+           font-size: 1.8rem;
+       }
+       .dashboard-mood-list .mood-list {
+           grid-template-columns: 1fr; /* Ensure single column */
+       }
+       .dashboard-main .mood-item {
+           padding: 15px 20px;
+       }
+       /* Filters stack */
+       .text-search-group,
+       .emotion-filter-group,
+       .date-filter-group,
+       .filter-button-group {
+           flex-basis: 100%;
+       }
+       .filter-button-group {
+           justify-content: space-around; /* Space out buttons */
+       }
+   
+       /* Modals */
+       .modal-content {
+           padding: 20px;
+       }
+       .modal-header h2 {
+           font-size: 1.2rem;
+       }
+       .emoji-suggestion-btn {
+           font-size: 1.1rem;
+       }
+   
+       /* Stats Page */
+       .stats-container {
+           padding: 15px 10px;
+           margin: 20px auto;
+           border-radius: 10px;
+       }
+       .stats-summary-column .summary-card p {
+           font-size: 1rem;
+       }
+       .stats-summary-column .summary-card h3 {
+           font-size: 0.8rem;
+       }
+        .chart-container h3 {
+           font-size: 0.9rem;
+       }
+       .chart-container,
+       .stats-line-chart-section .chart-container.chart-full-width {
+           min-height: 250px; /* Adjust chart height */
+       }
+       .stats-custom-pagination {
+           gap: 8px;
+       }
+       .stats-custom-pagination .btn {
+           padding: 5px 10px;
+           font-size: 0.8rem;
+       }
+       .stats-custom-pagination #stats-page-indicator {
+           font-size: 0.85rem;
+       }
+       .stats-controls-row {
+           padding: 10px 0;
+       }
+   
+        /* Profile Page */
+        .profile-container {
+            padding: 20px 15px;
+        }
+        .profile-section {
+            padding: 15px;
+        }
+         .profile-section h2 {
+            font-size: 1.3rem;
+        }
+         .profile-section .button-group {
+           justify-content: center; /* Center buttons on small screens */
+        }
+   }
+   
+   
+   /* ==========================================================================
+      End of Styles
+      ========================================================================== */

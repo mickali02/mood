@@ -109,8 +109,8 @@
                                data-emoji="{{.Emoji}}"
                                data-color="{{.Color}}"
                                data-created-at="{{.CreatedAt | HumanDate}}"
-                               {{/* --- START: MODIFIED LINE --- */}}
-                                data-full-content={{printf "%q" .RawContent}}> {{/* <<< CHANGE BACK TO THIS */}}                                 View More...
+                               data-full-content={{printf "%q" .RawContent}}>
+                                 View More...
                             </a>
                          </div>
 
@@ -145,9 +145,9 @@
                     <ul>
                         {{/* Previous Page Link */}}
                         {{if eq .CurrentPage .FirstPage}}
-                            <li class="disabled"><span>< Previous</span></li> {{/* Use HTML entity for < */}}
+                            <li class="disabled"><span>< Previous</span></li>
                         {{else}}
-                            {{ $prevPage := sub .CurrentPage 1 }} {{/* Calculate previous page */}}
+                            {{ $prevPage := sub .CurrentPage 1 }}
                             <li>
                                 <a href="#"
                                    hx-get="/dashboard"
@@ -155,9 +155,9 @@
                                    hx-swap="innerHTML"
                                    hx-indicator=".htmx-indicator"
                                    hx-include=".filter-form"
-                                   hx-vals='{"page": "{{$prevPage}}"}' {{/* Use calculated variable */}}
+                                   hx-vals='{"page": "{{$prevPage}}"}'
                                    hx-push-url="true"
-                                >< Previous</a> {{/* Use HTML entity for < */}}
+                                >< Previous</a>
                             </li>
                         {{end}}
 
@@ -168,9 +168,9 @@
 
                         {{/* Next Page Link */}}
                         {{if eq .CurrentPage .LastPage}}
-                             <li class="disabled"><span>Next ></span></li> {{/* Use HTML entity for > */}}
+                             <li class="disabled"><span>Next ></span></li>
                         {{else}}
-                             {{ $nextPage := add .CurrentPage 1 }} {{/* Calculate next page */}}
+                             {{ $nextPage := add .CurrentPage 1 }}
                              <li>
                                  <a href="#"
                                    hx-get="/dashboard"
@@ -178,9 +178,9 @@
                                    hx-swap="innerHTML"
                                    hx-indicator=".htmx-indicator"
                                    hx-include=".filter-form"
-                                   hx-vals='{"page": "{{$nextPage}}"}' {{/* Use calculated variable */}}
+                                   hx-vals='{"page": "{{$nextPage}}"}'
                                    hx-push-url="true"
-                                 >Next ></a> {{/* Use HTML entity for > */}}
+                                 >Next ></a>
                             </li>
                         {{end}}
                     </ul>
@@ -208,27 +208,6 @@
         {{end}}
     </section>
 
-
-    <!-- Mood Detail Modal Structure -->
-    <div id="mood-detail-modal" class="mood-detail-modal">
-        <div class="mood-detail-modal-content">
-            <div class="mood-detail-modal-header">
-                <h2 id="modal-title">Mood Title</h2>
-                <button class="mood-detail-modal-close" id="modal-detail-close-button" aria-label="Close modal">×</button>
-            </div>
-            <div class="mood-detail-modal-body">
-                 <div class="modal-emotion-info">
-                     <span id="modal-emoji">❓</span>
-                     <strong id="modal-emotion-name">Emotion</strong>
-                 </div>
-                 <div class="modal-date-info">
-                     Logged: <span id="modal-created-at">Date</span>
-                 </div>
-                 <div id="modal-full-content" class="quill-rendered-content">
-                     <!-- Full content will be inserted here by JS -->
-                 </div>
-            </div>
-        </div>
-    </div>
+    <!-- Mood Detail Modal Structure is REMOVED from this fragment -->
 
 {{end}} {{/* End block "dashboard-content" */}}
