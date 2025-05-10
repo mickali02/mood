@@ -75,6 +75,10 @@ type TemplateData struct {
 
 	CSRFToken string     `json:"csrf_token"`
 	User      *data.User `json:"user"`
+
+	// --- Fields for Profile Page Pagination ---
+	ProfileCurrentPage int
+	ProfileTotalPages  int
 }
 
 // NewTemplateData creates a *basic* default TemplateData instance.
@@ -110,6 +114,10 @@ func NewTemplateData() *TemplateData {
 		Stats:             nil,
 		EmotionCountsJSON: "[]",
 		Quote:             "",
+
+		// --- Initialize Profile Pagination Fields ---
+		ProfileCurrentPage: 1, // Default to page 1
+		ProfileTotalPages:  2, // We have 2 logical pages for profile settings
 	}
 }
 

@@ -860,9 +860,25 @@ func (app *application) showUserProfilePage(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
+	// --- Pagination Logic for Profile Page ---
+	pageStr := r.URL.Query().Get("page")
+	currentPage, err := strconv.Atoi(pageStr) // Renamed to currentPage for clarity
+	if err != nil || currentPage < 1 {
+		currentPage = 1
+	}
+	// Define total pages for profile.
+	profileTotalPages := 2 // Page 1: Info/Password, Page 2: Reset/Delete
+	if currentPage > profileTotalPages {
+		currentPage = profileTotalPages // Cap at max pages
+	}
+	// --- End Pagination Logic ---
+
 	templateData := app.newTemplateData(r)
 	templateData.Title = "User Profile"
 	templateData.User = user
+	templateData.ProfileCurrentPage = currentPage // Use the processed currentPage
+	templateData.ProfileTotalPages = profileTotalPages
+
 	if templateData.FormData == nil {
 		templateData.FormData = make(map[string]string)
 	}
@@ -927,6 +943,7 @@ func (app *application) updateUserProfile(w http.ResponseWriter, r *http.Request
 			"name":  user.Name,
 			"email": user.Email,
 		}
+		templateData.ProfileCurrentPage = 1 // Explicitly set page for error re-render
 		errRender := app.render(w, http.StatusUnprocessableEntity, "profile.tmpl", templateData)
 		if errRender != nil {
 			app.serverError(w, r, errRender)
@@ -948,6 +965,7 @@ func (app *application) updateUserProfile(w http.ResponseWriter, r *http.Request
 				"name":  r.PostForm.Get("name"),  // Show what user typed
 				"email": r.PostForm.Get("email"), // Show problematic email
 			}
+			templateData.ProfileCurrentPage = 1 // Explicitly set page
 			errRender := app.render(w, http.StatusUnprocessableEntity, "profile.tmpl", templateData)
 			if errRender != nil {
 				app.serverError(w, r, errRender)
@@ -1004,6 +1022,7 @@ func (app *application) changeUserPassword(w http.ResponseWriter, r *http.Reques
 		templateData.FormData = make(map[string]string)
 		templateData.FormData["name"] = user.Name
 		templateData.FormData["email"] = user.Email
+		templateData.ProfileCurrentPage = 1 // Password form is on page 1
 
 		errRender := app.render(w, http.StatusUnprocessableEntity, "profile.tmpl", templateData)
 		if errRender != nil {
