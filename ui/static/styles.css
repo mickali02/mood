@@ -1864,17 +1864,29 @@ body.stats-page-background { /* Specific background if needed */
 }
 
 .back-link.stats-back-link {
-    margin: 0;
-    padding: 7px 15px;
-    font-size: 0.85rem;
-    text-transform: none;
-    background-color: rgba(255, 255, 255, 0.15);
-    color: #bdc1c6;
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    display: inline-flex; /* MATCH */
+    align-items: center;  /* MATCH */
+    justify-content: center; /* MATCH */
+    padding: 0.8rem 2.2rem; /* MATCH */
+    background-color: #A074B5; /* MATCH */
+    color: #FFFFFF;             /* MATCH */
+    font-weight: 500;           /* MATCH */
+    border-radius: 30px;       /* MATCH */
+    border: none;              /* MATCH */
+    text-transform: uppercase; /* MATCH */
+    font-size: 0.9rem;         /* MATCH */
+    letter-spacing: 0.5px;   /* MATCH */
+    text-decoration: none;     /* MATCH */
+    transition: all 0.3s ease; /* MATCH */
+    cursor: pointer;           /* ENSURE */
+    font-family: 'Poppins', sans-serif; /* ENSURE */
+    margin: 0; /* Reset margin if it was specific */
 }
 .back-link.stats-back-link:hover {
-    background-color: rgba(255, 255, 255, 0.25);
-    color: #ffffff;
+    background-color: #8a6aaf; /* MATCH */
+    transform: translateY(-2px); /* MATCH */
+    box-shadow: 0 0 20px rgba(177, 156, 217, 0.7); /* MATCH/ENHANCE */
+    color: #ffffff;     
 }
 
 
@@ -1886,15 +1898,25 @@ body.stats-page-background { /* Specific background if needed */
 
 /* --- No Stats Message --- */
 .no-stats {
-    text-align: center;
-    padding: 40px 20px;
-    font-size: 1rem;
-    color: #bdc1c6;
-    min-height: 200px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+    display: inline-flex; /* CHANGE from block */
+    align-items: center;  /* ADD */
+    justify-content: center; /* ADD */
+    padding: 0.8rem 2.2rem; /* MATCH */
+    background-color: #A074B5; /* MATCH */
+    color: #FFFFFF;             /* MATCH */
+    font-weight: 500;           /* MATCH */
+    border-radius: 30px;       /* MATCH (was 22px) */
+    border: none;              /* MATCH */
+    text-transform: uppercase; /* MATCH */
+    font-size: 0.9rem;         /* MATCH */
+    letter-spacing: 0.5px;   /* MATCH */
+    text-decoration: none;     /* MATCH */
+    transition: all 0.3s ease; /* MATCH */
+    cursor: pointer;           /* ENSURE */
+    font-family: 'Poppins', sans-serif; /* ENSURE */
+    margin: 25px auto 0 auto; /* Keep its specific margin for positioning in .no-stats */
+    width: auto; /* Change from fit-content if inline-flex is used */
+    text-align: center; /* Keep */
 }
 
 .no-stats .back-link {
@@ -1918,9 +1940,10 @@ body.stats-page-background { /* Specific background if needed */
     box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
 }
 .no-stats .back-link:hover {
-    background-color: #8a6aaf;
-    transform: translateY(-2px);
-    box-shadow: 0 5px 12px rgba(0,0,0,0.2);
+    background-color: #8a6aaf;; /* MATCH */
+    transform: translateY(-2px); /* MATCH */
+    box-shadow: 0 0 20px rgba(177, 156, 217, 0.7); /* MATCH/ENHANCE (was different) */
+    color: #ffffff;             /* MATCH */
 }
 
 /* Links styling */
