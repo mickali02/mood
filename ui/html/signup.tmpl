@@ -12,6 +12,12 @@
 <body class="mood-form-page"> <!-- Reuse form page styling -->
 
     <div class="form-container"> <!-- Reuse form container styling -->
+            <!-- === ADD THE CLOSE BUTTON HERE === -->
+        <a href="/" class="form-close-button" aria-label="Close and go to homepage">
+            × <!-- This is the HTML entity for the 'X' multiplication sign -->
+            <!-- Or, if using Bootstrap Icons: <i class="bi bi-x-lg"></i> -->
+        </a>
+        <!-- ================================ -->
         <h1>Create Account</h1>
 
         <!-- Display flash messages if any -->
@@ -59,7 +65,7 @@
             <div class="button-group">
                 <button type="submit" class="btn dashboard-add-btn">Sign Up</button>
                 <!-- Optional: Link to login page -->
-                <a href="/user/login" class="btn cancel-btn">Already have account? Log In</a>
+                <a href="/user/login" class="btn cancel-btn">Already have an account? Log In</a>
             </div>
         </form>
     </div>

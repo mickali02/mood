@@ -308,18 +308,19 @@
    }
 
    .landing-specific-nav a {
-       color: #fff; /* White nav links */
-       text-decoration: none;
-       font-size: 1.4rem;
-       font-weight: 500;
-       transition: all 0.3s ease;
-   }
+    color: #fff; /* White nav links */
+    text-decoration: none;
+    font-size: 1.4rem;
+    font-weight: 500;
+    display: inline-block;  /* Or 'block' if they should take full width */
+    transition: transform 0.2s ease-out, color 0.2s ease-out, text-shadow 0.2s ease-out;
+}
 
-   .landing-specific-nav a:hover {
-       color: #e6d29e; /* Light yellow hover */
-       text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
-   }
-
+.landing-specific-nav a:hover {
+    color: #e6d29e; /* Light yellow hover */
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+    transform: translateY(-2px); /* This should now work */
+}
    .landing-specific-nav .signup-button { /* Style specific sign up button */
        background-color: #a074b5; /* Solid purple */
        border-radius: 25px;
@@ -462,8 +463,6 @@
        z-index: 2;
    }
    
-   
-
    .dashboard-sidebar {
     width: 80px;
     height: fit-content;
@@ -2630,6 +2629,31 @@ body.stats-page-background { /* Specific background if needed */
     }
 }
 
+/* Ensure the form container can act as a positioning context for the close button */
+.form-container {
+    position: relative; /*  <-- VERY IMPORTANT! */
+}
+
+.form-close-button {
+    position: absolute; /* Position relative to .form-container */
+    top: 30px;          /* Adjust for desired vertical position */
+    right: 60px;         /* Adjust for desired horizontal position */
+
+    color: #a0a0c0;     /* A muted color for the X */
+    font-size: 3rem;    /* Make the 'X' character larger */
+    font-weight: 400;   /* Lighter weight for a softer 'X' */
+    line-height: 1;     /* Prevents extra vertical space */
+    text-decoration: none;
+    padding: 5px;       /* Add a little clickable area around the X */
+    cursor: pointer;
+    transition: color 0.2s ease, transform 0.2s ease;
+    z-index: 10;        /* Ensure it's above other content if necessary */
+}
+
+.form-close-button:hover {
+    color: #e6d29e /* MATCH */; 
+    transform: scale(1.1); /* Slight pop effect */
+}
 
 
    /* ==========================================================================
