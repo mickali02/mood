@@ -433,7 +433,7 @@
        display: flex;
        width: 92%;
        max-width: 1600px; /* Increased max width */
-       margin: 40px auto 50px auto; /* Adjusted top margin */
+       margin: 150px auto 0;
        padding: 0; /* Removed padding */
        gap: 30px;
        position: relative;
@@ -443,8 +443,7 @@
    
    .dashboard-sidebar {
        width: 80px;
-       height: fit-content;
-       max-height: calc(100vh - 80px); /* Ensure it doesn't overflow */
+ /* height: fit-content; -- This is fine, but max-height is more important for sticky */       max-height: calc(100vh - 80px); /* Ensure it doesn't overflow */
        background-color: rgba(40, 42, 54, 0.7);
        backdrop-filter: blur(12px);
        -webkit-backdrop-filter: blur(12px);
@@ -458,7 +457,7 @@
        margin: 0; /* Remove auto margin */
        align-self: flex-start; /* Align to top */
        position: sticky;
-       top: 40px; /* Stick below potential top nav */
+       top: 100px; /* Stick below potential top nav */
        z-index: 5;
    }
    
@@ -590,7 +589,8 @@
    .dashboard-header h1 {
        font-size: 2.1rem;
        margin: 0;
-       text-align: left; /* Align title left */
+       text-align: center; /* Align title left */
+       flex-grow: 1;
    }
    
    /* Filter Bar */
