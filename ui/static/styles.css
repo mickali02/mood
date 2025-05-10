@@ -262,116 +262,122 @@
    /* ==========================================================================
       3. Landing & About Page Styles
       ========================================================================== */
-   
+
+   /* --- Shared Background and Text --- */
+
    body.landing-specific-background,
-   body.about-page-background { /* Added about class */
+   body.about-page-background {
        background: url('/static/resources/landing.png') no-repeat center center fixed;
        background-size: cover;
-       color: #f0f0f0;
+       color: #f0f0f0; /* Light text for landing/about */
    }
-   
-   
+
+
+   /* --- Header Shared by Landing/About --- */
+
    .landing-specific-header {
        display: flex;
-       justify-content: space-between; /* Space logo and nav */
        align-items: center;
        padding: 1.5rem 5%;
        width: 100%;
-       position: relative; /* Keep for potential absolute elements */
+       position: relative;
        z-index: 10;
    }
-   
+
    .landing-specific-logo {
        display: flex;
        align-items: center;
    }
-   
+
    .landing-specific-logo img {
-       height: 170px; /* Adjusted height */
+       height: 180px; /* Kept larger logo */
        width: auto;
-       /* Removed margin-top */
+       margin-top: 10px; /* Adjust as needed */
    }
-   
+
    .landing-specific-nav {
        display: flex;
        align-items: center;
    }
-   
+
    .landing-specific-nav ul {
        display: flex;
        list-style: none;
-       gap: 2.2rem;
+       gap: 2.2rem; /* Spacing between nav items */
        align-items: center;
    }
-   
+
    .landing-specific-nav a {
-       color: #fff;
+       color: #fff; /* White nav links */
        text-decoration: none;
-       font-size: 1.1rem; /* Adjusted size */
+       font-size: 1.4rem;
        font-weight: 500;
        transition: all 0.3s ease;
    }
-   
+
    .landing-specific-nav a:hover {
-       color: #e6d29e;
+       color: #e6d29e; /* Light yellow hover */
        text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
    }
-   
-   .landing-specific-nav .signup-button {
-       background-color: #a074b5;
+
+   .landing-specific-nav .signup-button { /* Style specific sign up button */
+       background-color: #a074b5; /* Solid purple */
        border-radius: 25px;
        padding: 0.6rem 1.8rem;
        font-weight: 600;
-       font-size: 0.9rem;
-       letter-spacing: 0.5px;
-       text-transform: uppercase;
+       font-size: 0.9rem; /* Match previous */
+       letter-spacing: 0.5px; /* Match previous */
+       text-transform: uppercase; /* Match previous */
        box-shadow: 0 0 15px rgba(177, 156, 217, 0.5);
        transition: all 0.3s ease;
    }
-   
+
    .landing-specific-nav .signup-button:hover {
-       background-color: #e6d29e;
-       color: #fff;
+       background-color: #e6d29e; /* Yellow hover */
+       color: #fff; /* Keep text white */
        transform: translateY(-2px);
        box-shadow: 0 0 20px rgba(177, 156, 217, 0.7);
    }
-   
-   
+
+
+   /* --- Landing Page Specific Content --- */
+
    .landing-main-content {
        display: flex;
        flex-direction: column;
-       justify-content: center; /* Center vertically */
-       align-items: center; /* Center horizontally */
+       justify-content: flex-start;
+       align-items: flex-start;
        padding: 5vh 8%;
        flex-grow: 1;
        position: relative;
        z-index: 5;
-       text-align: center; /* Center text within */
-       /* Removed min-height */
+       min-height: calc(100vh - 150px); /* Adjust 150px based on actual header height */
    }
-   
+
    .landing-content-wrapper {
        max-width: 600px;
-       /* Removed margins */
+       text-align: center;
+       margin-left: 0;
+       margin-right: auto;
    }
-   
+
    .landing-content-wrapper h1 {
        color: #ffffff;
        font-size: 3.2rem;
        text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+       text-align: center;
        margin-bottom: 1rem;
    }
-   
+
    .landing-content-wrapper p {
        color: #d8d8e0;
        font-size: 1.1rem;
        line-height: 1.7;
        margin-bottom: 2.5rem;
-       max-width: 550px; /* Limit paragraph width */
-       margin-left: auto; /* Center paragraph block */
-       margin-right: auto;
+       text-align: center;
+       max-width: 550px;
    }
-   
+
    .read-more-button {
        display: inline-flex;
        align-items: center;
@@ -389,33 +395,54 @@
        box-shadow: 0 0 15px rgba(177, 156, 217, 0.5);
        transition: all 0.3s ease;
    }
-   
+
    .read-more-button:hover {
        background-color: #e6d29e;
        transform: translateY(-2px);
        box-shadow: 0 0 15px rgba(177, 156, 217, 0.5);
        color: #ffffff;
    }
-   
-   /* About Page Specific Container - Reuse landing structure */
-   .about-page-background .landing-main-content {
-       align-items: center; /* Center content wrapper */
+
+
+   /* --- About Page Specific Content --- */
+
+   .about-main-content {
+       display: flex;
+       justify-content: center;
+       align-items: flex-start;
+       padding: 40px 20px;
+       flex-grow: 1;
+       width: 100%;
    }
-   
-   .about-page-background .landing-content-wrapper {
-       text-align: left; /* Align text left inside wrapper */
+
+   .about-content-wrapper {
+       background-color: rgba(255, 255, 255, 0.85);
+       backdrop-filter: blur(8px);
+       padding: 35px 45px;
+       border-radius: 10px;
+       box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+       max-width: 850px;
+       width: 100%;
+       text-align: center;
+       margin-top: 20px;
+       border: 1px solid rgba(255, 255, 255, 0.1);
    }
-   
-   .about-page-background .landing-content-wrapper h1 {
-       text-align: left; /* Align h1 left */
-       width: 100%; /* Ensure h1 takes full width */
+
+   .about-content-wrapper h1 {
+       color: #4a0e6c;
+       border-bottom: 2px solid #d8c1e3;
+       padding-bottom: 10px;
+       font-size: 2.4rem;
+       text-align: left;
    }
-   .about-page-background .landing-content-wrapper p {
-       text-align: left; /* Align p left */
-       max-width: none; /* Allow paragraph full width */
+
+   .about-content-wrapper p {
+       color: #444;
+       font-size: 1rem;
+       line-height: 1.8;
+       text-align: left;
    }
-   
-   
+
    /* ==========================================================================
       4. Dashboard Page Styles
       ========================================================================== */
