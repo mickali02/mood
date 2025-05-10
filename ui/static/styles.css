@@ -441,25 +441,27 @@
    }
    
    
+
    .dashboard-sidebar {
-       width: 80px;
- /* height: fit-content; -- This is fine, but max-height is more important for sticky */       max-height: calc(100vh - 80px); /* Ensure it doesn't overflow */
-       background-color: rgba(40, 42, 54, 0.7);
-       backdrop-filter: blur(12px);
-       -webkit-backdrop-filter: blur(12px);
-       display: flex;
-       flex-direction: column;
-       padding: 25px 0;
-       flex-shrink: 0;
-       border-radius: 20px;
-       box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
-       border: 1px solid rgba(255, 255, 255, 0.1);
-       margin: 0; /* Remove auto margin */
-       align-self: flex-start; /* Align to top */
-       position: sticky;
-       top: 100px; /* Stick below potential top nav */
-       z-index: 5;
-   }
+    width: 80px;
+    height: fit-content;
+    max-height: calc(100vh - 80px); /* Keeps sidebar scroll if needed */
+    background-color: rgba(40, 42, 54, 0.7);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    display: flex;
+    flex-direction: column;
+    padding: 25px 0;
+    flex-shrink: 0;
+    border-radius: 20px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    margin: auto 0;
+    align-self: center;
+    position: sticky;
+    top: 40px;
+    z-index: 5;
+}
    
    .sidebar-nav ul {
        width: 100%;
