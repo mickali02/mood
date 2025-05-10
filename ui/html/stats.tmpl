@@ -10,34 +10,28 @@
 </head>
 <body class="dashboard-page stats-page-background">
 
-    <!-- Add is-loading class to the main container initially -->
-    <div class="stats-container is-loading"
+    <div class="stats-container {{if gt .Stats.TotalEntries 0}}is-loading{{else}}data-loaded no-data-initial{{end}}" 
          id="stats-data-container"
          data-emotion-counts='{{.EmotionCountsJSON}}'
-         data-weekly-counts='{{.WeeklyCountsJSON}}'
          data-has-data="{{gt .Stats.TotalEntries 0}}">
 
         <header class="stats-header">
             <h1>Your Mood Statistics</h1>
         </header>
 
-        <!-- Optional: Loading Indicator -->
+        <!-- Show global loading indicator only if we expect data -->
+        {{if gt .Stats.TotalEntries 0}}
         <div class="stats-loading-indicator">
             <p>Loading statistics...</p>
         </div>
+        {{end}}
 
-        <!-- **** WRAPPER for main stats content **** -->
-        <div class="stats-main-content"> <!-- NO is-loading here -->
+        <!-- Main content area; JS will manage opacity/visibility if data exists -->
+        <div class="stats-main-content">
 
-            {{if gt .Stats.TotalEntries 0}} <!-- Check if there's data -->
-
-                <!-- Page 1 Content: Summary + Bar + Pie -->
+            {{if gt .Stats.TotalEntries 0}}
                 <div id="stats-page-1" class="stats-page active-stats-page">
                     <section class="stats-top-grid">
-
-                        <!-- =================================== -->
-                        <!-- == Column 1: Summary Cards - ADD THIS BACK == -->
-                        <!-- =================================== -->
                         <div class="stats-summary-column">
                             <div class="summary-card">
                                 <h3>Total Entries</h3>
@@ -70,82 +64,50 @@
                                 <p>{{printf "%.1f" .Stats.AvgEntriesPerWeek}}</p>
                             </div>
                         </div>
-                        <!-- =================================== -->
-                        <!-- == END Summary Cards Column ======== -->
-                        <!-- =================================== -->
-
 
                         <!-- Column 2: Bar Chart -->
-                        <div class="stats-chart-column">
-                            <div class="chart-container">
-                                <h3>Emotion Frequency</h3>
-                                <!-- ============================= -->
-                                <!-- == ADD CANVAS BACK ========= -->
-                                <canvas id="emotionBarChart"></canvas>
-                                <!-- ============================= -->
-                            </div>
+                       <div class="chart-container chart-container-bar">
+                        <h3>Emotion Distribution</h3>
+                        <div class="chart-canvas-wrapper">
+                            <canvas id="emotionBarChart"></canvas>
+                        </div>
+                        <div class="chart-description">Shows how frequently you experience different emotions.</div>
                         </div>
 
                         <!-- Column 3: Pie Chart -->
-                        <div class="stats-chart-column">
-                            <div class="chart-container">
-                                <h3>Emotion Breakdown</h3>
-                                <!-- ============================= -->
-                                <!-- == ADD CANVAS BACK ========= -->
-                                <canvas id="emotionPieChart"></canvas>
-                                <!-- ============================= -->
+                        <div class="chart-container chart-container-pie">
+                            <h3>Emotion Breakdown</h3>
+                            <div class="chart-canvas-wrapper pie-chart-wrapper">
+                                <div class="chart-loading-text" id="pieChartLoadingPlaceholder">
+                                    <span class="dot one">.</span><span class="dot two">.</span><span class="dot three">.</span>
+                                </div>
+                                <canvas id="emotionPieChart" style="display:none;"></canvas>
                             </div>
+                            <div class="chart-description">Proportion of each emotion in your mood entries.</div>
                         </div>
                     </section>
                 </div>
-
-                <!-- Page 2 Content: Line Chart -->
-                <div id="stats-page-2" class="stats-page">
-                    <section class="stats-line-chart-section">
-                         <div class="chart-container chart-full-width">
-                            <h3>Entries per Week</h3>
-                            <!-- ============================= -->
-                            <!-- == ADD CANVAS BACK ========= -->
-                            <canvas id="weeklyLineChart"></canvas>
-                             <!-- ============================= -->
-                            <p class="chart-description">Total mood entries logged per week.</p>
-                         </div>
-                    </section>
-                </div>
-
-            {{else}} <!-- If no data -->
-
-                <!-- No Stats Message -->
+            {{else}}
+                <!-- This 'no-stats' block is now directly rendered if no data, not hidden by JS first -->
                 <div class="no-stats">
                     <p>You haven't logged enough moods to generate statistics yet. Keep tracking!</p>
                      <a href="/dashboard" class="back-link">← Back to Dashboard</a>
                 </div>
+            {{end}}
+        </div>
 
-            {{end}} <!-- End check for data -->
-
-        </div> <!-- **** END WRAPPER for main stats content **** -->
-
-        <!-- Quote, Controls, Footer are OUTSIDE the wrapper that gets hidden/shown -->
         <p class="stats-quote">{{.Quote}}</p>
 
         <div class="stats-controls-row">
             <a href="/dashboard" class="back-link stats-back-link">← Back to Dashboard</a>
-            <!-- Pagination will be hidden by JS if only 1 page or no data -->
-            <nav class="stats-custom-pagination">
-                <button id="stats-prev-page" class="btn" disabled>< Previous</button>
-                <span id="stats-page-indicator">Page 1 of 2</span>
-                <button id="stats-next-page" class="btn">Next ></button>
-            </nav>
             <div class="back-link-placeholder"></div>
         </div>
 
         <footer class="stats-footer">
-             <!-- Footer content -->
         </footer>
 
-    </div> <!-- End stats-container -->
+    </div>
 
-    <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chroma-js/2.4.2/chroma.min.js"></script>

@@ -657,10 +657,7 @@
        -webkit-appearance: none;
        appearance: none;
    }
-   .emotion-filter-group,
-   .date-filter-group {
-       /* Removed align-self/justify-content */
-   }
+
    .filter-group label {
        margin-bottom: 0;
        color: #bdc1c6;
@@ -914,9 +911,7 @@
        height: 0;
    }
    
-   .emotion-option-wrapper {
-       /* Wrapper for radio + label if needed */
-   }
+
    
    .emotion-option {
        display: inline-flex;
@@ -938,9 +933,6 @@
        line-height: 1;
    }
    
-   .emotion-option-name {
-       /* Specific styles if needed */
-   }
    
    .emotion-option:hover {
        background-color: rgba(255, 255, 255, 0.2);
@@ -1066,10 +1058,6 @@
        color: #fff;
        text-decoration: none;
        outline: none; /* Remove focus outline */
-   }
-   
-   .modal-body {
-       /* Container for form groups */
    }
    
    .modal .form-group {
@@ -1433,21 +1421,12 @@
        color: #a074b5; /* Highlight color */
    }
    
-   /* Content rendered from Quill */
-   .quill-rendered-content {
-        /* Styles defined in .dashboard-main .mood-item section */
-        /* And .mood-detail-modal-body section */
-   }
-   
+
    
    /* ==========================================================================
       11. View More & Mood Detail Modal Styles (Dashboard)
       ========================================================================== */
-   
-   .view-more-link {
-       /* Defined within .dashboard-main .mood-item styles */
-   }
-   
+
    .mood-detail-modal {
        display: none;
        position: fixed;
@@ -1633,319 +1612,324 @@
    
    
    /* ==========================================================================
-      13. Stats Page Styles
-      ========================================================================== */
-   body.stats-page-background { /* Specific background if needed */
-        background: url('/static/resources/dashboard.png') no-repeat center center fixed;
-        background-size: cover;
-   }
-   
-   .stats-container {
-       width: 90vw;
-       max-width: 1800px;
-       margin: 40px auto;
-       padding: 25px 30px;
-       background-color: rgba(35, 37, 49, 0.85);
-       backdrop-filter: blur(10px);
-       border-radius: 15px;
-       color: #e0e0e0;
-       border: 1px solid rgba(255, 255, 255, 0.1);
-       box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
-   }
-   
-   .stats-header {
-       text-align: center;
-       margin-bottom: 30px;
-       padding-bottom: 15px;
-       border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-   }
-   
-   .stats-header h1 {
-       font-size: 2rem;
-       color: #fff;
-       margin-bottom: 0; /* Remove default margin */
-   }
-   
-   /* --- Loading State --- */
-   .stats-loading-indicator {
-       text-align: center;
-       padding: 40px 20px;
-       font-size: 1.1rem;
-       color: #bdc1c6;
-       display: none; /* Hidden by default */
-   }
-   
-   .stats-container.is-loading .stats-loading-indicator {
-       display: block; /* Show when loading */
-   }
-   
-   .stats-container.is-loading .stats-main-content {
-       display: none !important; /* Hide content when loading */
-   }
-   
-   .stats-main-content {
-       opacity: 0;
-       visibility: hidden;
-       transition: opacity 0.5s ease-in-out;
-       display: block; /* Default display */
-   }
-   
-   .stats-main-content.is-loaded {
-       opacity: 1;
-       visibility: visible;
-   }
-   
-   /* --- Page Structure --- */
-   .stats-page {
-       display: none; /* Hide pages by default */
-       margin-bottom: 35px; /* Space between page content and controls */
-   }
-   .stats-page.active-stats-page {
-       display: block; /* Show active page */
-   }
-   
-   
-   /* --- Top Grid (Page 1) --- */
-   .stats-top-grid {
-       display: grid;
-       grid-template-columns: 240px 1fr 1fr; /* Fixed summary, flexible charts */
-       gap: 25px;
-       align-items: stretch; /* Columns fill height */
-       width: 100%;
-       margin-bottom: 25px; /* Space below grid */
-   }
-   
-   /* --- Columns --- */
-   .stats-summary-column {
-       display: flex;
-       flex-direction: column;
-       gap: 15px;
-   }
-   
-   .stats-chart-column {
-       display: flex;
-       flex-direction: column;
-       min-width: 0; /* Prevent overflow */
-   }
-   
-   /* --- Summary Cards --- */
-   .stats-summary-column .summary-card {
-       width: 100%;
-       padding: 12px 15px;
-       background-color: rgba(50, 53, 70, 0.8);
-       border-radius: 8px;
-       min-height: 80px; /* Ensure cards have height */
-       box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
-       border: 1px solid rgba(255, 255, 255, 0.07);
-       text-align: center;
-       display: flex;
-       flex-direction: column;
-       align-items: center;
-       justify-content: center; /* Center content vertically */
-   }
-   
-   .stats-summary-column .summary-card h3 {
-       margin-top: 0;
-       margin-bottom: 5px;
-       font-size: 0.9rem;
-       color: #bdc1c6;
-       font-family: 'Poppins', sans-serif;
-       font-weight: 500;
-   }
-   
-   .stats-summary-column .summary-card p {
-       font-size: 1.1rem;
-       font-weight: 500;
-       margin: 0;
-       color: #fff;
-       line-height: 1.1;
-       word-break: break-word; /* Prevent long text overflow */
-   }
-   
-   .stats-summary-column .summary-card .summary-card-detail {
-       font-size: 0.75rem;
-       color: #a0a8b4;
-       display: block;
-       margin-top: 3px;
-   }
-   .latest-mood-info {
-       line-height: 1.4; /* Better spacing for multiline */
-   }
-   
-   /* --- Chart Containers --- */
-   .chart-container {
-       display: flex;
-       flex-direction: column;
-       flex-grow: 1; /* Fill available space */
-       position: relative;
-       background-color: rgba(50, 53, 70, 0.7);
-       padding: 20px;
-       border-radius: 10px;
-       border: 1px solid rgba(255, 255, 255, 0.1);
-       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-       min-height: 350px; /* Ensure minimum drawing area */
-       overflow: hidden; /* Prevent canvas overflow */
-   }
-   
-   .chart-container h3 {
-       text-align: center;
-       margin-bottom: 15px;
-       font-size: 1.1rem;
-       font-weight: 500;
-       color: #eee;
-       flex-shrink: 0; /* Don't shrink title */
-       font-family: 'Playfair Display', serif;
-   }
-   
-   .chart-container canvas {
-       display: block;
-       box-sizing: border-box;
-       width: 100% !important; /* Force width */
-       /* height: auto !important; -- Let chart.js determine height based on aspect ratio */
-       max-width: 100%;
-   }
-   
-   /* Specifics for Line Chart section */
-   .stats-line-chart-section {
-       /* Container for the full-width line chart */
-   }
-   .stats-line-chart-section .chart-container.chart-full-width {
-       min-height: 380px; /* Slightly taller line chart */
-   }
-   
-   .chart-description {
-       font-size: 0.8rem;
-       color: #a0a8b4;
-       text-align: center;
-       margin-top: 10px;
-       font-style: italic;
-       padding: 0 10px;
-   }
-   
-   /* --- Quote --- */
-   .stats-quote {
-       text-align: center;
-       font-style: italic;
-       color: #bdc1c6;
-       font-size: 0.9rem;
-       margin-top: 15px; /* Reduced space above quote */
-       margin-bottom: 25px;
-       padding: 0 15px;
-   }
-   
-   /* --- Controls Row --- */
-   .stats-controls-row {
-       display: flex;
-       justify-content: space-between;
-       align-items: center;
-       padding: 15px 0;
-       margin-top: 0;
-       margin-bottom: 15px; /* Reduced space below controls */
-   }
-   
-   .back-link.stats-back-link { /* Back link specific to stats page */
-       margin: 0; /* Reset margin */
-       padding: 7px 15px;
-       font-size: 0.85rem;
-       text-transform: none;
-       background-color: rgba(255, 255, 255, 0.15); /* Use cancel style */
-       color: #bdc1c6;
-       border: 1px solid rgba(255, 255, 255, 0.2);
-   }
-   .back-link.stats-back-link:hover {
-       background-color: rgba(255, 255, 255, 0.25);
-       color: #ffffff;
-   }
-   
-   
-   .back-link-placeholder { /* To balance the flex layout */
-       min-width: 158px; /* Match typical width of back button */
-       visibility: hidden;
-   }
-   
-   /* --- Stats Pagination --- */
-   .stats-custom-pagination {
-       display: flex;
-       justify-content: center;
-       align-items: center;
-       gap: 12px;
-       margin: 0;
-       padding: 0;
-       border-top: none;
-       flex-grow: 1; /* Take up center space */
-       text-align: center;
-   }
-   
-   .stats-custom-pagination .btn {
-       padding: 7px 15px;
-       font-size: 0.85rem;
-       text-transform: none;
-   }
-   
-   .stats-custom-pagination .btn:disabled {
-       background-color: rgba(255, 255, 255, 0.08);
-       color: rgba(189, 193, 198, 0.3);
-       cursor: default;
-       border: 1px solid rgba(255, 255, 255, 0.15);
-       transform: none; /* No hover/active effects */
-       box-shadow: none;
-   }
-   
-   .stats-custom-pagination #stats-page-indicator {
-       font-size: 0.9rem;
-       color: #bdc1c6;
-       font-weight: 500;
-   }
-   
-   /* --- Footer --- */
-   .stats-footer {
-       text-align: center;
-       margin-top: 20px;
-       padding-top: 20px;
-       border-top: 1px solid rgba(255, 255, 255, 0.1);
-       min-height: 20px;
-       /* Add footer content styles if needed */
-   }
-   
-   /* --- No Stats Message --- */
-   .no-stats {
-       text-align: center;
-       padding: 40px 20px;
-       font-size: 1rem;
-       color: #bdc1c6;
-       min-height: 200px; /* Give it some minimum height */
-       display: flex;
-       flex-direction: column;
-       justify-content: center;
-       align-items: center;
-   }
-   
-   .no-stats .back-link { /* Ensure back link is styled */
-        font-family: 'Poppins', sans-serif;
-        display: block;
-        width: fit-content;
-        margin: 25px auto 0 auto;
-        padding: 9px 22px;
-        background-color: #A074B5;
-        color: #FFFFFF;
-        text-decoration: none;
-        border-radius: 22px;
-        font-size: 0.9rem;
-        border: none;
-        cursor: pointer;
-        transition: background-color 0.3s, transform 0.1s, box-shadow 0.2s;
-        font-weight: 500;
-        text-align: center;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
-    }
-    .no-stats .back-link:hover {
-        background-color: #8a6aaf;
-        transform: translateY(-2px);
-        box-shadow: 0 5px 12px rgba(0,0,0,0.2);
-    }
-   
+   13. Stats Page Styles
+   ========================================================================== */
+body.stats-page-background { /* Specific background if needed */
+    background: url('/static/resources/dashboard.png') no-repeat center center fixed;
+    background-size: cover;
+}
+
+/* Ensure .stats-container horizontal centering is solid */
+.stats-container {
+    width: 90vw;
+    max-width: 1800px; /* This limits how wide it can get */
+    margin-left: auto;  /* For horizontal centering */
+    margin-right: auto; /* For horizontal centering */
+    margin-top: 70px;   /* Your existing top margin */
+    margin-bottom: 40px;/* Your existing bottom margin */
+    padding: 25px 30px;
+    background-color: rgba(35, 37, 49, 0.85);
+    backdrop-filter: blur(10px);
+    border-radius: 15px;
+    color: #e0e0e0;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+}
+
+.stats-header {
+    text-align: center;
+    margin-bottom: 30px;
+    padding-bottom: 19px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.stats-header h1 {
+    font-size: 2rem;
+    color: #fff;
+    margin-bottom: 0; /* Remove default margin */
+}
+
+/* --- Loading State --- */
+.stats-loading-indicator {
+    text-align: center;
+    padding: 40px 20px;
+    font-size: 1.1rem;
+    color: #bdc1c6;
+    display: none; /* Hidden by default */
+}
+
+.stats-container.is-loading .stats-loading-indicator {
+    display: block; /* Show when loading */
+}
+
+.stats-container.is-loading .stats-main-content {
+    display: none !important; /* Hide content when loading */
+}
+
+.stats-main-content {
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.5s ease-in-out;
+    display: block; /* Default display */
+}
+
+.stats-main-content.is-loaded {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* --- Page Structure --- */
+.stats-page {
+    display: none; /* Hide pages by default */
+    margin-bottom: 35px; /* Space between page content and controls */
+}
+.stats-page.active-stats-page {
+    display: block; /* Show active page */
+}
+
+
+/* --- Top Grid (Page 1) --- */
+.stats-top-grid {
+    display: grid;
+    grid-template-columns: 240px 1fr 1fr; /* Fixed summary, flexible charts */
+    gap: 25px;
+    align-items: stretch; /* Columns fill height */
+    width: 100%;
+    margin-bottom: 25px; /* Space below grid */
+}
+
+/* --- Columns --- */
+.stats-summary-column {
+    display: flex;
+    flex-direction: column;
+    gap: 19px;
+}
+
+.stats-chart-column {
+    display: flex;
+    flex-direction: column;
+    min-width: 0; /* Prevent overflow */
+}
+
+/* --- Summary Cards --- */
+.stats-summary-column .summary-card {
+    width: 100%;
+    padding: 12px 15px;
+    background-color: rgba(50, 53, 70, 0.8);
+    border-radius: 8px;
+    min-height: 80px; /* Ensure cards have height */
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center; /* Center content vertically */
+}
+
+.stats-summary-column .summary-card h3 {
+    margin-top: 0;
+    margin-bottom: 5px;
+    font-size: 0.9rem;
+    color: #bdc1c6;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 500;
+}
+
+.stats-summary-column .summary-card p {
+    font-size: 1.1rem;
+    font-weight: 500;
+    margin: 0;
+    color: #fff;
+    line-height: 1.1;
+    word-break: break-word; /* Prevent long text overflow */
+}
+
+.stats-summary-column .summary-card .summary-card-detail {
+    font-size: 0.75rem;
+    color: #a0a8b4;
+    display: block;
+    margin-top: 3px;
+}
+.latest-mood-info {
+    line-height: 1.4; /* Better spacing for multiline */
+}
+
+/* --- FIXED Chart Containers --- */
+.chart-container {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    background-color: rgba(50, 53, 70, 0.7);
+    padding: 20px;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    overflow: hidden; /* Prevent canvas overflow */
+    height: 385px; /* Fixed consistent height for all charts */
+}
+
+.chart-container h3 {
+    text-align: center;
+    margin-bottom: 15px;
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: #eee;
+    flex-shrink: 0; /* Don't shrink title */
+    font-family: 'Playfair Display', serif;
+}
+
+/* Set a fixed height container for the chart canvas */
+.chart-canvas-wrapper {
+    flex-grow: 1;
+    position: relative;
+    width: 100%;
+    min-height: 250px;
+    display: flex; /* Add flex to center loading text */
+    align-items: center; /* Vertically center */
+    justify-content: center; /* Horizontally center */
+}
+
+.chart-loading-text {
+    color: #bdc1c6;
+    font-family: 'Poppins', sans-serif;
+    font-size: 1rem;
+}
+
+.dot {
+    animation: blink 1.4s infinite;
+    font-size: 1.5rem; /* Make dots a bit bigger */
+    margin: 0 2px; /* Add a little space between dots */
+  }
+  .dot.one { animation-delay: 0s; }
+  .dot.two { animation-delay: 0.2s; }
+  .dot.three { animation-delay: 0.4s; }
+  
+  @keyframes blink {
+    0%, 80%, 100% { opacity: 0; }
+    40% { opacity: 1; }
+  }
+  
+.chart-container canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100% !important;
+    height: 100% !important;
+}
+
+/* Specific styles for bar chart to prevent the growing issue */
+.chart-container-bar {
+    height: 385px; /* Explicit fixed height */
+}
+
+.chart-container-bar .chart-canvas-wrapper {
+    height: 300px; /* Fixed height, no growing */
+}
+
+/* Pie chart container consistency */
+.chart-container-pie {
+    height: 385px; /* Same height as others */
+}
+
+.chart-description {
+    font-size: 0.8rem;
+    color: #a0a8b4;
+    text-align: center;
+    margin-top: 10px;
+    font-style: italic;
+    padding: 0 10px;
+    flex-shrink: 0; /* Don't let description shrink */
+}
+
+/* --- Quote --- */
+.stats-quote {
+    text-align: center;
+    font-style: italic;
+    color: #bdc1c6;
+    font-size: 0.9rem;
+    margin-top: 15px;
+    margin-bottom: 25px;
+    padding: 0 15px;
+}
+
+/* --- Controls Row --- */
+.stats-controls-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 0;
+    margin-top: 0;
+    margin-bottom: 15px;
+}
+
+.back-link.stats-back-link {
+    margin: 0;
+    padding: 7px 15px;
+    font-size: 0.85rem;
+    text-transform: none;
+    background-color: rgba(255, 255, 255, 0.15);
+    color: #bdc1c6;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+.back-link.stats-back-link:hover {
+    background-color: rgba(255, 255, 255, 0.25);
+    color: #ffffff;
+}
+
+
+.back-link-placeholder {
+    min-width: 158px;
+    visibility: hidden;
+}
+
+
+/* --- No Stats Message --- */
+.no-stats {
+    text-align: center;
+    padding: 40px 20px;
+    font-size: 1rem;
+    color: #bdc1c6;
+    min-height: 200px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.no-stats .back-link {
+    font-family: 'Poppins', sans-serif;
+    display: block;
+    width: fit-content;
+    margin: 25px auto 0 auto;
+    padding: 9px 22px;
+    background-color: #A074B5;
+    color: #FFFFFF;
+    text-decoration: none;
+    border-radius: 22px;
+    font-size: 0.9rem;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.1s, box-shadow 0.2s;
+    font-weight: 500;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+}
+.no-stats .back-link:hover {
+    background-color: #8a6aaf;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 12px rgba(0,0,0,0.2);
+}
+
+/* Links styling */
+.back-link.stats-back-link,
+.back-link.stats-back-link:hover,
+.back-link.stats-back-link:focus,
+.back-link.stats-back-link:active {
+    text-decoration: none !important; /* Ensure no underline from browser defaults */
+}  
    
    /* ==========================================================================
       14. Profile Page Styles
@@ -2046,10 +2030,6 @@
        /* Use default .btn styles */
    }
    
-   /* Danger zone buttons */
-   .profile-actions {
-       /* Specific container for reset/delete if needed */
-   }
    .profile-actions .btn.reset-btn {
        background-color: #ffae42; /* Orange */
        color: #2c3e50; /* Dark text for contrast */
@@ -2095,312 +2075,146 @@
       15. Responsive Adjustments
       ========================================================================== */
    
-   /* --- Medium Screens (Tablets) --- */
-   @media (max-width: 1200px) {
-       /* Stats Page */
-       .stats-container {
-           width: 95vw;
-           padding: 20px 25px;
-       }
-       .stats-top-grid {
-           grid-template-columns: minmax(200px, 0.7fr) 1fr 1fr; /* Adjust grid */
-       }
-       .chart-container,
-       .stats-line-chart-section .chart-container.chart-full-width {
-           min-height: 330px; /* Adjust chart min height */
-       }
-   }
-   
-   @media (max-width: 992px) {
-       /* Dashboard Layout */
-       .dashboard-mood-list .mood-list {
-           grid-template-columns: 1fr; /* Stack mood items */
-           gap: 20px;
-       }
-       .dashboard-main .mood-item {
-           min-height: 180px; /* Adjust mood item height */
-       }
-       .dashboard-container {
-           width: 95%;
-           gap: 15px;
-           margin-top: 60px; /* Adjust top margin */
-       }
-       .dashboard-main {
-           padding: 20px;
-           /* max-height: none; */ /* Removed */
-       }
-       /* Filters */
-       .filter-form {
-           gap: 10px 15px;
-       }
-       .text-search-group {
-           min-width: 200px;
-       }
-       .filter-group select,
-       .filter-group input[type="date"] {
-           width: 140px;
-       }
-       .filter-button-group {
-           margin-left: 0; /* Center buttons */
-           width: 100%;
-           justify-content: center;
-       }
-   
-       /* Stats Page */
-       .stats-top-grid {
-           grid-template-columns: 1fr; /* Stack columns */
-           gap: 20px;
-       }
-       .stats-summary-column .summary-card {
-           min-height: 75px;
-       }
-       .chart-container,
-       .stats-line-chart-section .chart-container.chart-full-width {
-           min-height: 300px; /* Adjust chart height */
-       }
-       .stats-container {
-           padding: 20px 15px;
-           margin: 30px auto;
-       }
-       .stats-header h1 {
-           font-size: 1.8rem;
-       }
-       .stats-page {
-           margin-bottom: 35px;
-       }
-       .stats-controls-row {
-           flex-direction: column;
-           gap: 15px;
-           padding: 15px 0;
-           margin-top: 0;
-       }
-        .stats-custom-pagination {
-           border-top: 1px solid rgba(255, 255, 255, 0.08);
-           padding-top: 15px;
-           margin-top: 5px;
-           width: 100%;
-           justify-content: center;
-        }
-       .back-link.stats-back-link {
-           order: -1; /* Move back link above pagination */
-           margin: 0 auto;
-           border-top: none;
-           padding-top: 0;
-           width: auto; /* Don't force width */
-       }
-       .back-link-placeholder {
-           display: none;
-       }
-   }
-   
-   /* --- Small Screens (Portrait Tablets, Large Phones) --- */
-   @media (max-width: 768px) {
-       /* Dashboard Layout */
-       .dashboard-container {
-           flex-direction: column; /* Stack sidebar and main */
-           padding: 10px;
-           width: 100%;
-           margin-top: 20px; /* Adjust top margin */
-           gap: 15px;
-       }
-       .dashboard-sidebar {
-           position: static; /* Unstick sidebar */
-           width: 100%;
-           max-height: none;
-           flex-direction: row; /* Horizontal sidebar */
-           justify-content: center;
-           padding: 10px 0;
-           border-radius: 15px;
-           margin-bottom: 15px;
-           overflow-x: auto; /* Allow scrolling if icons overflow */
-           align-self: auto; /* Reset alignment */
-       }
-       .sidebar-nav ul {
-           flex-direction: row;
-           gap: 10px;
-           flex-wrap: nowrap; /* Prevent wrapping */
-           width: auto; /* Fit content */
-       }
-       .sidebar-nav a::after,
-       .sidebar-nav .logout-button::after {
-           display: none; /* Hide tooltips on mobile */
-       }
-       .dashboard-main {
-           padding: 15px;
-       }
-       /* Filters */
-       .filter-form {
-           gap: 10px;
-       }
-       .text-search-group,
-       .emotion-filter-group,
-       .date-filter-group {
-           flex-basis: 45%; /* Two columns approx */
-           flex-grow: 1;
-       }
-       .filter-button-group {
-           flex-basis: 100%; /* Full width buttons */
-           justify-content: center;
-       }
-       .filter-group select,
-       .filter-group input[type="date"] {
-           width: 100%; /* Full width inputs */
-       }
-       /* Landing Page */
-       .landing-specific-header {
-           padding: 1rem 5%;
-           flex-direction: column;
-           gap: 1.5rem;
-       }
-       .landing-specific-logo img {
-           height: 50px; /* Smaller logo */
-       }
-       .landing-specific-nav ul {
-            gap: 1.5rem; /* Adjust nav gap */
-       }
-        .landing-specific-nav a {
-           font-size: 1rem; /* Smaller nav links */
-       }
-       .landing-main-content {
-           padding: 1.5rem 5%;
-       }
-       .landing-content-wrapper h1 {
-           font-size: 2.8rem;
-       }
-   
-       /* Stats Page */
-       .chart-container,
-       .stats-line-chart-section .chart-container.chart-full-width {
-           min-height: 280px; /* Adjust chart height */
-       }
-       .stats-header h1 {
-           font-size: 1.6rem;
-       }
-   
-        /* Profile Page */
-       .profile-container {
-            margin: 30px auto;
-            padding: 20px;
-       }
-       .profile-section {
-           padding: 15px 20px;
-       }
-   }
-   
-   /* --- Extra Small Screens (Phones) --- */
-   @media (max-width: 576px) {
-       /* Landing/About */
-       .landing-specific-logo img {
-           height: 40px;
-       }
-       .landing-specific-nav ul {
-           gap: 1rem;
-       }
-        .landing-specific-nav a {
-           font-size: 0.9rem;
-       }
-       .landing-specific-nav .signup-button {
-           padding: 0.5rem 1.2rem;
-           font-size: 0.8rem;
-       }
-       .landing-content-wrapper h1 {
-           font-size: 2.3rem;
-       }
-       .landing-content-wrapper p {
-           font-size: 1rem;
-       }
-       .btn, /* General buttons smaller */
-       .read-more-button {
-           padding: 0.7rem 1.8rem;
-           font-size: 0.9rem;
-       }
-       /* Dashboard */
-       .edit-delete-buttons .btn {
-           padding: 5px 12px;
-           font-size: 0.8rem;
-       }
-       .dashboard-main {
-           padding: 10px;
-       }
-       .dashboard-header h1 {
-           font-size: 1.8rem;
-       }
-       .dashboard-mood-list .mood-list {
-           grid-template-columns: 1fr; /* Ensure single column */
-       }
-       .dashboard-main .mood-item {
-           padding: 15px 20px;
-       }
-       /* Filters stack */
-       .text-search-group,
-       .emotion-filter-group,
-       .date-filter-group,
-       .filter-button-group {
-           flex-basis: 100%;
-       }
-       .filter-button-group {
-           justify-content: space-around; /* Space out buttons */
-       }
-   
-       /* Modals */
-       .modal-content {
-           padding: 20px;
-       }
-       .modal-header h2 {
-           font-size: 1.2rem;
-       }
-       .emoji-suggestion-btn {
-           font-size: 1.1rem;
-       }
-   
-       /* Stats Page */
-       .stats-container {
-           padding: 15px 10px;
-           margin: 20px auto;
-           border-radius: 10px;
-       }
-       .stats-summary-column .summary-card p {
-           font-size: 1rem;
-       }
-       .stats-summary-column .summary-card h3 {
-           font-size: 0.8rem;
-       }
-        .chart-container h3 {
-           font-size: 0.9rem;
-       }
-       .chart-container,
-       .stats-line-chart-section .chart-container.chart-full-width {
-           min-height: 250px; /* Adjust chart height */
-       }
-       .stats-custom-pagination {
-           gap: 8px;
-       }
-       .stats-custom-pagination .btn {
-           padding: 5px 10px;
-           font-size: 0.8rem;
-       }
-       .stats-custom-pagination #stats-page-indicator {
-           font-size: 0.85rem;
-       }
-       .stats-controls-row {
-           padding: 10px 0;
-       }
-   
-        /* Profile Page */
-        .profile-container {
-            padding: 20px 15px;
-        }
-        .profile-section {
-            padding: 15px;
-        }
-         .profile-section h2 {
-            font-size: 1.3rem;
-        }
-         .profile-section .button-group {
-           justify-content: center; /* Center buttons on small screens */
-        }
-   }
-   
+ /* --- Medium Screens (Tablets) --- */
+@media (max-width: 1200px) {
+    /* Stats Page */
+    .stats-container {
+        width: 95vw;
+        padding: 20px 25px;
+    }
+    .stats-top-grid {
+        grid-template-columns: minmax(200px, 0.7fr) 1fr 1fr; /* Adjust grid */
+    }
+    /* UPDATED: No longer need .stats-line-chart-section .chart-container.chart-full-width here */
+    .chart-container-bar, /* Target specific containers */
+    .chart-container-pie,
+    .chart-container-line {
+        min-height: 330px; /* General min-height, explicit heights will override */
+    }
+    .chart-container-pie { height: 330px; } /* Adjust explicit height */
+    .chart-container-line { height: 330px; } /* Adjust explicit height */
+
+}
+
+@media (max-width: 992px) {
+    /* ... (other responsive dashboard styles) ... */
+
+    /* Stats Page */
+    .stats-top-grid {
+        grid-template-columns: 1fr; /* Stack columns */
+        gap: 20px;
+    }
+    .stats-summary-column .summary-card {
+        min-height: 75px;
+    }
+    /* UPDATED: Target specific containers for height adjustments */
+    .chart-container-bar,
+    .chart-container-pie,
+    .chart-container-line {
+        min-height: 300px; /* General adjustment */
+    }
+    .chart-container-pie { height: 300px; } /* Specific adjustment */
+    .chart-container-line { height: 300px; } /* Specific adjustment */
+
+    .stats-container {
+        padding: 20px 15px;
+        margin: 30px auto;
+    }
+    .stats-header h1 {
+        font-size: 1.8rem;
+    }
+    .stats-page {
+        margin-bottom: 35px;
+    }
+    .stats-controls-row {
+        flex-direction: column;
+        gap: 15px;
+        padding: 15px 0;
+        margin-top: 0;
+    }
+    .stats-custom-pagination {
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+        padding-top: 15px;
+        margin-top: 5px;
+        width: 100%;
+        justify-content: center;
+    }
+    .back-link.stats-back-link {
+        order: -1;
+        margin: 0 auto;
+        border-top: none;
+        padding-top: 0;
+        width: auto;
+    }
+    .back-link-placeholder {
+        display: none;
+    }
+}
+
+/* --- Small Screens (Portrait Tablets, Large Phones) --- */
+@media (max-width: 768px) {
+    /* ... (other responsive styles) ... */
+
+    /* Stats Page */
+    .chart-container-bar,
+    .chart-container-pie,
+    .chart-container-line {
+        min-height: 280px; /* General adjustment */
+    }
+    .chart-container-pie { height: 280px; } /* Specific adjustment */
+    .chart-container-line { height: 280px; } /* Specific adjustment */
+
+    .stats-header h1 {
+        font-size: 1.6rem;
+    }
+
+    /* ... (other profile responsive styles) ... */
+}
+
+/* --- Extra Small Screens (Phones) --- */
+@media (max-width: 576px) {
+    /* ... (other responsive styles) ... */
+
+    /* Stats Page */
+    .stats-container {
+        padding: 15px 10px;
+        margin: 20px auto;
+        border-radius: 10px;
+    }
+    .stats-summary-column .summary-card p {
+        font-size: 1rem;
+    }
+    .stats-summary-column .summary-card h3 {
+        font-size: 0.8rem;
+    }
+    .chart-container h3 { /* General title size for charts */
+        font-size: 0.9rem;
+    }
+    .chart-container-bar,
+    .chart-container-pie,
+    .chart-container-line {
+        min-height: 250px; /* General adjustment */
+    }
+    .chart-container-pie { height: 250px; } /* Specific adjustment */
+    .chart-container-line { height: 250px; } /* Specific adjustment */
+
+    .stats-custom-pagination {
+        gap: 8px;
+    }
+    .stats-custom-pagination .btn {
+        padding: 5px 10px;
+        font-size: 0.8rem;
+    }
+    .stats-custom-pagination #stats-page-indicator {
+        font-size: 0.85rem;
+    }
+    .stats-controls-row {
+        padding: 10px 0;
+    }
+
+    /* ... (other profile responsive styles) ... */
+}
+
    
    /* ==========================================================================
       End of Styles

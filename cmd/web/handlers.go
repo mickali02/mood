@@ -821,22 +821,14 @@ func (app *application) showStatsPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Marshal Weekly Counts instead of Monthly
-	weeklyCountsJSON, err := json.Marshal(stats.WeeklyCounts) // Ensure this variable is declared and used
-	if err != nil {
-		app.serverError(w, r, fmt.Errorf("marshal weekly counts: %w", err))
-		return
-	}
-
 	templateData := app.newTemplateData(r)
 	templateData.Title = "Mood Statistics"
 	templateData.Stats = stats
 	templateData.EmotionCountsJSON = string(emotionCountsJSON)
-	templateData.WeeklyCountsJSON = string(weeklyCountsJSON) // Ensure this field exists in TemplateData
 	templateData.Quote = "Every mood matters. Thanks for checking in 💖"
 
 	// *** ADDED: Log final JSON being sent ***
-	app.logger.Debug("Final JSON for template", "emotions", templateData.EmotionCountsJSON, "weekly", templateData.WeeklyCountsJSON)
+	app.logger.Debug("Final JSON for template", "emotions", templateData.EmotionCountsJSON)
 	// *** END ADDED LOGGING ***
 
 	renderErr := app.render(w, http.StatusOK, "stats.tmpl", templateData)

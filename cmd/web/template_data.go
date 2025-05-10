@@ -68,7 +68,6 @@ type TemplateData struct {
 	// --- Fields for Stats Page ---
 	Stats             *data.MoodStats
 	EmotionCountsJSON string
-	WeeklyCountsJSON  string
 	Quote             string
 
 	// --- Field for Authentication State ---
@@ -110,7 +109,6 @@ func NewTemplateData() *TemplateData {
 		// --- Initialize Stats Fields ---
 		Stats:             nil,
 		EmotionCountsJSON: "[]",
-		WeeklyCountsJSON:  "[]",
 		Quote:             "",
 	}
 }
