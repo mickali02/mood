@@ -34,12 +34,7 @@
    }
    
    /* --- Base Typography --- */
-   h1,
-   h2,
-   h3,
-   h4,
-   h5,
-   h6 {
+   h1,h2,h3,h4,h5,h6 {
        font-family: 'Playfair Display', serif;
        color: #ffffff;
        margin-bottom: 0.75em;
@@ -859,7 +854,7 @@
        margin-bottom: 25px;
    }
    
-   
+
    /* ==========================================================================
       5. Mood Form Page Styles (/mood/new, /mood/edit/*)
       ========================================================================== */
@@ -1617,7 +1612,7 @@
    13. Stats Page Styles
    ========================================================================== */
 body.stats-page-background { /* Specific background if needed */
-    background: url('/static/resources/dashboard.png') no-repeat center center fixed;
+    background-image: url('/static/resources/form.png'); /* Specific background */
     background-size: cover;
 }
 
@@ -1960,7 +1955,7 @@ body.stats-page-background { /* Specific background if needed */
    14. Profile Page Styles (Updated and New Additions)
    ========================================================================== */
    body.profile-page-body {
-    background: url('/static/resources/dashboard.png') no-repeat center center fixed;
+    background-image: url('/static/resources/form.png'); /* Specific background */
     background-size: cover;
     display: flex;
     flex-direction: column;
@@ -2401,7 +2396,215 @@ body.stats-page-background { /* Specific background if needed */
     /* ... (other profile responsive styles) ... */
 }
 
-   
+/* ==========================================================================
+   XX. Animated Cloud Background (Main Border Cloud)
+   ========================================================================== */
+
+   .animated-cloud-background {
+    position: fixed;
+    top: 15%;
+    left: 0;
+    width: 500px;
+    height: 200px;
+    z-index: 0;
+    animation: moveCloud 80s linear infinite;
+    opacity: 0.70;
+    pointer-events: none;
+}
+
+@keyframes moveCloud {
+    0% {
+        transform: translateX(-100%);
+    }
+    100% {
+        transform: translateX(100vw);
+    }
+}
+
+/* ==========================================================================
+   Cloud Shape Styles (Reused by ALL animated cloud backgrounds)
+   ========================================================================== */
+
+.cloud-container {
+    width: 100%;
+    height: 100%;
+    background: transparent;
+}
+
+.cloud {
+    position: absolute;
+    width: 100%;
+    height: 90px;
+    background-color: #4a4a5a;
+    border-radius: 50px;
+    bottom: 0;
+}
+
+.bump {
+    position: absolute;
+    background-color: #4a4a5a;
+    border-radius: 50%;
+}
+
+.bump-1 { width: 140px; height: 140px; left: 50%; bottom: 25px; transform: translateX(-50%); }
+.bump-2 { width: 90px; height: 90px; left: 25%; bottom: 35px; }
+.bump-3 { width: 70px; height: 70px; left: 10%; bottom: 40px; }
+.bump-4 { width: 80px; height: 80px; right: 25%; bottom: 35px; }
+.bump-5 { width: 65px; height: 65px; right: 12%; bottom: 45px; }
+.bump-6 { width: 50px; height: 50px; right: 5%; bottom: 50px; }
+.bump-7 { width: 50px; height: 50px; left: 38%; bottom: 55px; }
+.bump-8 { width: 55px; height: 55px; right: 38%; bottom: 55px; }
+
+/* ==========================================================================
+   XX+1. Additional Animated Clouds (Refined Positions & Animations)
+   ========================================================================== */
+
+.animated-cloud-background-small-high {
+    position: fixed;
+    top: 2%;
+    left: 0;
+    width: 500px;
+    height: 200px;
+    z-index: 0;
+    opacity: 0.45;
+    pointer-events: none;
+    transform: scale(0.65);
+    transform-origin: top left;
+    animation: moveCloudSmallHigh 95s linear infinite;
+    animation-delay: -15s;
+}
+
+@keyframes moveCloudSmallHigh {
+    0% {
+        transform: scale(0.65) translateX(-45px);
+    }
+    100% {
+        transform: scale(0.65) translateX(calc(100vw / 0.65 + 100px));
+    }
+}
+
+.animated-cloud-background-medium-mid {
+    position: fixed;
+    top: 6%;
+    left: 0;
+    width: 500px;
+    height: 200px;
+    z-index: 0;
+    opacity: 0.6;
+    pointer-events: none;
+    transform: scale(0.8);
+    transform-origin: top left;
+    animation: moveCloudMediumMid 100s linear infinite;
+    animation-delay: -5s;
+}
+
+@keyframes moveCloudMediumMid {
+    0% {
+        transform: scale(0.8) translateX(-100px);
+    }
+    100% {
+        transform: scale(0.8) translateX(calc(100vw / 0.8 + 150px));
+    }
+}
+
+.animated-cloud-background-small-higher {
+    position: fixed;
+    top: 1.5%;
+    left: 0;
+    width: 500px;
+    height: 200px;
+    z-index: 0;
+    opacity: 0.38;
+    pointer-events: none;
+    transform: scale(0.58);
+    transform-origin: top left;
+    animation: moveCloudSmallHigher 70s linear infinite;
+    animation-delay: -2s;
+}
+
+@keyframes moveCloudSmallHigher {
+    0% {
+        transform: scale(0.58) translateX(calc(80vw / 0.58));
+    }
+    100% {
+        transform: scale(0.58) translateX(calc(100vw / 0.58 + 120px));
+    }
+}
+
+.animated-cloud-background-tiny-topmost {
+    position: fixed;
+    top: 0.3%;
+    left: 0;
+    width: 500px;
+    height: 200px;
+    z-index: 0;
+    opacity: 0.28;
+    pointer-events: none;
+    transform: scale(0.38);
+    transform-origin: top left;
+    animation: moveCloudTinyTopmost 95s linear infinite;
+    animation-delay: -50s;
+}
+
+@keyframes moveCloudTinyTopmost {
+    0% {
+        transform: scale(0.38) translateX(-290px);
+    }
+    100% {
+        transform: scale(0.38) translateX(calc(100vw / 0.38 + 100px));
+    }
+}
+
+.animated-cloud-background-medium-small-lowermid {
+    position: fixed;
+    top: 20%;
+    left: 0;
+    width: 500px;
+    height: 200px;
+    z-index: 0;
+    opacity: 0.5;
+    pointer-events: none;
+    transform: scale(0.72);
+    transform-origin: top left;
+    animation: moveCloudMediumSmallLowerMidRevised 70s linear infinite;
+    animation-delay: -5s;
+}
+
+@keyframes moveCloudMediumSmallLowerMidRevised {
+    0% {
+        transform: scale(0.72) translateX(-10px);
+    }
+    100% {
+        transform: scale(0.72) translateX(calc(100vw / 0.72 + 140px));
+    }
+}
+
+.animated-cloud-background-medium-midright {
+    position: fixed;
+    top: 5%;
+    left: 0;
+    width: 500px;
+    height: 200px;
+    z-index: 0;
+    opacity: 0.5;
+    pointer-events: none;
+    transform: scale(0.75);
+    transform-origin: top left;
+    animation: moveCloudMediumMidRight 90s linear infinite;
+    animation-delay: -35s;
+}
+
+@keyframes moveCloudMediumMidRight {
+    0% {
+        transform: scale(0.75) translateX(calc(60vw / 0.75));
+    }
+    100% {
+        transform: scale(0.75) translateX(calc(100vw / 0.75 + 150px));
+    }
+}
+
+
+
    /* ==========================================================================
       End of Styles
       ========================================================================== */
