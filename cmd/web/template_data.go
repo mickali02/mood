@@ -18,7 +18,7 @@ type displayMood struct {
 	UpdatedAt    time.Time
 	Title        string
 	Content      template.HTML
-	ShortContent string
+	ShortContent template.HTML
 	RawContent   string
 	Emotion      string
 	Emoji        string

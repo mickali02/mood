@@ -7,14 +7,14 @@ import (
 	"flag"
 	"html/template"
 	"log/slog"
-	"net/http" // Import net/http for http.Server options potentially (though not strictly needed here yet)
+	"net/http"
 	"os"
-	"time" // Import time package
+	"time"
 
 	_ "github.com/lib/pq"
 
-	"github.com/golangcollege/sessions"       // <-- Import the sessions package
-	"github.com/mickali02/mood/internal/data" // <-- Ensure internal/data is imported
+	"github.com/golangcollege/sessions"
+	"github.com/mickali02/mood/internal/data"
 )
 
 // application struct holds application-wide dependencies.
@@ -38,26 +38,32 @@ func main() {
 	logger := slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelDebug}))
 
 	// --- Validate Secret Key Length ---
+	// A quick but important security check: ensure the session secret key is the correct length (32 bytes).
+
 	if len(*secret) != 32 {
 		logger.Error("secret key must be exactly 32 bytes long", slog.Int("length", len(*secret)))
 		os.Exit(1)
 	}
 
 	// --- Database Connection ---
+	// Establish a connection to our PostgreSQL database using the DSN.
+	// The `openDB` helper configures the connection pool for optimal performance.
 	if *dsn == "" {
 		logger.Error("database DSN must be provided via -dsn flag or MOODNOTES_DB_DSN environment variable")
 		os.Exit(1)
 	}
-	db, err := openDB(*dsn)
+	db, err := openDB(*dsn) // Call helper to open and configure DB pool.
 	if err != nil {
 		logger.Error("failed to connect to database", slog.String("error", err.Error()))
 		os.Exit(1)
 	}
-	defer db.Close()
+	defer db.Close() // Ensure database connection is closed when main exits.
 	logger.Info("database connection pool established")
 
 	// --- Template Cache ---
-	templateCache, err := newTemplateCache()
+	// To improve performance, HTML templates are parsed once at startup
+	// and stored in a cache. This avoids re-parsing on every request.
+	templateCache, err := newTemplateCache() // `newTemplateCache` (in templates.go) loads and parses HTML files.
 	if err != nil {
 		logger.Error("failed to build template cache", slog.String("error", err.Error()))
 		os.Exit(1)
@@ -65,6 +71,9 @@ func main() {
 	logger.Info("template cache built successfully")
 
 	// --- Session Manager Initialization ---
+	// The session manager is configured here. We set a secret key for security,
+	// define a session lifetime (12 hours), and set cookie attributes like Secure, HttpOnly, and SameSite
+	// for better security and CSRF protection.
 	sessionManager := sessions.New([]byte(*secret))
 	sessionManager.Lifetime = 12 * time.Hour
 	sessionManager.Secure = true
@@ -73,8 +82,10 @@ func main() {
 
 	logger.Info("session manager initialized")
 
-	// --- Application Dependencies ---
-	// *** UPDATED THIS SECTION ***
+	// --- Application Dependencies Injection ---
+	// All initialized components (logger, database models, template cache, session manager)
+	// are then bundled into our `application` struct. This struct is passed to our HTTP handlers,
+	// giving them access to these shared resources – this is a form of dependency injection.
 	app := &application{
 		logger:        logger,
 		addr:          *addr,
@@ -83,37 +94,46 @@ func main() {
 		templateCache: templateCache,           // Initialize Template Cache
 		session:       sessionManager,          // Initialize Session Manager
 	}
-	// *** END OF UPDATE ***
 
 	// --- Start Server ---
+	// Start the HTTP server using the `app.serve()` method (defined in server.go),
+	// which sets up routing and listens for incoming requests on the configured address.
 	logger.Info("starting server", slog.String("addr", app.addr))
-	err = app.serve()
-	if err != nil {
+	err = app.serve() // `app.serve()` configures and starts the HTTPS server.
+	if err != nil {   // If server fails to start.
 		logger.Error("server failed to start", slog.String("error", err.Error()))
 		os.Exit(1)
 	}
 }
 
-// openDB function remains unchanged...
+// openDB establishes and configures a database connection pool.
+// This helper function connects to PostgreSQL and configures the connection pool settings
+// like max open connections and idle timeouts, crucial for robust database interaction.
 func openDB(dsn string) (*sql.DB, error) {
-	db, err := sql.Open("postgres", dsn)
+	// 1. Open Connection: `sql.Open` doesn't immediately create a connection, just prepares it.
+	db, err := sql.Open("postgres", dsn) // "postgres" is the driver name.
 	if err != nil {
 		return nil, err
 	}
 
-	db.SetMaxOpenConns(25)
-	db.SetMaxIdleConns(25)
-	db.SetConnMaxIdleTime(5 * time.Minute)
-	db.SetConnMaxLifetime(2 * time.Hour)
+	// 2. Configure Connection Pool:
+	//    These settings help manage database resources efficiently.
+	db.SetMaxOpenConns(25)                 // Max number of open connections to the database.
+	db.SetMaxIdleConns(25)                 // Max number of connections in the idle connection pool.
+	db.SetConnMaxIdleTime(5 * time.Minute) // Max amount of time a connection may be idle.
+	db.SetConnMaxLifetime(2 * time.Hour)   // Max amount of time a connection may be reused.
 
+	// 3. Verify Connection: `PingContext` attempts to connect to the database to ensure it's reachable.
+	//    A timeout is used to prevent indefinite blocking.
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
+	defer cancel() // Release resources associated with the context.
 
 	err = db.PingContext(ctx)
 	if err != nil {
-		db.Close()
+		db.Close() // If ping fails, close the db object before returning.
 		return nil, err
 	}
 
-	return db, nil
+	return db, nil // Return the configured and verified database pool.
+
 }

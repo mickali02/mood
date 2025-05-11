@@ -28,7 +28,6 @@ func (app *application) sessionMiddleware(next http.Handler) http.Handler {
 	return app.session.Enable(next)
 }
 
-// **** ADD THIS MIDDLEWARE ****
 // requireAuthentication checks if a user is authenticated. If not, it redirects
 // them to the login page and returns. Otherwise, it calls the next handler.
 func (app *application) requireAuthentication(next http.Handler) http.Handler {
@@ -75,5 +74,3 @@ func noSurf(next http.Handler) http.Handler {
 
 	return csrfHandler
 }
-
-// **** END ADDED MIDDLEWARE ****

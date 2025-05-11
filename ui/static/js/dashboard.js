@@ -1,31 +1,41 @@
+// Wait for the entire HTML document to be fully loaded and parsed.
 document.addEventListener('DOMContentLoaded', function () {
+    // Log to confirm the dashboard JavaScript file has been loaded and executed.
     console.log("Dashboard JS Loaded - View More always visible mode.");
 
     // --- Mood Detail Modal Logic ---
-    const moodDetailModal = document.getElementById('mood-detail-modal');
-    const modalDetailCloseButton = document.getElementById('modal-detail-close-button');
-    const modalTitle = document.getElementById('modal-title');
-    const modalEmoji = document.getElementById('modal-emoji');
-    const modalEmotionName = document.getElementById('modal-emotion-name');
-    const modalCreatedAt = document.getElementById('modal-created-at');
-    const modalFullContent = document.getElementById('modal-full-content');
+    // Get references to all necessary HTML elements for the mood detail modal.
+    const moodDetailModal = document.getElementById('mood-detail-modal');                 // The modal container itself. 
+    const modalDetailCloseButton = document.getElementById('modal-detail-close-button');  // The 'x' button to close the modal.
+    const modalTitle = document.getElementById('modal-title');                            // Element to display the mood's title.
+    const modalEmoji = document.getElementById('modal-emoji');                             // Element for the mood's emoji.
+    const modalEmotionName = document.getElementById('modal-emotion-name');                // Element for the mood's emotion name.
+    const modalCreatedAt = document.getElementById('modal-created-at');                    // Element for the mood's creation date
+    const modalFullContent = document.getElementById('modal-full-content');                 // Element to display the full mood content.
 
+
+     // Function to populate the modal with data from a mood entry.
+    // This function dynamically updates the modal's content based on the clicked mood entry.
     function updateModalContent(data) {
-        // ... (function remains the same - make sure it handles potential errors gracefully) ...
-        if (modalTitle) modalTitle.textContent = data.title || '';
+         // Safely set text content for each modal element, providing defaults if data is missing.
+        if (modalTitle) modalTitle.textContent = data.title || ''; // Default if title is undefined.
         if (modalEmoji) {
-            modalEmoji.textContent = data.emoji || '❓';
-            modalEmoji.style.color = data.color || '#ccc';
+            modalEmoji.textContent = data.emoji || '❓'; // Default emoji.
+            modalEmoji.style.color = data.color || '#ccc'; // Default color.
         }
         if (modalEmotionName) modalEmotionName.textContent = data.emotion || '';
         if (modalCreatedAt) modalCreatedAt.textContent = data.createdAt || '';
         if (modalFullContent) {
+            // Process and sanitize the raw HTML content for display.
+            // This handles escaped quotes that might come from `printf "%q"` in Go templates.
              let fullContentHTML = '';
              try {
-                 let rawContent = data.fullContent || '';
+                 let rawContent = data.fullContent || ''; // Get raw content, default to empty.
+                   // Unescape if content was quoted (e.g., by Go's %q formatting).
                  if (rawContent.startsWith('"') && rawContent.endsWith('"')) {
                     rawContent = rawContent.substring(1, rawContent.length - 1);
                  }
+                 // Replace escaped quotes and backslashes.
                  fullContentHTML = rawContent.replace(/\\"/g, '"').replace(/\\'/g, "'").replace(/\\\\/g, "\\");
              } catch (e) {
                  console.error("Error processing mood content:", e, " Raw data:", data.fullContent);
@@ -35,11 +45,13 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    // --- Event Listener for View More Links (DELEGATION ON BODY) ---
-    // **** Attach listener to document.body ****
+    // --- Event Listener for View More Links (Event Delegation on document.body) ---
+    // Using event delegation for 'View More' links. This means one listener on the body
+    // efficiently handles clicks on any current or future 'View More' links, especially important with HTMX content swaps.
     console.log("[Initial Load] Attaching view more listener to document.body"); // DEBUG
     document.body.addEventListener('click', function(event) {
-        // **** Use more specific selector including the container ID ****
+         // Check if the clicked element (or its ancestor) is a 'view-more-link' INSIDE the dashboard content area.
+        // `event.target.closest()` efficiently finds the nearest ancestor matching the selector.
         const link = event.target.closest('#dashboard-content-area .view-more-link');
 
         // console.log("[Body Click] Target:", event.target); // Optional broader debug
@@ -107,9 +119,6 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         }
     });
-
-    // --- REMOVED: Overflow Check Logic ---
-    // --- REMOVED: HTMX Event Listener for overflow check ---
 
     // Close modals with ESC key
     document.addEventListener('keydown', function (event) {

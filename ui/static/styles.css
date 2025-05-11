@@ -177,10 +177,10 @@
    
    input[type="text"],
    input[type="email"],
-   input[type="password"], /* Added password */
+   input[type="password"], 
    input[type="search"],
-   input[type="date"],  /* Added date */
-   select,              /* Added select */
+   input[type="date"],  
+   select,            
    textarea {
        width: 100%;
        padding: 14px 18px;
@@ -249,12 +249,11 @@
    .emotion-selector.has-error {
        border: 1px solid #e74c3c;
        padding: 10px;
-       margin: -10px -10px 5px -10px; /* Adjust negative margins */
+       margin: -10px -10px 5px -10px; 
        border-radius: 8px;
    }
    
    .emotion-group-error {
-       /* This specific error might not be needed if individual fields show errors */
        margin-bottom: 10px;
    }
    
@@ -269,7 +268,7 @@
    body.about-page-background {
        background: url('/static/resources/landing.png') no-repeat center center fixed;
        background-size: cover;
-       color: #f0f0f0; /* Light text for landing/about */
+       color: #f0f0f0; 
    }
 
 
@@ -290,9 +289,9 @@
    }
 
    .landing-specific-logo img {
-       height: 180px; /* Kept larger logo */
+       height: 180px; 
        width: auto;
-       margin-top: 10px; /* Adjust as needed */
+       margin-top: 10px; 
    }
 
    .landing-specific-nav {
@@ -303,39 +302,39 @@
    .landing-specific-nav ul {
        display: flex;
        list-style: none;
-       gap: 2.2rem; /* Spacing between nav items */
+       gap: 2.2rem; 
        align-items: center;
    }
 
    .landing-specific-nav a {
-    color: #fff; /* White nav links */
+    color: #fff; 
     text-decoration: none;
     font-size: 1.4rem;
     font-weight: 500;
-    display: inline-block;  /* Or 'block' if they should take full width */
+    display: inline-block;  
     transition: transform 0.2s ease-out, color 0.2s ease-out, text-shadow 0.2s ease-out;
 }
 
 .landing-specific-nav a:hover {
-    color: #e6d29e; /* Light yellow hover */
+    color: #e6d29e; 
     text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
-    transform: translateY(-2px); /* This should now work */
+    transform: translateY(-2px); 
 }
-   .landing-specific-nav .signup-button { /* Style specific sign up button */
-       background-color: #a074b5; /* Solid purple */
+   .landing-specific-nav .signup-button { 
+       background-color: #a074b5; 
        border-radius: 25px;
        padding: 0.6rem 1.8rem;
        font-weight: 600;
-       font-size: 0.9rem; /* Match previous */
-       letter-spacing: 0.5px; /* Match previous */
-       text-transform: uppercase; /* Match previous */
+       font-size: 0.9rem; 
+       letter-spacing: 0.5px; 
+       text-transform: uppercase; 
        box-shadow: 0 0 15px rgba(177, 156, 217, 0.5);
        transition: all 0.3s ease;
    }
 
    .landing-specific-nav .signup-button:hover {
-       background-color: #e6d29e; /* Yellow hover */
-       color: #fff; /* Keep text white */
+       background-color: #e6d29e;
+       color: #fff; 
        transform: translateY(-2px);
        box-shadow: 0 0 20px rgba(177, 156, 217, 0.7);
    }
@@ -352,7 +351,7 @@
        flex-grow: 1;
        position: relative;
        z-index: 5;
-       min-height: calc(100vh - 150px); /* Adjust 150px based on actual header height */
+       min-height: calc(100vh - 150px); 
    }
 
    .landing-content-wrapper {
@@ -455,9 +454,9 @@
    .dashboard-container {
        display: flex;
        width: 92%;
-       max-width: 1600px; /* Increased max width */
+       max-width: 1600px; 
        margin: 150px auto 0;
-       padding: 0; /* Removed padding */
+       padding: 0; 
        gap: 30px;
        position: relative;
        z-index: 2;
@@ -466,7 +465,7 @@
    .dashboard-sidebar {
     width: 80px;
     height: fit-content;
-    max-height: calc(100vh - 80px); /* Keeps sidebar scroll if needed */
+    max-height: calc(100vh - 80px); 
     background-color: rgba(40, 42, 54, 0.7);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
@@ -498,7 +497,7 @@
        justify-content: center;
    }
    .sidebar-nav a,
-   .sidebar-nav .logout-button { /* Combine styles */
+   .sidebar-nav .logout-button { 
        display: flex;
        align-items: center;
        justify-content: center;
@@ -510,11 +509,11 @@
        border-radius: 50%;
        background-color: rgba(255, 255, 255, 0.08);
        position: relative;
-       border: none; /* Ensure buttons have no border */
-       padding: 0; /* Ensure buttons have no padding */
-       cursor: pointer; /* Ensure buttons have pointer */
-       outline: none; /* Remove default outline */
-       font-family: inherit; /* Inherit font */
+       border: none; 
+       padding: 0; 
+       cursor: pointer; 
+       outline: none; 
+       font-family: inherit; 
    }
    
    .sidebar-nav a:hover,
@@ -527,7 +526,7 @@
        box-shadow: 0 0 15px rgba(160, 116, 181, 0.5);
    }
    .sidebar-nav a::after,
-   .sidebar-nav .logout-button::after { /* Tooltip for both */
+   .sidebar-nav .logout-button::after { 
        content: attr(data-title);
        position: absolute;
        left: 110%;
@@ -629,9 +628,8 @@
    .filter-form {
        display: flex;
        flex-wrap: wrap;
-       align-items: flex-end; /* Align items bottom */
+       align-items: flex-end; 
        gap: 15px 20px;
-       /* Removed justify-content center */
    }
    .filter-group {
        display: flex;
@@ -642,14 +640,13 @@
    .text-search-group {
        flex-grow: 1;
        min-width: 220px;
-       /* Removed align-self/justify-content */
    }
    .search-input-wrapper {
        display: flex;
        width: 100%;
        background-color: rgba(20, 22, 34, 0.6);
        border: 1px solid rgba(255, 255, 255, 0.2);
-       border-radius: 20px; /* Rounded search */
+       border-radius: 20px; 
        overflow: hidden;
        transition: border-color 0.2s, box-shadow 0.2s;
    }
@@ -666,10 +663,10 @@
        font-size: 0.95rem;
        outline: none;
        font-family: 'Poppins', sans-serif;
-       margin-bottom: 0; /* Override base input margin */
+       margin-bottom: 0; 
    }
    .search-input-wrapper input[type="search"]:focus{
-       box-shadow: none; /* Override base focus */
+       box-shadow: none; 
    }
    input[type="search"]::placeholder {
        color: #9aabbc;
@@ -690,19 +687,19 @@
    }
    .filter-group select,
    .filter-group input[type="date"] {
-       padding: 9px 12px; /* Slightly less padding */
+       padding: 9px 12px; 
        background-color: rgba(20, 22, 34, 0.6);
        border: 1px solid rgba(255, 255, 255, 0.2);
-       border-radius: 6px; /* Less rounded */
+       border-radius: 6px; 
        color: #e0e0e0;
        font-family: 'Poppins', sans-serif;
        font-size: 0.9rem;
        outline: none;
        transition: border-color 0.2s, box-shadow 0.2s;
-       height: 40px; /* Fixed height */
+       height: 40px; 
        line-height: normal;
-       width: 160px; /* Fixed width */
-       margin-bottom: 0; /* Override base input margin */
+       width: 160px; 
+       margin-bottom: 0; 
    }
    .filter-group select:focus,
    .filter-group input[type="date"]:focus {
@@ -716,7 +713,7 @@
        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23bdc1c6' viewBox='0 0 16 16'%3E%3Cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3E%3C/svg%3E");
        background-repeat: no-repeat;
        background-position: right 10px center;
-       padding-right: 35px; /* Space for arrow */
+       padding-right: 35px; 
        cursor: pointer;
    }
    .filter-group input[type="date"]::-webkit-calendar-picker-indicator {
@@ -726,22 +723,21 @@
    .filter-button-group {
        display: flex;
        gap: 10px;
-       margin-left: auto; /* Push buttons to the right */
-       /* Removed align-self/padding-bottom */
+       margin-left: auto; 
    }
-   .filter-button-group .btn { /* Target buttons inside specifically */
+   .filter-button-group .btn { 
        text-transform: none;
        padding: 9px 20px;
        font-size: 0.95rem;
-       height: 40px; /* Match input height */
+       height: 40px; 
    }
    
    
    /* Mood List Section */
    .dashboard-mood-list {
        flex-grow: 1;
-       overflow-y: auto; /* Allow scrolling if content exceeds */
-       padding-right: 5px; /* Prevent scrollbar overlap */
+       overflow-y: auto; 
+       padding-right: 5px; 
    }
    
    .dashboard-mood-list .mood-list {
@@ -754,20 +750,19 @@
    
    .dashboard-main .mood-item {
        width: auto;
-       margin-bottom: 0; /* Handled by grid gap */
+       margin-bottom: 0; 
        background-color: rgba(55, 58, 80, 0.7);
        padding: 20px 24px;
        border-radius: 14px;
        border: 1px solid rgba(255, 255, 255, 0.1);
        border-left-width: 5px;
-       border-left-style: solid; /* Color set inline */
+       border-left-style: solid; 
        transition: box-shadow 0.3s ease, transform 0.3s ease, border-color 0.2s;
        color: #e0e0e0;
        display: flex;
        flex-direction: column;
-       /* height: 250px; --- Removed fixed height */
-       min-height: 220px; /* Set minimum height */
-       overflow: hidden; /* Keep hidden */
+       min-height: 220px; 
+       overflow: hidden; 
        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
        text-align: left;
        position: relative;
@@ -798,11 +793,11 @@
         flex-shrink: 0;
    }
    .dashboard-main .mood-item-content {
-        flex-grow: 1; /* Allow content to take space */
+        flex-grow: 1; 
         overflow: hidden;
         display: flex;
         flex-direction: column;
-        min-height: 0; /* Allow shrinking */
+        min-height: 0; 
         margin-bottom: 10px;
    }
    .dashboard-main .mood-item .quill-rendered-content {
@@ -810,16 +805,16 @@
         text-overflow: ellipsis;
         display: -webkit-box;
         -webkit-box-orient: vertical;
-        -webkit-line-clamp: 1; /* Limit lines */
+        -webkit-line-clamp: 1; 
         line-clamp: 1;
         color: #c8c8d8;
         font-size: 0.95rem;
         line-height: 1.5;
         font-family: 'Lora', serif;
-        margin-bottom: 5px; /* Space before view more */
+        margin-bottom: 5px; 
    }
    .quill-rendered-content > p {
-       margin-bottom: 0.5em; /* Space between paragraphs */
+       margin-bottom: 0.5em; 
    }
    .quill-rendered-content > *:last-child {
        margin-bottom: 0;
@@ -832,7 +827,7 @@
        color: #ffffff;
        cursor: pointer;
        text-decoration: none;
-       margin-top: auto; /* Push to bottom of content area */
+       margin-top: auto; 
        padding-top: 5px;
        align-self: flex-start;
        transition: color 0.2s ease;
@@ -851,17 +846,16 @@
         border-top: 1px solid rgba(255, 255, 255, 0.08);
         flex-shrink: 0;
         width: 100%;
-        margin-top: 10px; /* Space above meta */
+        margin-top: 10px; 
    }
    .edit-delete-buttons {
-        /* margin-top: auto; Remove auto margin */
         padding-top: 10px;
         flex-shrink: 0;
         align-self: flex-end;
         width: 100%;
         text-align: right;
         white-space: nowrap;
-        margin-top: 5px; /* Space between meta and buttons */
+        margin-top: 5px; 
    }
    
    /* Centered content (No Moods Message) */
@@ -889,7 +883,7 @@
        justify-content: center;
        align-items: center;
        padding: 30px 15px;
-       background-image: url('/static/resources/form.png'); /* Specific background */
+       background-image: url('/static/resources/form.png'); 
        background-size: cover;
        background-position: center center;
        background-repeat: no-repeat;
@@ -907,7 +901,7 @@
        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
        border: 1px solid rgba(255, 255, 255, 0.1);
        text-align: left;
-       margin: 0 auto; /* Center form container */
+       margin: 0 auto; 
    }
    
    .mood-form-page h1 {
@@ -948,7 +942,7 @@
        transition: all 0.3s ease;
        border: 1px solid rgba(255, 255, 255, 0.2);
        font-size: 0.9rem;
-       user-select: none; /* Prevent text selection */
+       user-select: none; 
    }
    
    .emotion-option-emoji {
@@ -965,20 +959,18 @@
    }
    
    .hidden-radio:checked + .emotion-option,
-   .emotion-option.other-option.has-custom-value { /* Style for selected or custom */
+   .emotion-option.other-option.has-custom-value { 
        background-color: #a074b5;
        color: #ffffff;
        border-color: #a074b5;
        box-shadow: 0 0 10px rgba(160, 116, 181, 0.4);
    }
    
-   /* Ensure custom option text is white when selected */
    .emotion-option.other-option.has-custom-value .emotion-option-emoji,
    .emotion-option.other-option.has-custom-value .emotion-option-name {
        color: #ffffff !important;
    }
    
-   /* Style 'Other' option when *not* selected and *no* custom value is set */
    .hidden-radio#emotion-other:not(:checked) + label.emotion-option.other-option:not(.has-custom-value) {
        background-color: rgba(255, 255, 255, 0.1);
        border-color: rgba(255, 255, 255, 0.2);
@@ -988,10 +980,9 @@
    
    .hidden-radio#emotion-other:not(:checked) + label.emotion-option.other-option:not(.has-custom-value) .emotion-option-emoji,
    .hidden-radio#emotion-other:not(:checked) + label.emotion-option.other-option:not(.has-custom-value) .emotion-option-name {
-       color: #bdc1c6; /* Reset text color */
+       color: #bdc1c6; 
    }
    
-   /* Focus styles for accessibility */
    .hidden-radio:focus + .emotion-option:not(.has-custom-value),
    .hidden-radio:focus + .emotion-option.other-option.has-custom-value {
        outline: none;
@@ -1003,24 +994,23 @@
       6. Custom Emotion Modal Styles
       ========================================================================== */
    .modal {
-       display: none; /* Hidden by default */
+       display: none; 
        position: fixed;
        z-index: 1000;
        left: 0;
        top: 0;
        width: 100%;
        height: 100%;
-       overflow: auto; /* Enable scroll if needed */
-       background-color: rgba(0, 0, 0, 0.7); /* Dim background */
-       align-items: center; /* Vertical center */
-       justify-content: center; /* Horizontal center */
-       opacity: 0;
+       overflow: auto; 
+       background-color: rgba(0, 0, 0, 0.7); 
+       align-items: center; 
+       justify-content: center; 
        visibility: hidden;
        transition: opacity 0.3s ease, visibility 0s linear 0.3s;
    }
    
    .modal.is-visible {
-       display: flex; /* Use flex to center content */
+       display: flex; 
        opacity: 1;
        visibility: visible;
        transition-delay: 0s;
@@ -1028,7 +1018,7 @@
    
    .modal-content {
        background-color: #2f3241;
-       margin: auto; /* Centered */
+       margin: auto;
        padding: 30px 35px;
        border: 1px solid rgba(255, 255, 255, 0.15);
        width: 90%;
@@ -1042,7 +1032,7 @@
    }
    
    .modal.is-visible .modal-content {
-       transform: scale(1); /* Scale in effect */
+       transform: scale(1); 
    }
    
    .modal-header {
@@ -1050,9 +1040,8 @@
        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
        margin-bottom: 25px;
        display: flex;
-       justify-content: space-between; /* Space title and close */
+       justify-content: space-between; 
        align-items: center;
-       /* Removed position relative */
    }
    
    .modal-header h2 {
@@ -1069,18 +1058,16 @@
        line-height: 1;
        cursor: pointer;
        padding: 0 5px;
-       /* margin: -5px -10px 0 10px; Removed complex margin */
        transition: color 0.2s;
-       background: none; /* Ensure button background is transparent */
-       border: none; /* Ensure no button border */
-       /* Removed position absolute */
+       background: none; 
+       border: none; 
    }
    
    .modal-close:hover,
    .modal-close:focus {
        color: #fff;
        text-decoration: none;
-       outline: none; /* Remove focus outline */
+       outline: none; 
    }
    
    .modal .form-group {
@@ -1114,10 +1101,10 @@
    }
    
    .modal input[type="color"] {
-       padding: 5px; /* Specific padding for color input */
+       padding: 5px; 
        height: 45px;
        cursor: pointer;
-       width: 100%; /* Ensure full width */
+       width: 100%; 
    }
    
    .modal input[type="color"]::-webkit-color-swatch-wrapper {
@@ -1162,7 +1149,6 @@
        border-top: 1px solid rgba(255, 255, 255, 0.1);
        padding-top: 20px;
        gap: 10px;
-       /* .button-group styles already applied */
    }
    
    .modal .btn {
@@ -1181,7 +1167,7 @@
       7. HTMX Indicator Styles
       ========================================================================== */
    .htmx-indicator {
-       display: inline-block; /* Or block if needed */
+       display: inline-block; 
        opacity: 0;
        transition: opacity 200ms ease-in;
        margin-left: 15px;
@@ -1191,11 +1177,11 @@
        border: 2px solid rgba(160, 116, 181, 0.3);
        border-radius: 50%;
        border-top-color: #A074B5;
-       animation: spin 0.8s linear infinite; /* Use linear for smooth spin */
+       animation: spin 0.8s linear infinite; 
        -webkit-animation: spin 0.8s linear infinite;
    }
    
-   .htmx-indicator span { /* Hide fallback text */
+   .htmx-indicator span { 
        display: none;
    }
    
@@ -1212,15 +1198,15 @@
    }
    
    body.htmx-request .htmx-indicator,
-   .htmx-request .htmx-indicator { /* Show during request */
+   .htmx-request .htmx-indicator { 
        opacity: 1;
    }
    
-   body.htmx-request.htmx-indicator { /* Just in case */
+   body.htmx-request.htmx-indicator { 
        opacity: 1;
    }
    
-   .htmx-swapping { /* Element being replaced */
+   .htmx-swapping { 
        opacity: 0.6;
        transition: opacity 250ms ease-out;
    }
@@ -1229,13 +1215,13 @@
    /* ==========================================================================
       8. Utility Classes
       ========================================================================== */
-   .visually-hidden { /* For screen readers */
+   .visually-hidden { 
        position: absolute !important;
        height: 1px;
        width: 1px;
        overflow: hidden;
        clip: rect(1px, 1px, 1px, 1px);
-       white-space: nowrap; /* Keep on one line */
+       white-space: nowrap; 
    }
    
    
@@ -1259,7 +1245,7 @@
    }
    
    .pagination li {
-       margin: 0; /* Reset list item margin */
+       margin: 0; 
    }
    
    .pagination span,
@@ -1291,7 +1277,7 @@
        border: 1px solid transparent;
    }
    
-   .pagination li span:not([class]) { /* Style the "Page X of Y" text */
+   .pagination li span:not([class]) { 
        background-color: transparent;
        border: none;
        color: #e0e0e0;
@@ -1306,91 +1292,86 @@
        border-radius: 8px;
        transition: box-shadow 0.3s ease, border-color 0.3s ease;
        margin-bottom: 5px;
-       overflow: hidden; /* Important for rounded corners */
+       overflow: hidden; 
        width: 100%;
-       position: relative; /* For potential absolute elements */
+       position: relative; 
    }
    
    .mood-form-page .ql-toolbar.ql-snow {
        background-color: rgba(30, 32, 44, 0.6);
        border: 1px solid rgba(255, 255, 255, 0.2);
-       border-bottom: none; /* Only bottom border on container */
+       border-bottom: none; 
        padding: 8px 10px;
-       font-family: 'Poppins', sans-serif; /* Match rest of UI */
+       font-family: 'Poppins', sans-serif; 
        box-sizing: border-box;
        transition: border-color 0.3s ease;
-       border-top-left-radius: 8px; /* Round top corners */
+       border-top-left-radius: 8px; 
        border-top-right-radius: 8px;
-       /* Removed bottom radius */
    }
    
    .mood-form-page .ql-container.ql-snow {
        border: 1px solid rgba(255, 255, 255, 0.2);
-       border-top: none; /* Toolbar has top border */
-       color: #FFFFFF; /* Text color */
-       font-family: 'Lora', serif; /* Content font */
+       border-top: none; 
+       color: #FFFFFF; 
+       font-family: 'Lora', serif; 
        font-size: 1rem;
        box-sizing: border-box;
        transition: border-color 0.3s ease, background-color 0.3s ease;
-       /* Removed top radius */
-       border-bottom-left-radius: 8px; /* Round bottom corners */
+       border-bottom-left-radius: 8px; 
        border-bottom-right-radius: 8px;
-       background-color: rgba(20, 22, 34, 0.5); /* Base background */
+       background-color: rgba(20, 22, 34, 0.5); 
    }
    
    .mood-form-page .ql-editor {
-       padding: 14px 18px; /* Match input padding */
+       padding: 14px 18px; 
        min-height: 140px;
        box-sizing: border-box;
        line-height: 1.6;
        color: #FFFFFF;
-       outline: none; /* Remove focus outline */
-       background-color: transparent; /* Inherit from container */
+       outline: none; 
+       background-color: transparent; 
        transition: background-color 0.3s ease;
    }
    
-   .mood-form-page .ql-editor.ql-blank::before { /* Placeholder text */
+   .mood-form-page .ql-editor.ql-blank::before { 
        color: #888dac;
        opacity: 0.8;
-       font-style: normal; /* Not italic */
+       font-style: normal; 
        font-family: 'Lora', serif;
-       left: 18px; /* Match padding */
+       left: 18px; 
        right: 18px;
        font-size: 1rem;
        pointer-events: none;
    }
    
-   /* Focus state for the whole editor */
    #editor-container:focus-within .ql-toolbar.ql-snow,
    #editor-container:focus-within .ql-container.ql-snow {
        border-color: #a074b5;
-       z-index: 1; /* Ensure toolbar is above content */
+       z-index: 1; 
    }
    
    #editor-container:focus-within {
-       box-shadow: 0 0 0 3px rgba(160, 116, 181, 0.3); /* Outer glow */
+       box-shadow: 0 0 0 3px rgba(160, 116, 181, 0.3); 
    }
    
    #editor-container:focus-within .ql-container.ql-snow {
-       background-color: rgba(30, 32, 44, 0.6); /* Darker background on focus */
+       background-color: rgba(30, 32, 44, 0.6); 
    }
    
-   /* Invalid state */
    #editor-container.invalid-editor {
-       box-shadow: 0 0 0 2px rgba(231, 76, 60, 0.5); /* Red glow */
+       box-shadow: 0 0 0 2px rgba(231, 76, 60, 0.5); 
    }
    
    #editor-container.invalid-editor .ql-toolbar.ql-snow,
    #editor-container.invalid-editor .ql-container.ql-snow {
-       border-color: #e74c3c !important; /* Red border */
+       border-color: #e74c3c !important; 
        z-index: 1;
    }
    
    #editor-container.invalid-editor .ql-container.ql-snow {
-       background-color: rgba(50, 20, 20, 0.5) !important; /* Reddish background */
+       background-color: rgba(50, 20, 20, 0.5) !important; 
    }
    
-   /* Quill UI element theming (dark theme) */
    .mood-form-page .ql-snow .ql-stroke {
        stroke: #bdc1c6;
        transition: stroke 0.2s ease;
@@ -1404,7 +1385,6 @@
        transition: color 0.2s ease;
    }
    
-   /* Hover/Active states for toolbar items */
    .mood-form-page .ql-snow.ql-toolbar button:hover .ql-stroke,
    .mood-form-page .ql-snow .ql-toolbar button:hover .ql-stroke,
    .mood-form-page .ql-snow.ql-toolbar button:focus .ql-stroke,
@@ -1415,7 +1395,7 @@
    .mood-form-page .ql-snow .ql-toolbar .ql-picker-label.ql-active .ql-stroke,
    .mood-form-page .ql-snow.ql-toolbar .ql-picker-item:hover .ql-stroke,
    .mood-form-page .ql-snow .ql-toolbar .ql-picker-item.ql-selected .ql-stroke {
-       stroke: #a074b5; /* Highlight color */
+       stroke: #a074b5; 
    }
    
    .mood-form-page .ql-snow.ql-toolbar button:hover .ql-fill,
@@ -1428,7 +1408,7 @@
    .mood-form-page .ql-snow .ql-toolbar .ql-picker-label.ql-active .ql-fill,
    .mood-form-page .ql-snow.ql-toolbar .ql-picker-item:hover .ql-fill,
    .mood-form-page .ql-snow .ql-toolbar .ql-picker-item.ql-selected .ql-fill {
-       fill: #a074b5; /* Highlight color */
+       fill: #a074b5; 
    }
    
    .mood-form-page .ql-snow.ql-toolbar button:hover,
@@ -1441,7 +1421,7 @@
    .mood-form-page .ql-snow.ql-toolbar .ql-picker-label.ql-active,
    .mood-form-page .ql-snow.ql-toolbar .ql-picker-item:hover,
    .mood-form-page .ql-snow .ql-toolbar .ql-picker-item.ql-selected {
-       color: #a074b5; /* Highlight color */
+       color: #a074b5; 
    }
    
 
@@ -1453,13 +1433,13 @@
    .mood-detail-modal {
        display: none;
        position: fixed;
-       z-index: 9999 !important; /* High z-index */
+       z-index: 9999 !important; 
        left: 0;
        top: 0;
        width: 100%;
        height: 100%;
-       overflow: hidden; /* Prevent body scroll when modal open */
-       background-color: rgba(0, 0, 0, 0.8); /* Dark overlay */
+       overflow: hidden; 
+       background-color: rgba(0, 0, 0, 0.8);
        align-items: center;
        justify-content: center;
        opacity: 0;
@@ -1468,20 +1448,20 @@
    }
    
    .mood-detail-modal.is-visible {
-       display: flex; /* Use flex for centering */
+       display: flex; 
        opacity: 1;
        visibility: visible;
        transition-delay: 0s;
    }
    
    .mood-detail-modal-content {
-       background-color: #2f3241; /* Dark background */
+       background-color: #2f3241; 
        margin: auto;
        padding: 25px 35px;
        border: 1px solid rgba(255, 255, 255, 0.15);
        width: 90%;
        max-width: 650px;
-       max-height: 85vh; /* Limit height */
+       max-height: 85vh; 
        border-radius: 12px;
        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
        color: #e0e0e0;
@@ -1503,7 +1483,7 @@
        display: flex;
        justify-content: space-between;
        align-items: center;
-       flex-shrink: 0; /* Prevent header shrinking */
+       flex-shrink: 0; 
    }
    
    .mood-detail-modal-header h2 {
@@ -1511,8 +1491,8 @@
        color: #fff;
        font-size: 1.5rem;
        font-family: 'Playfair Display', serif;
-       word-break: break-word; /* Wrap long titles */
-       padding-right: 15px; /* Space before close button */
+       word-break: break-word; 
+       padding-right: 15px; 
    }
    
    .mood-detail-modal-close {
@@ -1525,7 +1505,7 @@
        transition: color 0.2s;
        background: none;
        border: none;
-       flex-shrink: 0; /* Prevent button shrinking */
+       flex-shrink: 0; 
    }
    
    .mood-detail-modal-close:hover,
@@ -1536,9 +1516,9 @@
    }
    
    .mood-detail-modal-body {
-       overflow-y: auto; /* Enable scrolling for long content */
+       overflow-y: auto; 
        margin-bottom: 20px;
-       flex-grow: 1; /* Allow body to take up space */
+       flex-grow: 1; 
        font-family: 'Lora', serif;
        line-height: 1.6;
        color: #e0e0e0;
@@ -1571,17 +1551,16 @@
    
    .mood-detail-modal-body #modal-full-content {
        color: #e0e0e0;
-       /* Quill styles applied via .quill-render-content */
-       word-break: break-word; /* ADD THIS: Allows breaking long words */
-       overflow-wrap: break-word; /* ADD THIS: Another property for word breaking, good for compatibility */
-       white-space: normal; /* ENSURE THIS: Default, but good to be explicit if overriding elsewhere */
+       word-break: break-word; 
+       overflow-wrap: break-word; 
+       white-space: normal; 
    }
 
-   .mood-detail-modal-body #modal-full-content.quill-rendered-content p, /* If content is in <p> tags */
-.mood-detail-modal-body #modal-full-content.quill-rendered-content {   /* If content is directly in it */
+   .mood-detail-modal-body #modal-full-content.quill-rendered-content p, 
+.mood-detail-modal-body #modal-full-content.quill-rendered-content {   
     word-break: break-word;
     overflow-wrap: break-word;
-    white-space: normal; /* Ensure text can wrap normally */
+    white-space: normal; 
 }
    
    
@@ -1591,7 +1570,7 @@
    
    .flash-message {
        padding: 15px 20px;
-       margin: 0 0 25px 0; /* Space below flash */
+       margin: 0 0 25px 0; 
        border-radius: 8px;
        border: 1px solid transparent;
        font-family: 'Poppins', sans-serif;
@@ -1600,36 +1579,36 @@
        font-weight: 500;
        box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
        position: relative;
-       background-color: rgba(40, 42, 54, 0.8); /* Default dark background */
+       background-color: rgba(40, 42, 54, 0.8); 
        color: #e0e0e0;
    }
    
    .flash-message.success {
-       background-color: rgba(46, 139, 87, 0.85); /* Green */
+       background-color: rgba(46, 139, 87, 0.85); 
        border-color: rgba(60, 179, 113, 0.9);
        color: #ffffff;
    }
    
    .flash-message.error {
-       background-color: rgba(220, 20, 60, 0.85); /* Red */
+       background-color: rgba(220, 20, 60, 0.85); 
        border-color: rgba(178, 34, 34, 0.9);
        color: #ffffff;
    }
    
    .flash-message p {
        margin: 0;
-       padding: 0 25px 0 0; /* Space for close button */
+       padding: 0 25px 0 0; 
        line-height: 1.4;
    }
    
    .flash-message .flash-close-btn {
        position: absolute;
-       top: 50%; /* Vertically center */
+       top: 50%; 
        right: 10px;
-       transform: translateY(-50%); /* Precise vertical centering */
+       transform: translateY(-50%); 
        background: none;
        border: none;
-       color: inherit; /* Inherit color from parent */
+       color: inherit; 
        font-size: 1.5rem;
        font-weight: bold;
        line-height: 1;
@@ -1647,19 +1626,18 @@
    /* ==========================================================================
    13. Stats Page Styles
    ========================================================================== */
-body.stats-page-background { /* Specific background if needed */
-    background-image: url('/static/resources/form.png'); /* Specific background */
+body.stats-page-background { 
+    background-image: url('/static/resources/form.png'); 
     background-size: cover;
 }
 
-/* Ensure .stats-container horizontal centering is solid */
 .stats-container {
     width: 90vw;
-    max-width: 1800px; /* This limits how wide it can get */
-    margin-left: auto;  /* For horizontal centering */
-    margin-right: auto; /* For horizontal centering */
-    margin-top: 70px;   /* Your existing top margin */
-    margin-bottom: 40px;/* Your existing bottom margin */
+    max-width: 1800px; 
+    margin-left: auto; 
+    margin-right: auto; 
+    margin-top: 70px;   
+    margin-bottom: 40px;
     padding: 25px 30px;
     background-color: rgba(35, 37, 49, 0.85);
     backdrop-filter: blur(10px);
@@ -1679,31 +1657,30 @@ body.stats-page-background { /* Specific background if needed */
 .stats-header h1 {
     font-size: 2rem;
     color: #fff;
-    margin-bottom: 0; /* Remove default margin */
+    margin-bottom: 0; 
 }
 
-/* --- Loading State --- */
 .stats-loading-indicator {
     text-align: center;
     padding: 40px 20px;
     font-size: 1.1rem;
     color: #bdc1c6;
-    display: none; /* Hidden by default */
+    display: none; 
 }
 
 .stats-container.is-loading .stats-loading-indicator {
-    display: block; /* Show when loading */
+    display: block; 
 }
 
 .stats-container.is-loading .stats-main-content {
-    display: none !important; /* Hide content when loading */
+    display: none !important; 
 }
 
 .stats-main-content {
     opacity: 0;
     visibility: hidden;
     transition: opacity 0.5s ease-in-out;
-    display: block; /* Default display */
+    display: block; 
 }
 
 .stats-main-content.is-loaded {
@@ -1711,27 +1688,24 @@ body.stats-page-background { /* Specific background if needed */
     visibility: visible;
 }
 
-/* --- Page Structure --- */
 .stats-page {
-    display: none; /* Hide pages by default */
-    margin-bottom: 35px; /* Space between page content and controls */
+    display: none; 
+    margin-bottom: 35px; 
 }
 .stats-page.active-stats-page {
-    display: block; /* Show active page */
+    display: block; 
 }
 
 
-/* --- Top Grid (Page 1) --- */
 .stats-top-grid {
     display: grid;
-    grid-template-columns: 240px 1fr 1fr; /* Fixed summary, flexible charts */
+    grid-template-columns: 240px 1fr 1fr; 
     gap: 25px;
-    align-items: stretch; /* Columns fill height */
+    align-items: stretch; 
     width: 100%;
-    margin-bottom: 25px; /* Space below grid */
+    margin-bottom: 25px; 
 }
 
-/* --- Columns --- */
 .stats-summary-column {
     display: flex;
     flex-direction: column;
@@ -1741,23 +1715,22 @@ body.stats-page-background { /* Specific background if needed */
 .stats-chart-column {
     display: flex;
     flex-direction: column;
-    min-width: 0; /* Prevent overflow */
+    min-width: 0; 
 }
 
-/* --- Summary Cards --- */
 .stats-summary-column .summary-card {
     width: 100%;
     padding: 12px 15px;
     background-color: rgba(50, 53, 70, 0.8);
     border-radius: 8px;
-    min-height: 80px; /* Ensure cards have height */
+    min-height: 80px; 
     box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
     border: 1px solid rgba(255, 255, 255, 0.07);
     text-align: center;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center; /* Center content vertically */
+    justify-content: center; 
 }
 
 .stats-summary-column .summary-card h3 {
@@ -1775,7 +1748,7 @@ body.stats-page-background { /* Specific background if needed */
     margin: 0;
     color: #fff;
     line-height: 1.1;
-    word-break: break-word; /* Prevent long text overflow */
+    word-break: break-word; 
 }
 
 .stats-summary-column .summary-card .summary-card-detail {
@@ -1785,10 +1758,10 @@ body.stats-page-background { /* Specific background if needed */
     margin-top: 3px;
 }
 .latest-mood-info {
-    line-height: 1.4; /* Better spacing for multiline */
+    line-height: 1.4; 
 }
 
-/* --- FIXED Chart Containers --- */
+
 .chart-container {
     display: flex;
     flex-direction: column;
@@ -1798,8 +1771,8 @@ body.stats-page-background { /* Specific background if needed */
     border-radius: 10px;
     border: 1px solid rgba(255, 255, 255, 0.1);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    overflow: hidden; /* Prevent canvas overflow */
-    height: 385px; /* Fixed consistent height for all charts */
+    overflow: hidden; 
+    height: 385px; 
 }
 
 .chart-container h3 {
@@ -1808,19 +1781,19 @@ body.stats-page-background { /* Specific background if needed */
     font-size: 1.1rem;
     font-weight: 500;
     color: #eee;
-    flex-shrink: 0; /* Don't shrink title */
+    flex-shrink: 0; 
     font-family: 'Playfair Display', serif;
 }
 
-/* Set a fixed height container for the chart canvas */
+
 .chart-canvas-wrapper {
     flex-grow: 1;
     position: relative;
     width: 100%;
     min-height: 250px;
-    display: flex; /* Add flex to center loading text */
-    align-items: center; /* Vertically center */
-    justify-content: center; /* Horizontally center */
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
 }
 
 .chart-loading-text {
@@ -1831,8 +1804,8 @@ body.stats-page-background { /* Specific background if needed */
 
 .dot {
     animation: blink 1.4s infinite;
-    font-size: 1.5rem; /* Make dots a bit bigger */
-    margin: 0 2px; /* Add a little space between dots */
+    font-size: 1.5rem; 
+    margin: 0 2px; 
   }
   .dot.one { animation-delay: 0s; }
   .dot.two { animation-delay: 0.2s; }
@@ -1851,18 +1824,17 @@ body.stats-page-background { /* Specific background if needed */
     height: 100% !important;
 }
 
-/* Specific styles for bar chart to prevent the growing issue */
 .chart-container-bar {
-    height: 385px; /* Explicit fixed height */
+    height: 385px; 
 }
 
 .chart-container-bar .chart-canvas-wrapper {
-    height: 300px; /* Fixed height, no growing */
+    height: 300px; 
 }
 
-/* Pie chart container consistency */
+
 .chart-container-pie {
-    height: 385px; /* Same height as others */
+    height: 385px; 
 }
 
 .chart-description {
@@ -1872,10 +1844,9 @@ body.stats-page-background { /* Specific background if needed */
     margin-top: 10px;
     font-style: italic;
     padding: 0 10px;
-    flex-shrink: 0; /* Don't let description shrink */
+    flex-shrink: 0; 
 }
 
-/* --- Quote --- */
 .stats-quote {
     text-align: center;
     font-style: italic;
@@ -1886,7 +1857,6 @@ body.stats-page-background { /* Specific background if needed */
     padding: 0 15px;
 }
 
-/* --- Controls Row --- */
 .stats-controls-row {
     display: flex;
     justify-content: space-between;
@@ -1897,27 +1867,27 @@ body.stats-page-background { /* Specific background if needed */
 }
 
 .back-link.stats-back-link {
-    display: inline-flex; /* MATCH */
-    align-items: center;  /* MATCH */
-    justify-content: center; /* MATCH */
-    padding: 0.8rem 2.2rem; /* MATCH */
-    background-color: #A074B5; /* MATCH */
-    color: #FFFFFF;             /* MATCH */
-    font-weight: 500;           /* MATCH */
-    border-radius: 30px;       /* MATCH */
-    border: none;              /* MATCH */
-    text-transform: uppercase; /* MATCH */
-    font-size: 0.9rem;         /* MATCH */
-    letter-spacing: 0.5px;   /* MATCH */
-    text-decoration: none;     /* MATCH */
-    transition: all 0.3s ease; /* MATCH */
-    cursor: pointer;           /* ENSURE */
-    font-family: 'Poppins', sans-serif; /* ENSURE */
-    margin: 0; /* Reset margin if it was specific */
+    display: inline-flex; 
+    align-items: center; 
+    justify-content: center; 
+    padding: 0.8rem 2.2rem; 
+    background-color: #A074B5; 
+    color: #FFFFFF;             
+    font-weight: 500;           
+    border-radius: 30px;       
+    border: none;              
+    text-transform: uppercase; 
+    font-size: 0.9rem;        
+    letter-spacing: 0.5px;   
+    text-decoration: none;     
+    transition: all 0.3s ease; 
+    cursor: pointer;           
+    font-family: 'Poppins', sans-serif; 
+    margin: 0; 
 }
 .back-link.stats-back-link:hover {
-    background-color: #8a6aaf; /* MATCH */
-    transform: translateY(-2px); /* MATCH */
+    background-color: #8a6aaf; 
+    transform: translateY(-2px); 
     color: #ffffff;     
 }
 
@@ -1928,27 +1898,26 @@ body.stats-page-background { /* Specific background if needed */
 }
 
 
-/* --- No Stats Message --- */
 .no-stats {
-    display: inline-flex; /* CHANGE from block */
-    align-items: center;  /* ADD */
-    justify-content: center; /* ADD */
-    padding: 0.8rem 2.2rem; /* MATCH */
-    background-color: #A074B5; /* MATCH */
-    color: #FFFFFF;             /* MATCH */
-    font-weight: 500;           /* MATCH */
-    border-radius: 30px;       /* MATCH (was 22px) */
-    border: none;              /* MATCH */
-    text-transform: uppercase; /* MATCH */
-    font-size: 0.9rem;         /* MATCH */
-    letter-spacing: 0.5px;   /* MATCH */
-    text-decoration: none;     /* MATCH */
-    transition: all 0.3s ease; /* MATCH */
-    cursor: pointer;           /* ENSURE */
-    font-family: 'Poppins', sans-serif; /* ENSURE */
-    margin: 25px auto 0 auto; /* Keep its specific margin for positioning in .no-stats */
-    width: auto; /* Change from fit-content if inline-flex is used */
-    text-align: center; /* Keep */
+    display: inline-flex; 
+    align-items: center; 
+    justify-content: center; 
+    padding: 0.8rem 2.2rem; 
+    background-color: #A074B5;
+    color: #FFFFFF;             
+    font-weight: 500;           
+    border-radius: 30px;       
+    border: none;             
+    text-transform: uppercase; 
+    font-size: 0.9rem;        
+    letter-spacing: 0.5px;   
+    text-decoration: none;     
+    transition: all 0.3s ease;
+    cursor: pointer;           
+    font-family: 'Poppins', sans-serif; 
+    margin: 25px auto 0 auto; 
+    width: auto; 
+    text-align: center; 
 }
 
 .no-stats .back-link {
@@ -1972,17 +1941,17 @@ body.stats-page-background { /* Specific background if needed */
     box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
 }
 .no-stats .back-link:hover {
-    background-color: #8a6aaf;; /* MATCH */
-    transform: translateY(-2px); /* MATCH */
-    color: #ffffff;             /* MATCH */
+    background-color: #8a6aaf;; 
+    transform: translateY(-2px); 
+    color: #ffffff;            
 }
 
-/* Links styling */
+
 .back-link.stats-back-link,
 .back-link.stats-back-link:hover,
 .back-link.stats-back-link:focus,
 .back-link.stats-back-link:active {
-    text-decoration: none !important; /* Ensure no underline from browser defaults */
+    text-decoration: none !important; 
 }  
    
 
@@ -1991,7 +1960,7 @@ body.stats-page-background { /* Specific background if needed */
    14. Profile Page Styles (Updated and New Additions)
    ========================================================================== */
    body.profile-page-body {
-    background-image: url('/static/resources/form.png'); /* Specific background */
+    background-image: url('/static/resources/form.png'); 
     background-size: cover;
     display: flex;
     flex-direction: column;
@@ -2051,12 +2020,7 @@ body.stats-page-background { /* Specific background if needed */
 .profile-section-half {
     flex: 1 1 45%;
     min-width: 300px;
-    /* 
-      Set a min-height based on the tallest content you expect on Page 1.
-      Inspect Page 1 in your browser to find a suitable value.
-      For example, if "Account Information" or "Change Password" is ~430px tall, use that.
-    */
-    min-height: 485px; /* <<< ADJUST THIS VALUE AFTER INSPECTING PAGE 1 */
+    min-height: 485px; 
 }
 
 
@@ -2175,48 +2139,44 @@ body.stats-page-background { /* Specific background if needed */
     margin-bottom: 20px !important;
 }
 
-/* --- MODIFIED AND NEW FOOTER/PAGINATION STYLES FOR PROFILE --- */
 .profile-footer-controls {
     display: flex;
-    /* justify-content: space-between; REMOVE this, we'll use margins and flex-grow */
-    align-items: center; /* Vertical alignment */
+    align-items: center; 
     margin-top: 30px;
     padding-top: 20px;
     border-top: 1px solid rgba(255,255,255,0.1);
 }
 
 .profile-footer-back-link {
-    /* This wrapper takes up space on the left. */
-    /* flex-grow: 1; REMOVE - We don't want it to grow excessively */
-    text-align: left; /* Align the link itself to the left */
-    margin-right: auto; /* ADDED: Pushes pagination to the right/center */
+    text-align: left; 
+    margin-right: auto; 
 }
 
 .profile-footer-back-link .back-link {
     display: inline-block;
-    white-space: nowrap; /* ADDED: Prevents "Dashboard" from wrapping */
-    display: inline-flex; /* MATCH */
-    align-items: center;  /* MATCH */
-    justify-content: center; /* MATCH */
-    padding: 0.8rem 2.2rem; /* MATCH */
-    background-color: #A074B5; /* MATCH */
-    color: #FFFFFF;             /* MATCH */
-    font-weight: 500;           /* MATCH */
-    border-radius: 30px;       /* MATCH */
-    border: none;              /* MATCH */
-    text-transform: uppercase; /* MATCH */
-    font-size: 0.9rem;         /* MATCH */
-    letter-spacing: 0.5px;   /* MATCH */
-    text-decoration: none;     /* MATCH */
-    transition: all 0.3s ease; /* MATCH */
-    cursor: pointer;           /* ENSURE */
-    font-family: 'Poppins', sans-serif; /* ENSURE */
-    margin: 0; /* Reset margin if it was specific */
+    white-space: nowrap;
+    display: inline-flex; 
+    align-items: center;  
+    justify-content: center; 
+    padding: 0.8rem 2.2rem;
+    background-color: #A074B5; 
+    color: #FFFFFF;            
+    font-weight: 500;           
+    border-radius: 30px;      
+    border: none;              
+    text-transform: uppercase; 
+    font-size: 0.9rem;        
+    letter-spacing: 0.5px;   
+    text-decoration: none;     
+    transition: all 0.3s ease; 
+    cursor: pointer;           
+    font-family: 'Poppins', sans-serif; 
+    margin: 0; 
 }
 
 .profile-footer-back-link .back-link:hover{
-    background-color: #8a6aaf; /* MATCH */
-    transform: translateY(-2px); /* MATCH */
+    background-color: #8a6aaf; 
+    transform: translateY(-2px); 
     color: #ffffff;     
 }
 
@@ -2224,213 +2184,39 @@ body.stats-page-background { /* Specific background if needed */
     margin-top: 0;
     padding-top: 0;
     border-top: none;
-    /* flex-shrink: 0; Not strictly needed now */
-    display: flex;      /* ADDED: Make nav a flex container */
-    justify-content: center; /* ADDED: Center its content (the ul) */
-    flex-grow: 1;       /* ADDED: Allow pagination to take up the central space */
+    display: flex;      
+    justify-content: center; 
+    flex-grow: 1;       
 }
 
 .pagination-placeholder {
-    /* This will now be centered as well if present, because .profile-pagination has flex-grow and centers its content */
     min-width: 1px;
     visibility: hidden;
-    flex-grow: 1; /* ADDED: Allow it to take space like pagination would */
-    display: flex; /* ADDED: To be consistent */
-    justify-content: center; /* ADDED */
+    flex-grow: 1; 
+    display: flex; 
+    justify-content: center; 
 }
 
-/* Target paragraphs within the specific sections on page 2 */
 .profile-page-2 .profile-section-half p {
-    font-size: 0.95rem; /* or 1rem if it fits well */
-    line-height: 1.8; /* A bit more spacing for readability */
+    font-size: 0.95rem; 
+    line-height: 1.8; 
 }
 
 .profile-page-2 .profile-section-half .profile-warning {
-    font-size: 0.95rem; /* or 1rem */
+    font-size: 0.95rem; 
     line-height: 1.8;
-    padding: 12px 15px; /* Slightly more padding if font is bigger */
+    padding: 12px 15px; 
 }
 
-/* You might also want to adjust the h2 slightly if the p text becomes larger */
 .profile-page-2 .profile-section-half h2 {
-    /* font-size: 1.6rem; /* Example */
-    margin-bottom: 20px; /* Ensure enough space */
+    margin-bottom: 20px; 
 }
 
 .profile-footer-spacer {
-    flex-grow: 1; /* This will take up all remaining space on the right */
-    min-width: 290px;/* Give it some conceptual presence */
+    flex-grow: 1; 
+    min-width: 290px;
 }
 
-/* Responsive Adjustments */
-@media (max-width: 992px) {
-    /* ... (other tablet responsive styles) ... */
-}
-
-@media (max-width: 768px) {
-    /* ... (other small screen responsive styles) ... */
-
-    .profile-footer-controls {
-        flex-direction: column; /* Stack back link and pagination */
-        gap: 15px; /* Space between stacked items */
-    }
-    .profile-footer-back-link {
-        text-align: center; /* Center back link when stacked */
-        flex-grow: 0; /* Don't grow when stacked */
-    }
-    .profile-pagination {
-        justify-content: center; /* Center pagination when stacked */
-        width: 100%; /* Allow pagination to take full width if needed */
-    }
-}
-
-@media (max-width: 576px) {
-    /* ... (other phone responsive styles) ... */
-}
-
-   /* ==========================================================================
-      15. Responsive Adjustments
-      ========================================================================== */
-   
- /* --- Medium Screens (Tablets) --- */
-@media (max-width: 1200px) {
-    /* Stats Page */
-    .stats-container {
-        width: 95vw;
-        padding: 20px 25px;
-    }
-    .stats-top-grid {
-        grid-template-columns: minmax(200px, 0.7fr) 1fr 1fr; /* Adjust grid */
-    }
-    /* UPDATED: No longer need .stats-line-chart-section .chart-container.chart-full-width here */
-    .chart-container-bar, /* Target specific containers */
-    .chart-container-pie,
-    .chart-container-line {
-        min-height: 330px; /* General min-height, explicit heights will override */
-    }
-    .chart-container-pie { height: 330px; } /* Adjust explicit height */
-    .chart-container-line { height: 330px; } /* Adjust explicit height */
-
-}
-
-@media (max-width: 992px) {
-    /* ... (other responsive dashboard styles) ... */
-
-    /* Stats Page */
-    .stats-top-grid {
-        grid-template-columns: 1fr; /* Stack columns */
-        gap: 20px;
-    }
-    .stats-summary-column .summary-card {
-        min-height: 75px;
-    }
-    /* UPDATED: Target specific containers for height adjustments */
-    .chart-container-bar,
-    .chart-container-pie,
-    .chart-container-line {
-        min-height: 300px; /* General adjustment */
-    }
-    .chart-container-pie { height: 300px; } /* Specific adjustment */
-    .chart-container-line { height: 300px; } /* Specific adjustment */
-
-    .stats-container {
-        padding: 20px 15px;
-        margin: 30px auto;
-    }
-    .stats-header h1 {
-        font-size: 1.8rem;
-    }
-    .stats-page {
-        margin-bottom: 35px;
-    }
-    .stats-controls-row {
-        flex-direction: column;
-        gap: 15px;
-        padding: 15px 0;
-        margin-top: 0;
-    }
-    .stats-custom-pagination {
-        border-top: 1px solid rgba(255, 255, 255, 0.08);
-        padding-top: 15px;
-        margin-top: 5px;
-        width: 100%;
-        justify-content: center;
-    }
-    .back-link.stats-back-link {
-        order: -1;
-        margin: 0 auto;
-        border-top: none;
-        padding-top: 0;
-        width: auto;
-    }
-    .back-link-placeholder {
-        display: none;
-    }
-}
-
-/* --- Small Screens (Portrait Tablets, Large Phones) --- */
-@media (max-width: 768px) {
-    /* ... (other responsive styles) ... */
-
-    /* Stats Page */
-    .chart-container-bar,
-    .chart-container-pie,
-    .chart-container-line {
-        min-height: 280px; /* General adjustment */
-    }
-    .chart-container-pie { height: 280px; } /* Specific adjustment */
-    .chart-container-line { height: 280px; } /* Specific adjustment */
-
-    .stats-header h1 {
-        font-size: 1.6rem;
-    }
-
-    /* ... (other profile responsive styles) ... */
-}
-
-/* --- Extra Small Screens (Phones) --- */
-@media (max-width: 576px) {
-    /* ... (other responsive styles) ... */
-
-    /* Stats Page */
-    .stats-container {
-        padding: 15px 10px;
-        margin: 20px auto;
-        border-radius: 10px;
-    }
-    .stats-summary-column .summary-card p {
-        font-size: 1rem;
-    }
-    .stats-summary-column .summary-card h3 {
-        font-size: 0.8rem;
-    }
-    .chart-container h3 { /* General title size for charts */
-        font-size: 0.9rem;
-    }
-    .chart-container-bar,
-    .chart-container-pie,
-    .chart-container-line {
-        min-height: 250px; /* General adjustment */
-    }
-    .chart-container-pie { height: 250px; } /* Specific adjustment */
-    .chart-container-line { height: 250px; } /* Specific adjustment */
-
-    .stats-custom-pagination {
-        gap: 8px;
-    }
-    .stats-custom-pagination .btn {
-        padding: 5px 10px;
-        font-size: 0.8rem;
-    }
-    .stats-custom-pagination #stats-page-indicator {
-        font-size: 0.85rem;
-    }
-    .stats-controls-row {
-        padding: 10px 0;
-    }
-
-    /* ... (other profile responsive styles) ... */
-}
 
 /* ==========================================================================
    XX. Animated Cloud Background (Main Border Cloud)
@@ -2639,33 +2425,31 @@ body.stats-page-background { /* Specific background if needed */
     }
 }
 
-/* Ensure the form container can act as a positioning context for the close button */
 .form-container {
-    position: relative; /*  <-- VERY IMPORTANT! */
+    position: relative; 
 }
 
 .form-close-button {
-    position: absolute; /* Position relative to .form-container */
-    top: 30px;          /* Adjust for desired vertical position */
-    right: 60px;         /* Adjust for desired horizontal position */
-
-    color: #a0a0c0;     /* A muted color for the X */
-    font-size: 3rem;    /* Make the 'X' character larger */
-    font-weight: 400;   /* Lighter weight for a softer 'X' */
-    line-height: 1;     /* Prevents extra vertical space */
+    position: absolute; 
+    top: 30px;        
+    right: 60px;         
+    color: #a0a0c0;     
+    font-size: 3rem;   
+    font-weight: 400;   
+    line-height: 1;    
     text-decoration: none;
-    padding: 5px;       /* Add a little clickable area around the X */
+    padding: 5px;       
     cursor: pointer;
     transition: color 0.2s ease, transform 0.2s ease;
-    z-index: 10;        /* Ensure it's above other content if necessary */
+    z-index: 10;        
 }
 
 .form-close-button:hover {
-    color: #e6d29e /* MATCH */; 
-    transform: scale(1.1); /* Slight pop effect */
+    color: #e6d29e; 
+    transform: scale(1.1); 
 }
 
 
-   /* ==========================================================================
+/* ==========================================================================
       End of Styles
-      ========================================================================== */
+========================================================================== */

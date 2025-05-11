@@ -11,7 +11,7 @@ import (
 	"testing"
 	"time"
 
-	_ "github.com/lib/pq" // Driver import
+	_ "github.com/lib/pq"
 
 	"github.com/mickali02/mood/internal/validator"
 )
