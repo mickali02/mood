@@ -1113,9 +1113,27 @@ func (app *application) showUserProfilePage(w http.ResponseWriter, r *http.Reque
 	}
 
 	// 5. Render Profile Page: Use "profile.tmpl".
-	err = app.render(w, http.StatusOK, "profile.tmpl", templateData)
-	if err != nil {
-		app.serverError(w, r, err)
+	// --- MODIFIED: Check for HTMX request ---
+	if r.Header.Get("HX-Request") == "true" {
+		app.logger.Info("HTMX: Rendering profile content fragment", "page", currentPage)
+		ts, ok := app.templateCache["profile.tmpl"]
+		if !ok {
+			err := fmt.Errorf("template %q does not exist", "profile.tmpl")
+			app.logger.Error("Template lookup failed for profile", "template", "profile.tmpl", "error", err)
+			http.Error(w, "Error loading profile content.", http.StatusInternalServerError)
+			return
+		}
+		// Execute only the "profile-content" block for HTMX swap
+		err = ts.ExecuteTemplate(w, "profile-content", templateData)
+		if err != nil {
+			app.logger.Error("Failed to execute profile template block", "block", "profile-content", "error", err)
+		}
+	} else {
+		app.logger.Info("Full page request for profile", "page", currentPage)
+		err = app.render(w, http.StatusOK, "profile.tmpl", templateData)
+		if err != nil {
+			app.serverError(w, r, err)
+		}
 	}
 }
 
@@ -1169,38 +1187,74 @@ func (app *application) updateUserProfile(w http.ResponseWriter, r *http.Request
 	if !v.ValidData() {
 		templateData := app.newTemplateData(r)
 		templateData.Title = "User Profile (Error)"
-		templateData.User = user // Pass user with attempted changes but validation errors
+		// For template consistency, pass user object (even if it has pending invalid changes).
+		// The FormData map will hold the actual submitted values.
+		templateData.User = &data.User{ID: user.ID, Name: user.Name, Email: user.Email, CreatedAt: user.CreatedAt}
 		templateData.FormErrors = v.Errors
-		templateData.FormData = map[string]string{ // Repopulate form with submitted data
-			"name":  user.Name,
-			"email": user.Email,
+		templateData.FormData = map[string]string{
+			"name":  user.Name,  // This is the attempted new name
+			"email": user.Email, // This is the attempted new email
 		}
-		templateData.ProfileCurrentPage = 1 // Ensure error re-renders on correct profile page section.
-		errRender := app.render(w, http.StatusUnprocessableEntity, "profile.tmpl", templateData)
-		if errRender != nil {
-			app.serverError(w, r, errRender)
+		templateData.ProfileCurrentPage = 1 // Name/Email form is on page 1.
+
+		// --- MODIFIED: Render fragment for HTMX on validation error ---
+		if r.Header.Get("HX-Request") == "true" {
+			app.logger.Info("HTMX: Re-rendering profile content due to name/email update validation errors")
+			ts, ok := app.templateCache["profile.tmpl"]
+			if !ok {
+				app.serverError(w, r, fmt.Errorf("template profile.tmpl not found"))
+				return
+			}
+			w.WriteHeader(http.StatusUnprocessableEntity)
+			errRender := ts.ExecuteTemplate(w, "profile-content", templateData)
+			if errRender != nil {
+				app.serverError(w, r, errRender)
+			}
+		} else {
+			errRender := app.render(w, http.StatusUnprocessableEntity, "profile.tmpl", templateData)
+			if errRender != nil {
+				app.serverError(w, r, errRender)
+			}
 		}
 		return
 	}
 
 	// 8. Database Update (User Profile).
-	err = app.users.Update(user) // UserModel.Update handles the SQL UPDATE.
+	err = app.users.Update(user)
 	if err != nil {
-		if errors.Is(err, data.ErrDuplicateEmail) { // Handle email conflict.
+		if errors.Is(err, data.ErrDuplicateEmail) {
 			v.AddError("email", "Email address is already in use")
 			templateData := app.newTemplateData(r)
 			templateData.Title = "User Profile (Error)"
-			user.Email = originalEmail // Revert email in struct before passing to template
-			templateData.User = user
+			// User object here should ideally reflect state before problematic update for display consistency,
+			// but FormData will hold the submitted (problematic) values.
+			tempUserForDisplay := &data.User{ID: user.ID, Name: r.PostForm.Get("name"), Email: originalEmail, CreatedAt: user.CreatedAt}
+			templateData.User = tempUserForDisplay
 			templateData.FormErrors = v.Errors
 			templateData.FormData = map[string]string{
-				"name":  r.PostForm.Get("name"),  // Show what user typed
-				"email": r.PostForm.Get("email"), // Show problematic email
+				"name":  r.PostForm.Get("name"),
+				"email": r.PostForm.Get("email"),
 			}
-			templateData.ProfileCurrentPage = 1 // Explicitly set page
-			errRender := app.render(w, http.StatusUnprocessableEntity, "profile.tmpl", templateData)
-			if errRender != nil {
-				app.serverError(w, r, errRender)
+			templateData.ProfileCurrentPage = 1
+
+			// --- MODIFIED: Render fragment for HTMX on duplicate email error ---
+			if r.Header.Get("HX-Request") == "true" {
+				app.logger.Info("HTMX: Re-rendering profile content due to duplicate email on update")
+				ts, ok := app.templateCache["profile.tmpl"]
+				if !ok {
+					app.serverError(w, r, fmt.Errorf("template profile.tmpl not found"))
+					return
+				}
+				w.WriteHeader(http.StatusUnprocessableEntity)
+				errRender := ts.ExecuteTemplate(w, "profile-content", templateData)
+				if errRender != nil {
+					app.serverError(w, r, errRender)
+				}
+			} else {
+				errRender := app.render(w, http.StatusUnprocessableEntity, "profile.tmpl", templateData)
+				if errRender != nil {
+					app.serverError(w, r, errRender)
+				}
 			}
 		} else {
 			app.serverError(w, r, err)
@@ -1210,7 +1264,14 @@ func (app *application) updateUserProfile(w http.ResponseWriter, r *http.Request
 
 	// 9. Success.
 	app.session.Put(r, "flash", "Profile updated successfully.")
-	http.Redirect(w, r, "/user/profile", http.StatusSeeOther)
+	// --- MODIFIED: Send HX-Redirect for HTMX success ---
+	if r.Header.Get("HX-Request") == "true" {
+		app.logger.Info("HTMX: Sending HX-Redirect to /user/profile after profile update")
+		w.Header().Set("HX-Redirect", "/user/profile") // Redirect to the profile page (page 1 by default)
+		w.WriteHeader(http.StatusOK)
+	} else {
+		http.Redirect(w, r, "/user/profile", http.StatusSeeOther)
+	}
 }
 
 // changeUserPassword handles submission for changing the user's password.
@@ -1253,20 +1314,36 @@ func (app *application) changeUserPassword(w http.ResponseWriter, r *http.Reques
 	data.ValidatePasswordUpdate(v, currentPassword, newPassword, confirmPassword)
 
 	// Helper to render password form with errors.
-	renderPasswordError := func(errors map[string]string) {
+	renderPasswordError := func(formErrors map[string]string) {
 		templateData := app.newTemplateData(r)
 		templateData.Title = "User Profile (Password Error)"
-		templateData.User = user // Pass existing user info
-		templateData.FormErrors = errors
-		// Don't repopulate password fields, but keep name/email for context
-		templateData.FormData = make(map[string]string)
-		templateData.FormData["name"] = user.Name
-		templateData.FormData["email"] = user.Email
-		templateData.ProfileCurrentPage = 1 // Password form is on page 1
+		templateData.User = user
+		templateData.FormErrors = formErrors
+		if templateData.FormData == nil {
+			templateData.FormData = make(map[string]string)
+		}
+		templateData.FormData["name"] = user.Name   // Keep user info for context
+		templateData.FormData["email"] = user.Email // Keep user info for context
+		templateData.ProfileCurrentPage = 1         // Password form is on page 1.
 
-		errRender := app.render(w, http.StatusUnprocessableEntity, "profile.tmpl", templateData)
-		if errRender != nil {
-			app.serverError(w, r, errRender)
+		// --- MODIFIED: Render fragment for HTMX on validation error ---
+		if r.Header.Get("HX-Request") == "true" {
+			app.logger.Info("HTMX: Re-rendering profile content due to password change validation errors")
+			ts, ok := app.templateCache["profile.tmpl"]
+			if !ok {
+				app.serverError(w, r, fmt.Errorf("template profile.tmpl not found"))
+				return
+			}
+			w.WriteHeader(http.StatusUnprocessableEntity)
+			errRender := ts.ExecuteTemplate(w, "profile-content", templateData)
+			if errRender != nil {
+				app.serverError(w, r, errRender)
+			}
+		} else {
+			errRender := app.render(w, http.StatusUnprocessableEntity, "profile.tmpl", templateData)
+			if errRender != nil {
+				app.serverError(w, r, errRender)
+			}
 		}
 	}
 
@@ -1304,7 +1381,14 @@ func (app *application) changeUserPassword(w http.ResponseWriter, r *http.Reques
 
 	// 10. Success.
 	app.session.Put(r, "flash", "Password updated successfully.")
-	http.Redirect(w, r, "/user/profile", http.StatusSeeOther)
+	// --- MODIFIED: Send HX-Redirect for HTMX success ---
+	if r.Header.Get("HX-Request") == "true" {
+		app.logger.Info("HTMX: Sending HX-Redirect to /user/profile after password update")
+		w.Header().Set("HX-Redirect", "/user/profile")
+		w.WriteHeader(http.StatusOK)
+	} else {
+		http.Redirect(w, r, "/user/profile", http.StatusSeeOther)
+	}
 }
 
 // resetUserEntries handles the request to delete all mood entries for the current user.
@@ -1319,6 +1403,7 @@ func (app *application) resetUserEntries(w http.ResponseWriter, r *http.Request)
 
 	// 2. Method Check (should be POST, often triggered by a confirmation button).
 	if r.Method != http.MethodPost {
+		w.Header().Set("Allow", http.MethodPost)
 		app.clientError(w, http.StatusMethodNotAllowed)
 		return
 	}
@@ -1332,8 +1417,15 @@ func (app *application) resetUserEntries(w http.ResponseWriter, r *http.Request)
 
 	// 4. Success.
 	app.session.Put(r, "flash", "All your mood entries have been reset.")
-	// Redirect to the second page of the profile settings.
-	http.Redirect(w, r, "/user/profile?page=2", http.StatusSeeOther)
+	// --- MODIFIED: Send HX-Redirect for HTMX success ---
+	if r.Header.Get("HX-Request") == "true" {
+		app.logger.Info("HTMX: Sending HX-Redirect to /user/profile?page=2 after resetting entries")
+		w.Header().Set("HX-Redirect", "/user/profile?page=2")
+		w.WriteHeader(http.StatusOK)
+	} else {
+		// Redirect to the second page of the profile settings.
+		http.Redirect(w, r, "/user/profile?page=2", http.StatusSeeOther)
+	}
 }
 
 // deleteUserAccount handles the permanent deletion of a user's account and all their data.
@@ -1348,6 +1440,7 @@ func (app *application) deleteUserAccount(w http.ResponseWriter, r *http.Request
 
 	// 2. Method Check.
 	if r.Method != http.MethodPost {
+		w.Header().Set("Allow", http.MethodPost)
 		app.clientError(w, http.StatusMethodNotAllowed)
 		return
 	}
@@ -1369,7 +1462,13 @@ func (app *application) deleteUserAccount(w http.ResponseWriter, r *http.Request
 	app.session.Remove(r, "authenticatedUserID")
 	// 5. Notify and Redirect to Public Page.
 	app.session.Put(r, "flash", "Your account has been successfully deleted.")
-	http.Redirect(w, r, "/landing", http.StatusSeeOther)
+	if r.Header.Get("HX-Request") == "true" {
+		app.logger.Info("HTMX: Sending HX-Redirect to /landing after account deletion")
+		w.Header().Set("HX-Redirect", "/landing")
+		w.WriteHeader(http.StatusOK)
+	} else {
+		http.Redirect(w, r, "/landing", http.StatusSeeOther)
+	}
 }
 
 /*

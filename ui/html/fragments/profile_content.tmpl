@@ -1,0 +1,164 @@
+<!-- ui/html/fragments/profile_content.tmpl -->
+{{define "profile-content"}}
+    {{with .Flash}}
+        <div class="flash-message success">
+            <p>{{.}}</p>
+            <button type="button" class="flash-close-btn" aria-label="Close message">×</button>
+        </div>
+    {{end}}
+
+    <div class="profile-content-area">
+        {{if eq .ProfileCurrentPage 1}}
+        <div class="profile-page-content profile-page-1">
+            <div class="profile-row">
+                <section class="profile-section profile-section-half">
+                    <h2>Account Information</h2>
+                    <form action="/user/profile/update" method="POST" novalidate
+                          hx-post="/user/profile/update"
+                          hx-target="#profile-content-wrapper"
+                          hx-swap="innerHTML"
+                          hx-indicator="#profile-loading-indicator">
+                        <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
+                        <div class="form-group">
+                            <label for="name">Name:</label>
+                            <input type="text" id="name" name="name" value="{{index .FormData "name"}}" required class="{{if index .FormErrors "name"}}invalid{{end}}">
+                            {{with index .FormErrors "name"}}<span class="error-message">{{.}}</span>{{end}}
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email:</label>
+                            <input type="email" id="email" name="email" value="{{index .FormData "email"}}" required class="{{if index .FormErrors "email"}}invalid{{end}}">
+                            {{with index .FormErrors "email"}}<span class="error-message">{{.}}</span>{{end}}
+                        </div>
+                        <div class="button-group">
+                            <button type="submit" class="btn">Save Changes</button>
+                        </div>
+                    </form>
+                </section>
+
+                <section class="profile-section profile-section-half password-change-section">
+                    <h2>🔑 Change Password</h2>
+                    <form action="/user/profile/password" method="POST" novalidate
+                          hx-post="/user/profile/password"
+                          hx-target="#profile-content-wrapper"
+                          hx-swap="innerHTML"
+                          hx-indicator="#profile-loading-indicator">
+                        <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
+                        <div class="form-group">
+                            <label for="current_password">Current Password:</label>
+                            <input type="password" id="current_password" name="current_password" required class="{{if index .FormErrors "current_password"}}invalid{{end}}">
+                            {{with index .FormErrors "current_password"}}<span class="error-message">{{.}}</span>{{end}}
+                        </div>
+                        <div class="form-group">
+                            <label for="new_password">New Password:</label>
+                            <input type="password" id="new_password" name="new_password" required class="{{if index .FormErrors "new_password"}}invalid{{end}}">
+                            {{with index .FormErrors "new_password"}}<span class="error-message">{{.}}</span>{{end}}
+                             <small class="form-hint">Minimum 8 characters.</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="confirm_password">Confirm New Password:</label>
+                            <input type="password" id="confirm_password" name="confirm_password" required class="{{if index .FormErrors "confirm_password"}}invalid{{end}}">
+                            {{with index .FormErrors "confirm_password"}}<span class="error-message">{{.}}</span>{{end}}
+                        </div>
+                        <div class="button-group">
+                            <button type="submit" class="btn">Update Password</button>
+                        </div>
+                    </form>
+                </section>
+            </div>
+        </div>
+        {{else if eq .ProfileCurrentPage 2}}
+        <div class="profile-page-content profile-page-2">
+            <div class="profile-row">
+                <section class="profile-section profile-section-half">
+                    <h2>🧼 Reset All Entries</h2>
+                    <p>Resetting your entries is useful if you want a fresh start with Feel Flow. All previously logged moods, statistics, and associated data will be removed. This process is irreversible. Your account itself will remain active.</p>
+                    <form action="/user/profile/reset-entries" method="POST"
+                          onsubmit="return confirm('Are you absolutely sure you want to delete ALL your mood entries? This cannot be undone.');"
+                          hx-post="/user/profile/reset-entries"
+                          hx-target="#profile-content-wrapper"
+                          hx-swap="innerHTML"
+                          hx-indicator="#profile-loading-indicator"
+                          {{/* For reset/delete, HTMX will often want a redirect or specific instruction.
+                               We'll handle HX-Redirect from the server for this one. */}}
+                          >
+                        <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
+                        <div class="button-group profile-actions">
+                            <button type="submit" class="btn reset-btn">Confirm Reset Entries</button>
+                        </div>
+                    </form>
+                </section>
+
+                <section class="profile-section profile-section-half">
+                    <h2>⚠️ Delete Account</h2>
+                    <p>If you no longer wish to use Feel Flow, you can permanently delete your account here.</p>
+                    <p class="profile-warning">Warning: This action is permanent and cannot be undone! All your account data, including mood entries, will be permanently erased. Once deleted, your username, email, password, and all mood data will be irretrievably lost. If you're sure, proceed below.</p>
+                    <form action="/user/profile/delete-account" method="POST"
+                          onsubmit="return confirm('DANGER ZONE! Are you absolutely sure you want to PERMANENTLY DELETE your account and all associated data? This cannot be undone.');"
+                          hx-post="/user/profile/delete-account"
+                          hx-target="#profile-content-wrapper"
+                          hx-swap="innerHTML"
+                          hx-indicator="#profile-loading-indicator"
+                          {{/* Server will send HX-Redirect for this */}}
+                          >
+                        <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
+                        <div class="button-group profile-actions">
+                            <button type="submit" class="btn delete-btn">Confirm Account Deletion</button>
+                        </div>
+                    </form>
+                </section>
+            </div>
+        </div>
+        {{end}}
+    </div>
+
+    <!-- Pagination (remains outside the swappable content but updates via HTMX triggers) -->
+    <div class="profile-footer-controls">
+        <div class="profile-footer-back-link">
+            <a href="/dashboard" class="back-link">← Back to Dashboard</a>
+        </div>
+
+        {{if gt .ProfileTotalPages 1}}
+        <nav class="pagination profile-pagination" aria-label="Profile Settings Pagination">
+            <ul>
+                {{if eq .ProfileCurrentPage 1}}
+                    <li class="disabled"><span>< Previous</span></li>
+                {{else}}
+                    {{ $prevPage := sub .ProfileCurrentPage 1 }}
+                    <li>
+                        <a href="/user/profile?page={{$prevPage}}"
+                           hx-get="/user/profile?page={{$prevPage}}"
+                           hx-target="#profile-content-wrapper"
+                           hx-swap="innerHTML"
+                           hx-push-url="true"
+                           hx-indicator="#profile-loading-indicator"
+                        >< Previous</a>
+                    </li>
+                {{end}}
+
+                <li>
+                    <span>Page {{.ProfileCurrentPage}} of {{.ProfileTotalPages}}</span>
+                </li>
+
+                {{if eq .ProfileCurrentPage .ProfileTotalPages}}
+                     <li class="disabled"><span>Next ></span></li>
+                {{else}}
+                     {{ $nextPage := add .ProfileCurrentPage 1 }}
+                     <li>
+                         <a href="/user/profile?page={{$nextPage}}"
+                            hx-get="/user/profile?page={{$nextPage}}"
+                            hx-target="#profile-content-wrapper"
+                            hx-swap="innerHTML"
+                            hx-push-url="true"
+                            hx-indicator="#profile-loading-indicator"
+                         >Next ></a>
+                    </li>
+                {{end}}
+            </ul>
+        </nav>
+        {{else}}
+        <div class="pagination-placeholder"></div>
+        {{end}}
+
+        <div class="profile-footer-spacer"></div>
+    </div>
+{{end}}
