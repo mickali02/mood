@@ -1332,7 +1332,8 @@ func (app *application) resetUserEntries(w http.ResponseWriter, r *http.Request)
 
 	// 4. Success.
 	app.session.Put(r, "flash", "All your mood entries have been reset.")
-	http.Redirect(w, r, "/user/profile", http.StatusSeeOther)
+	// Redirect to the second page of the profile settings.
+	http.Redirect(w, r, "/user/profile?page=2", http.StatusSeeOther)
 }
 
 // deleteUserAccount handles the permanent deletion of a user's account and all their data.
