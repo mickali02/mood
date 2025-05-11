@@ -7,6 +7,8 @@
     <title>About Feel Flow</title> <!-- Changed Title -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/static/styles.css">
+    <!-- HTMX Script -->
+    <script src="https://unpkg.com/htmx.org@1.9.10" integrity="sha384-D1Kt99CQMDuVetoL1lrYwg5t+9QdHe7NLX/SoJYkXDFfX37iInKRy5xLSi8nO7UC" crossorigin="anonymous"></script>
 </head>
 <body class="landing-specific-background"> <!-- Use the same body class as landing -->
 
@@ -20,37 +22,44 @@
         </div>
         <nav class="landing-specific-nav">
             <ul>
-                 <!-- ***** CHANGED THIS LINK ***** -->
-                <li><a href="/landing">Home</a></li>
-                <li><a href="/about">About</a></li> <!-- Consider adding an 'active' class later -->
+                <li><a href="/landing"
+                       hx-get="/landing"
+                       hx-target="#main-content-area"
+                       hx-swap="innerHTML"
+                       hx-push-url="true"
+                       hx-indicator="#page-loading-indicator">Home</a></li>
+                <li><a href="/about"
+                       hx-get="/about"
+                       hx-target="#main-content-area"
+                       hx-swap="innerHTML"
+                       hx-push-url="true"
+                       hx-indicator="#page-loading-indicator">About</a></li>
                 <li><a href="/user/login">Login</a></li>
-                <li><a href="/user/signup" class="signup-button">SIGN UP</a></li> <!-- CHANGE /signup to /user/signup -->
+                <li><a href="/user/signup" class="signup-button">SIGN UP</a></li>
             </ul>
         </nav>
     </header>
 
-    <!-- Main Content Area - Use the same class as landing -->
-    <main class="landing-main-content">
-        <!-- Content Wrapper - Use the same class as landing -->
-        <div class="landing-content-wrapper">
-            <!-- Replace content, keep structure -->
-            <h1>About Feel Flow</h1> <!-- Page Title -->
+    <!-- Main Content Area - This div will be targeted by HTMX -->
+    <div id="main-content-area">
+        {{block "page-content" .}}
+        <main class="landing-main-content">
+            <!-- Content Wrapper - Use the same class as landing -->
+            <div class="landing-content-wrapper">
+                <!-- Replace content, keep structure -->
+                <h1>About Feel Flow <span class="htmx-indicator" id="page-loading-indicator" style="font-size: 1rem; vertical-align: middle;"></span></h1>
 
-            <!-- Add your About page paragraphs here -->
-            <p>
-               Feel Flow is a school project designed to implement full CRUD functionality for 
-               mood entries using Go and PostgreSQL. It offers a simple way to log daily emotions 
-               with titles, descriptions, and emoji-based mood tags, helping users track patterns 
-               and practice mindfulness. The app showcases key web development concepts like routing,
-               templates, database interaction, and form handling in Go. Though basic, it lays the 
-               groundwork for future features like user accounts and mood analysis.
-            </p>
-
-            <!-- ***** NO BUTTONS HERE ***** -->
-            <!-- The "Read More" or other call-to-action buttons are removed -->
-
-        </div>
-    </main>
-
+                <p>
+                   Feel Flow is a school project designed to implement full CRUD functionality for 
+                   mood entries using Go and PostgreSQL. It offers a simple way to log daily emotions 
+                   with titles, descriptions, and emoji-based mood tags, helping users track patterns 
+                   and practice mindfulness. The app showcases key web development concepts like routing,
+                   templates, database interaction, and form handling in Go. Though basic, it lays the 
+                   groundwork for future features like user accounts and mood analysis.
+                </p>
+            </div>
+        </main>
+        {{end}}
+    </div>
 </body>
 </html>

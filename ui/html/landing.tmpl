@@ -7,6 +7,8 @@
     <title>Feel Flow</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/static/styles.css">
+    <!-- HTMX Script -->
+    <script src="https://unpkg.com/htmx.org@1.9.10" integrity="sha384-D1Kt99CQMDuVetoL1lrYwg5t+9QdHe7NLX/SoJYkXDFfX37iInKRy5xLSi8nO7UC" crossorigin="anonymous"></script>
 </head>
 <body class="landing-specific-background">
     <!-- Header with Logo and Navigation -->
@@ -17,23 +19,43 @@
             </a>
             <nav class="landing-specific-nav">
                 <ul>
-                    <li><a href="/landing">Home</a></li>
-                    <li><a href="/about">About</a></li>
+                    <li><a href="/landing"
+                           hx-get="/landing"
+                           hx-target="#main-content-area"
+                           hx-swap="innerHTML"
+                           hx-push-url="true"
+                           hx-indicator="#page-loading-indicator">Home</a></li>
+                    <li><a href="/about"
+                           hx-get="/about"
+                           hx-target="#main-content-area"
+                           hx-swap="innerHTML"
+                           hx-push-url="true"
+                           hx-indicator="#page-loading-indicator">About</a></li>
                     <li><a href="/user/login">Login</a></li>
-                    <li><a href="/user/signup" class="signup-button">SIGN UP</a></li> <!-- CHANGE /signup to /user/signup -->
+                    <li><a href="/user/signup" class="signup-button">SIGN UP</a></li>
                 </ul>
             </nav>
         </div>
     </header>
     
-    <!-- Main Content -->
-    <main class="landing-main-content">
-        <!-- Content Wrapper - Centered -->
-        <div class="landing-content-wrapper">
-            <h1>Your Mood Journey<br>Starts Here</h1>
-            <p>What if your feelings could paint a picture? Type a few words, and Feel Flow turns them into vibrant colors and emojis that reflect your emotional world. See your patterns. Understand your journey.</p>
-            <a href="/about" class="read-more-button">READ MORE</a>
-        </div>
-    </main>
+    <!-- Main Content Area - This div will be targeted by HTMX -->
+    <div id="main-content-area">
+        {{block "page-content" .}}
+        <main class="landing-main-content">
+            <!-- Content Wrapper - Centered -->
+            <div class="landing-content-wrapper">
+                <h1>Your Mood Journey<br>Starts Here <span class="htmx-indicator" id="page-loading-indicator" style="font-size: 1rem; vertical-align: middle;"></span></h1>
+                <p>What if your feelings could paint a picture? Type a few words, and Feel Flow turns them into vibrant colors and emojis that reflect your emotional world. See your patterns. Understand your journey.</p>
+                <a href="/about" 
+                   class="read-more-button"
+                   hx-get="/about"
+                   hx-target="#main-content-area"
+                   hx-swap="innerHTML"
+                   hx-push-url="true"
+                   hx-indicator="#page-loading-indicator">READ MORE</a>
+            </div>
+        </main>
+        {{end}}
+    </div>
 </body>
 </html>

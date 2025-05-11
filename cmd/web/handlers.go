@@ -280,48 +280,58 @@ func (app *application) showDashboardPage(w http.ResponseWriter, r *http.Request
 // showLandingPage handles GET requests to the root ("/") or "/landing" endpoint.
 // Its purpose is to display the main welcome/entry page of the application.
 func (app *application) showLandingPage(w http.ResponseWriter, r *http.Request) {
-	// --- 1. PREPARE TEMPLATE DATA ---
-	// `app.newTemplateData(r)` is a helper method that initializes a TemplateData struct.
-	// This struct holds data that will be passed to the HTML template.
-	// The helper typically populates:
-	//   - Authentication status (IsAuthenticated)
-	//   - Flash messages (if any, popped from the session)
-	//   - CSRF token (for any forms that might be on the page, though landing usually doesn't have POST forms)
-	//   - Default values for common fields (like default emotions list, if used globally)
 	templateData := app.newTemplateData(r)
-	// Set the specific title for the landing page. This will be used in the <title> tag of the HTML.
-	templateData.Title = "Feel Flow"
+	templateData.Title = "Feel Flow" // Title for full page
 
-	// --- 2. RENDER THE HTML TEMPLATE ---
-	// `app.render()` is another helper method responsible for:
-	//   1. Looking up the specified template file (e.g., "landing.tmpl") in the template cache.
-	//   2. Executing the template with the provided `templateData`.
-	//   3. Writing the resulting HTML to the `http.ResponseWriter` (`w`) with the given HTTP status code (http.StatusOK, which is 200).
-	err := app.render(w, http.StatusOK, "landing.tmpl", templateData)
-
-	// --- 3. ERROR HANDLING ---
-	// If the `app.render()` method encounters an error (e.g., template not found, error during template execution),
-	// it will return an error.
-	if err != nil {
-		app.serverError(w, r, err)
+	if r.Header.Get("HX-Request") == "true" {
+		app.logger.Info("HTMX: Rendering landing page content fragment")
+		ts, ok := app.templateCache["landing.tmpl"]
+		if !ok {
+			err := fmt.Errorf("template %q does not exist", "landing.tmpl")
+			app.logger.Error("Template lookup failed for landing", "template", "landing.tmpl", "error", err)
+			http.Error(w, "Error loading landing page content.", http.StatusInternalServerError)
+			return
+		}
+		// Execute only the "page-content" block for HTMX swap
+		err := ts.ExecuteTemplate(w, "page-content", templateData)
+		if err != nil {
+			app.logger.Error("Failed to execute landing template block", "block", "page-content", "error", err)
+		}
+	} else {
+		app.logger.Info("Full page request for landing page")
+		err := app.render(w, http.StatusOK, "landing.tmpl", templateData)
+		if err != nil {
+			app.serverError(w, r, err)
+		}
 	}
 }
 
 // showAboutPage handles GET requests to the "/about" endpoint.
 // It displays the "About" page, providing information about the application.
 func (app *application) showAboutPage(w http.ResponseWriter, r *http.Request) {
-	// --- 1. PREPARE TEMPLATE DATA ---
-	// Similar to showLandingPage, we initialize the base template data.
-	// This ensures consistency in how common data (auth status, CSRF token) is available to all pages.
 	templateData := app.newTemplateData(r)
-	templateData.Title = "About Feel Flow"
-	// --- 2. RENDER THE HTML TEMPLATE ---
-	// Render the "about.tmpl" HTML template with the prepared data.
-	err := app.render(w, http.StatusOK, "about.tmpl", templateData)
-	// --- 3. ERROR HANDLING ---
-	// If rendering fails, log the error and send a 500 response.
-	if err != nil {
-		app.serverError(w, r, err)
+	templateData.Title = "About Feel Flow" // Title for full page
+
+	if r.Header.Get("HX-Request") == "true" {
+		app.logger.Info("HTMX: Rendering about page content fragment")
+		ts, ok := app.templateCache["about.tmpl"]
+		if !ok {
+			err := fmt.Errorf("template %q does not exist", "about.tmpl")
+			app.logger.Error("Template lookup failed for about", "template", "about.tmpl", "error", err)
+			http.Error(w, "Error loading about page content.", http.StatusInternalServerError)
+			return
+		}
+		// Execute only the "page-content" block for HTMX swap
+		err := ts.ExecuteTemplate(w, "page-content", templateData)
+		if err != nil {
+			app.logger.Error("Failed to execute about template block", "block", "page-content", "error", err)
+		}
+	} else {
+		app.logger.Info("Full page request for about page")
+		err := app.render(w, http.StatusOK, "about.tmpl", templateData)
+		if err != nil {
+			app.serverError(w, r, err)
+		}
 	}
 }
 
