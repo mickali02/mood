@@ -810,8 +810,8 @@
         text-overflow: ellipsis;
         display: -webkit-box;
         -webkit-box-orient: vertical;
-        -webkit-line-clamp: 4; /* Limit lines */
-        line-clamp: 4;
+        -webkit-line-clamp: 1; /* Limit lines */
+        line-clamp: 1;
         color: #c8c8d8;
         font-size: 0.95rem;
         line-height: 1.5;
@@ -1572,7 +1572,17 @@
    .mood-detail-modal-body #modal-full-content {
        color: #e0e0e0;
        /* Quill styles applied via .quill-render-content */
+       word-break: break-word; /* ADD THIS: Allows breaking long words */
+       overflow-wrap: break-word; /* ADD THIS: Another property for word breaking, good for compatibility */
+       white-space: normal; /* ENSURE THIS: Default, but good to be explicit if overriding elsewhere */
    }
+
+   .mood-detail-modal-body #modal-full-content.quill-rendered-content p, /* If content is in <p> tags */
+.mood-detail-modal-body #modal-full-content.quill-rendered-content {   /* If content is directly in it */
+    word-break: break-word;
+    overflow-wrap: break-word;
+    white-space: normal; /* Ensure text can wrap normally */
+}
    
    
    /* ==========================================================================

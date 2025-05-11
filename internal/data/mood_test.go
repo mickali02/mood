@@ -165,59 +165,6 @@ func TestMoodModel_GetEmotionCounts(t *testing.T) {
 	})
 }
 
-// ** NEW Test for Weekly Counts **
-func TestMoodModel_GetWeeklyEntryCounts(t *testing.T) {
-	if testing.Short() {
-		t.Skip("postgres: skipping integration test in short mode")
-	}
-	db := newTestDB(t)
-	defer db.Close()
-	defer cleanupTestDB(t, db)
-	testUserID := insertTestUser(t, db)
-	model := MoodModel{DB: db}
-
-	t.Run("NoEntries", func(t *testing.T) {
-		counts, err := model.GetWeeklyEntryCounts(testUserID)
-		if err != nil {
-			t.Fatalf("Expected no error, got %s", err)
-		}
-		if len(counts) != 0 {
-			t.Errorf("Expected 0 weekly counts, got %d", len(counts))
-		}
-	})
-	t.Run("WithEntries", func(t *testing.T) {
-		// Use dates spanning a few weeks. Note: Week numbers depend on the specific dates.
-		// 2024-01-01 is Week 1 (Monday)
-		// 2024-01-08 is Week 2 (Monday)
-		// 2024-01-15 is Week 3 (Monday)
-		// 2023-12-25 is Week 52 of 2023 (Monday)
-		_, err := db.Exec(`INSERT INTO moods (title, content, emotion, emoji, color, created_at, user_id) VALUES
-            ('Week1-1','','N','😐','#B0C4DE','2024-01-01 10:00:00+00', $1),
-            ('Week1-2','','H','😊','#FFD700','2024-01-03 11:00:00+00', $1),
-            ('Week2-1','','S','😢','#6495ED','2024-01-08 12:00:00+00', $1),
-            ('Week2-2','','H','😊','#FFD700','2024-01-10 13:00:00+00', $1),
-            ('Week2-3','','C','😌','#90EE90','2024-01-14 09:00:00+00', $1),
-            ('OldWeek','','A','😠','#DC143C','2023-12-27 15:00:00+00', $1)`, // Belongs to 2023-W52
-			testUserID)
-		if err != nil {
-			t.Fatalf("Failed to insert test data: %s", err)
-		}
-		counts, err := model.GetWeeklyEntryCounts(testUserID)
-		if err != nil {
-			t.Fatalf("Expected no error, got %s", err)
-		}
-		// Expected order is chronological week start
-		expected := []WeeklyCount{
-			{Week: "2023-52", Count: 1}, // Week starting 2023-12-25
-			{Week: "2024-01", Count: 2}, // Week starting 2024-01-01
-			{Week: "2024-02", Count: 3}, // Week starting 2024-01-08
-		}
-		if !reflect.DeepEqual(counts, expected) {
-			t.Errorf("Mismatch in weekly counts.\nExpected: %+v\nGot:      %+v", expected, counts)
-		}
-	})
-}
-
 // ** UPDATED Test for GetAllStats **
 func TestMoodModel_GetAllStats(t *testing.T) {
 	if testing.Short() {

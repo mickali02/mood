@@ -97,22 +97,21 @@
                              </div>
                          </div>
 
-                         <div class="mood-item-content">
-                             {{/* Render Content in card using template.HTML type */}}
-                             <div class="quill-rendered-content">{{.Content}}</div>
+                    <div class="mood-item-content">
+                         <div class="quill-rendered-content">{{.ShortContent}}</div>
 
-                            <a class="view-more-link"
-                               href="#"
-                               data-mood-id="{{.ID}}"
-                               data-title="{{.Title | html}}"
-                               data-emotion="{{.Emotion | html}}"
-                               data-emoji="{{.Emoji}}"
-                               data-color="{{.Color}}"
-                               data-created-at="{{.CreatedAt | HumanDate}}"
-                               data-full-content={{printf "%q" .RawContent}}>
-                                 View More...
-                            </a>
-                         </div>
+                        <a class="view-more-link"
+                           href="#"
+                           data-mood-id="{{.ID}}"
+                           data-title="{{.Title | html}}"
+                           data-emotion="{{.Emotion | html}}"
+                           data-emoji="{{.Emoji}}"
+                           data-color="{{.Color}}"
+                           data-created-at="{{.CreatedAt | HumanDate}}"
+                           data-full-content={{printf "%q" .RawContent}}>
+                             View More...
+                        </a>
+                     </div>
 
                          <div class="mood-meta">
                             <time datetime="{{.CreatedAt.Format "2006-01-02T15:04:05Z"}}">Logged: {{ .CreatedAt | HumanDate }}</time>

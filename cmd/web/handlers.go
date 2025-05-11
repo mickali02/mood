@@ -10,98 +10,168 @@ import (
 	"net/url"
 	"strconv"
 	"time"
+	"unicode/utf8"
 
 	"github.com/mickali02/mood/internal/data"
 	"github.com/mickali02/mood/internal/validator"
+	"github.com/microcosm-cc/bluemonday"
 )
 
-// Helper function to get user ID from session
+// getUserIDFromSession checks if a user is logged in by looking for their ID in the session
 func (app *application) getUserIDFromSession(r *http.Request) int64 {
 	if !app.session.Exists(r, "authenticatedUserID") {
 		return 0
 	}
+	// Try to get the user ID and make sure it's the right type (int64)
 	userID, ok := app.session.Get(r, "authenticatedUserID").(int64)
 	if !ok {
+		// Log an error if the ID isn't the expected type
 		app.logger.Error("authenticatedUserID in session is not int64")
 		return 0
 	}
+	// Return the valid user ID
 	return userID
+}
+
+// Helper function to strip HTML and truncate text
+func truncateTextWithEllipsis(htmlContent string, limit int) string {
+	// Use bluemonday's strict policy to strip all HTML tags
+	p := bluemonday.StrictPolicy()
+	plainText := p.Sanitize(htmlContent)
+
+	// Count runes for proper handling of multi-byte characters
+	if utf8.RuneCountInString(plainText) <= limit {
+		return plainText
+	}
+
+	// Truncate and add ellipsis
+	runes := []rune(plainText)
+	return string(runes[:limit]) + "..."
 }
 
 /*
 ==========================================================================
 
 	START: Dashboard Handler
-	==========================================================================
+==========================================================================
 */
+// showDashboardPage handles GET requests to the /dashboard endpoint.
+// Primary role is to display a user's mood entries, allowing for filtering and pagination.
+// It also handles both full page loads and partial updates via HTMX.
 func (app *application) showDashboardPage(w http.ResponseWriter, r *http.Request) {
+	// --- 1. AUTHENTICATION & USER IDENTIFICATION ---
+	// First, we need to know *who* is requesting the page.
+	// We retrieve the user's ID from the session.
+	// If userID is 0, it means the user is not authenticated or the session is invalid.
 	userID := app.getUserIDFromSession(r)
 	if userID == 0 {
 		app.clientError(w, http.StatusUnauthorized)
 		return
 	}
 
-	// --- FETCH USER DETAILS ---
+	// --- 2. FETCHING USER DETAILS (for personalization) ---
+	// Once authenticated, we fetch the user's details (like their name) from the database.
+	// This is used to personalize the dashboard (e.g., "Hi, [UserName]!").
 	user, err := app.users.Get(userID)
 	if err != nil {
+		// If fetching fails (e.g., database error), log it.
+		// We still proceed but with an empty user struct, so the page doesn't crash.
 		app.logger.Error("Failed to get user details for dashboard", "userID", userID, "error", err)
 		user = &data.User{}
 	}
-	// --- END FETCH USER DETAILS ---
 
+	// --- 3. PROCESSING URL QUERY PARAMETERS (for filtering and pagination) ---
+	// The dashboard can be filtered (by text, emotion, date range) and paginated.
+	// These parameters are passed in the URL (e.g., /dashboard?query=happy&page=2).
+
+	// Initialize a new validator instance for validating query parameters.
 	v := validator.NewValidator()
+
+	// r.URL.Query() parses the query string from the URL into a map-like structure.
 	query := r.URL.Query()
-	searchQuery := query.Get("query")
-	filterCombinedEmotion := query.Get("emotion")
-	filterStartDateStr := query.Get("start_date")
-	filterEndDateStr := query.Get("end_date")
-	pageStr := query.Get("page")
+
+	// Get filter values from the query parameters.
+	// query.Get("param_name") retrieves the value for "param_name". If not present, it returns an empty string.
+	searchQuery := query.Get("query")             // For text search in title/content
+	filterCombinedEmotion := query.Get("emotion") // For filtering by a specific emotion (e.g., "Happy::😊")
+	filterStartDateStr := query.Get("start_date") // Start of date range filter
+	filterEndDateStr := query.Get("end_date")     // End of date range filter
+	pageStr := query.Get("page")                  // Requested page number for pagination
+
+	// --- 3a. PAGE NUMBER PARSING & VALIDATION ---
+	// Convert the page string to an integer.
 	page, err := strconv.Atoi(pageStr)
-	if err != nil || page < 1 {
-		page = 1
+	if err != nil || page < 1 { // If conversion fails or page is not positive
+		page = 1 // Default to page 1
 	}
+
+	// Validate the page number using our validator.
 	v.Check(page > 0, "page", "must be a positive integer")
 	v.Check(page <= 10_000_000, "page", "must be less than 10 million")
 
-	var filterStartDate, filterEndDate time.Time
+	// --- 3b. DATE FILTER PARSING & VALIDATION ---
+	var filterStartDate, filterEndDate time.Time // Initialize as zero-value time.Time
+
+	// Parse the start date string if provided.
 	if filterStartDateStr != "" {
 		var parseErr error
+		// time.Parse expects a layout string ("2006-01-02") and the date string to parse.
 		filterStartDate, parseErr = time.Parse("2006-01-02", filterStartDateStr)
 		if parseErr != nil {
+			// If parsing fails, log a warning and keep filterStartDate as zero (effectively no start date filter).
 			app.logger.Warn("Invalid start date format", "date", filterStartDateStr, "error", parseErr)
-			filterStartDate = time.Time{}
+			filterStartDate = time.Time{} // reset to zero value if parsing fails
 		}
 	}
+
+	// Parse the end date string if provided.
 	if filterEndDateStr != "" {
 		var parseErr error
 		parsedEndDate, parseErr := time.Parse("2006-01-02", filterEndDateStr)
 		if parseErr != nil {
 			app.logger.Warn("Invalid end date format", "date", filterEndDateStr, "error", parseErr)
-			filterEndDate = time.Time{}
+			filterEndDate = time.Time{} // Reset to zero value
 		} else {
+			// To make the end date inclusive for the entire day, set it to the end of that day.
 			filterEndDate = parsedEndDate.Add(24*time.Hour - 1*time.Nanosecond)
 		}
+		// Basic validation: if both dates are set, end date should not be before start date.
 		if !filterStartDate.IsZero() && !filterEndDate.IsZero() && filterEndDate.Before(filterStartDate) {
 			app.logger.Warn("End date before start date, ignoring end date", "start", filterStartDateStr, "end", filterEndDateStr)
-			filterEndDate = time.Time{}
+			filterEndDate = time.Time{} // Ignore the end date if it's invalid relative to start date
 		}
 	}
 
+	// --- 3c. APPLYING VALIDATION RESULTS ---
+	// If any validation checks (e.g., for the page number) failed:
 	if !v.ValidData() {
 		app.logger.Warn("Invalid page parameter", "page", pageStr, "errors", v.Errors)
-		page = 1 // Default to page 1 on validation error
+		page = 1 // Default to page 1 on any validation error for query parameters
 	}
 
+	// --- 4. PREPARING FILTER CRITERIA FOR DATABASE QUERY ---
+	// Consolidate all filter parameters into a FilterCriteria struct.
+	// This struct is passed to the data model (app.moods.GetFiltered) to fetch relevant mood entries.
+	// PageSize is hardcoded to 4 entries per page for this dashboard.
 	criteria := data.FilterCriteria{
-		TextQuery: searchQuery, Emotion: filterCombinedEmotion,
-		StartDate: filterStartDate, EndDate: filterEndDate,
-		Page: page, PageSize: 4, UserID: userID,
+		TextQuery: searchQuery,
+		Emotion:   filterCombinedEmotion,
+		StartDate: filterStartDate,
+		EndDate:   filterEndDate,
+		Page:      page, PageSize: 4, // Defines how many mood entries to show per page
+		UserID: userID, // Crucial: ensures we only fetch moods for the logged-in user
 	}
 
-	app.logger.Info("Fetching filtered moods", "criteria", fmt.Sprintf("%+v", criteria))
+	// --- 5. FETCHING MOOD ENTRIES & METADATA FROM DATABASE ---
+	// Call the GetFiltered method on our mood model, passing the criteria.
+	// This method returns:
+	//   - `moods`: A slice of *data.Mood pointers matching the filters.
+	//   - `metadata`: Pagination information (total records, current page, last page, etc.).
+	//   - `err`: Any error encountered during the database query.
 	moods, metadata, err := app.moods.GetFiltered(criteria)
 	if err != nil {
-		// Revert to checking the error string, as returned by the data model
+		// Specific error handling for a case where an invalid UserID might be passed.
+		// This is more of a consistency check; userID should be valid from the session.
 		if err.Error() == "invalid user ID provided for filtering moods" {
 			app.logger.Error("Invalid UserID passed to GetFiltered", "userID", userID)
 			app.serverError(w, r, errors.New("internal inconsistency: invalid user session"))
@@ -114,36 +184,64 @@ func (app *application) showDashboardPage(w http.ResponseWriter, r *http.Request
 		metadata = data.Metadata{}
 	}
 
+	// Define the character limit for the short content on dashboard cards
+	const shortContentCharacterLimit = 35 // Adjust as needed
+
+	// --- 6. TRANSFORMING MOOD DATA FOR DISPLAY ---
+	// The `data.Mood` struct might contain raw data (e.g., HTML content as a string).
+	// We transform it into a `displayMood` struct, which is tailored for the template.
+	// For example, `Content` is converted to `template.HTML` to prevent XSS vulnerabilities
+	// when rendering user-generated HTML content.
 	displayMoods := make([]displayMood, len(moods))
 	for i, moodEntry := range moods {
 		displayMoods[i] = displayMood{
-			ID: moodEntry.ID, CreatedAt: moodEntry.CreatedAt, UpdatedAt: moodEntry.UpdatedAt,
-			Title: moodEntry.Title, Content: template.HTML(moodEntry.Content), RawContent: moodEntry.Content,
-			Emotion: moodEntry.Emotion, Emoji: moodEntry.Emoji, Color: moodEntry.Color,
+			ID:           moodEntry.ID,
+			CreatedAt:    moodEntry.CreatedAt,
+			UpdatedAt:    moodEntry.UpdatedAt,
+			Title:        moodEntry.Title,
+			Content:      template.HTML(moodEntry.Content),                                        // Mark content as safe HTML for template
+			ShortContent: truncateTextWithEllipsis(moodEntry.Content, shortContentCharacterLimit), // Truncated plain text
+			RawContent:   moodEntry.Content,                                                       // Keep raw content for "View More" modal
+			Emotion:      moodEntry.Emotion,
+			Emoji:        moodEntry.Emoji,
+			Color:        moodEntry.Color,
 		}
 	}
 
+	// --- 7. FETCHING DISTINCT EMOTIONS (for filter dropdown) ---
+	// To populate the "Filter by Emotion" dropdown, we fetch all unique emotion/emoji/color
+	// combinations that the current user has logged.
 	availableEmotions, err := app.moods.GetDistinctEmotionDetails(userID)
 	if err != nil {
 		app.logger.Error("Failed to fetch distinct emotions", "error", err, "userID", userID)
 		availableEmotions = []data.EmotionDetail{} // Default to empty slice
 	}
 
+	// --- 8. PREPARING TEMPLATE DATA ---
+	// Consolidate all data needed by the HTML template into a `TemplateData` struct.
+	// `app.newTemplateData(r)` initializes common fields like CSRF token, authentication status, flash messages.
 	templateData := app.newTemplateData(r)
 	templateData.Title = "Dashboard"
+	// Pass back filter values so the form fields can be re-populated with current selections.
 	templateData.SearchQuery = searchQuery
 	templateData.FilterEmotion = filterCombinedEmotion
 	templateData.FilterStartDate = filterStartDateStr
 	templateData.FilterEndDate = filterEndDateStr
+	// Data to display.
 	templateData.DisplayMoods = displayMoods
-	templateData.HasMoodEntries = len(displayMoods) > 0
-	templateData.AvailableEmotions = availableEmotions
-	templateData.Metadata = metadata
-	templateData.UserName = user.Name // User name from fetched user
+	templateData.HasMoodEntries = len(displayMoods) > 0 // For conditional rendering in template
+	templateData.AvailableEmotions = availableEmotions  // For the filter dropdown
+	templateData.Metadata = metadata                    // For pagination controls
+	templateData.UserName = user.Name                   // User's name for personalization
 
-	// Handle HTMX request or full page load
+	// --- 9. RENDERING THE PAGE (Full Page Load vs. HTMX Partial Update) ---
+	// Check if the request is an HTMX request by looking for the "HX-Request" header.
+	// HTMX uses this header to indicate that it's an AJAX request expecting a partial HTML response.
 	if r.Header.Get("HX-Request") == "true" {
+		// --- 9a. HTMX PARTIAL UPDATE ---
+		// If it's an HTMX request (e.g., user changed a filter, clicked pagination).
 		app.logger.Info("Handling HTMX request for dashboard content area")
+		// Retrieve the "dashboard.tmpl" template from our pre-compiled cache.
 		ts, ok := app.templateCache["dashboard.tmpl"]
 		if !ok {
 			err := fmt.Errorf("template %q does not exist", "dashboard.tmpl")
@@ -159,7 +257,11 @@ func (app *application) showDashboardPage(w http.ResponseWriter, r *http.Request
 			// Don't write further if header already sent
 		}
 	} else {
+		// --- 9b. FULL PAGE LOAD ---
+		// If not an HTMX request, it's a standard browser request for the full page.
 		app.logger.Info("Handling full page request for dashboard")
+		// Render the entire "dashboard.tmpl" page with all its layout.
+		// `app.render` is a helper function that handles template execution and writing to the response.
 		err = app.render(w, http.StatusOK, "dashboard.tmpl", templateData)
 		if err != nil {
 			// Render handles logging and error response
@@ -171,21 +273,52 @@ func (app *application) showDashboardPage(w http.ResponseWriter, r *http.Request
 ==========================================================================
 
 	Static Pages Handlers
-	==========================================================================
+==========================================================================
 */
+
+// showLandingPage handles GET requests to the root ("/") or "/landing" endpoint.
+// Its purpose is to display the main welcome/entry page of the application.
 func (app *application) showLandingPage(w http.ResponseWriter, r *http.Request) {
+	// --- 1. PREPARE TEMPLATE DATA ---
+	// `app.newTemplateData(r)` is a helper method that initializes a TemplateData struct.
+	// This struct holds data that will be passed to the HTML template.
+	// The helper typically populates:
+	//   - Authentication status (IsAuthenticated)
+	//   - Flash messages (if any, popped from the session)
+	//   - CSRF token (for any forms that might be on the page, though landing usually doesn't have POST forms)
+	//   - Default values for common fields (like default emotions list, if used globally)
 	templateData := app.newTemplateData(r)
-	templateData.Title = "Feel Flow - Special Welcome"
+	// Set the specific title for the landing page. This will be used in the <title> tag of the HTML.
+	templateData.Title = "Feel Flow"
+
+	// --- 2. RENDER THE HTML TEMPLATE ---
+	// `app.render()` is another helper method responsible for:
+	//   1. Looking up the specified template file (e.g., "landing.tmpl") in the template cache.
+	//   2. Executing the template with the provided `templateData`.
+	//   3. Writing the resulting HTML to the `http.ResponseWriter` (`w`) with the given HTTP status code (http.StatusOK, which is 200).
 	err := app.render(w, http.StatusOK, "landing.tmpl", templateData)
+
+	// --- 3. ERROR HANDLING ---
+	// If the `app.render()` method encounters an error (e.g., template not found, error during template execution),
+	// it will return an error.
 	if err != nil {
 		app.serverError(w, r, err)
 	}
 }
 
+// showAboutPage handles GET requests to the "/about" endpoint.
+// It displays the "About" page, providing information about the application.
 func (app *application) showAboutPage(w http.ResponseWriter, r *http.Request) {
+	// --- 1. PREPARE TEMPLATE DATA ---
+	// Similar to showLandingPage, we initialize the base template data.
+	// This ensures consistency in how common data (auth status, CSRF token) is available to all pages.
 	templateData := app.newTemplateData(r)
 	templateData.Title = "About Feel Flow"
+	// --- 2. RENDER THE HTML TEMPLATE ---
+	// Render the "about.tmpl" HTML template with the prepared data.
 	err := app.render(w, http.StatusOK, "about.tmpl", templateData)
+	// --- 3. ERROR HANDLING ---
+	// If rendering fails, log the error and send a 500 response.
 	if err != nil {
 		app.serverError(w, r, err)
 	}
@@ -826,10 +959,6 @@ func (app *application) showStatsPage(w http.ResponseWriter, r *http.Request) {
 	templateData.Stats = stats
 	templateData.EmotionCountsJSON = string(emotionCountsJSON)
 	templateData.Quote = "Every mood matters. Thanks for checking in 💖"
-
-	// *** ADDED: Log final JSON being sent ***
-	app.logger.Debug("Final JSON for template", "emotions", templateData.EmotionCountsJSON)
-	// *** END ADDED LOGGING ***
 
 	renderErr := app.render(w, http.StatusOK, "stats.tmpl", templateData)
 	if renderErr != nil {

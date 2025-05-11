@@ -13,15 +13,16 @@ import (
 
 // displayMood struct definition (unchanged)
 type displayMood struct {
-	ID         int64
-	CreatedAt  time.Time
-	UpdatedAt  time.Time
-	Title      string
-	Content    template.HTML
-	RawContent string
-	Emotion    string
-	Emoji      string
-	Color      string
+	ID           int64
+	CreatedAt    time.Time
+	UpdatedAt    time.Time
+	Title        string
+	Content      template.HTML
+	ShortContent string
+	RawContent   string
+	Emotion      string
+	Emoji        string
+	Color        string
 }
 
 // EmotionDetails struct definition (unchanged)
