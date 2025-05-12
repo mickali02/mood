@@ -3,36 +3,36 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>{{.Title}}</title> <!-- Use TemplateData -->
-    <!-- Link your existing CSS -->
+    <title>{{.Title}}</title>
     <link rel="stylesheet" href="/static/styles.css">
-    <!-- Add other necessary links (fonts, icons) if needed, like from mood_form.tmpl -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <!-- Ensure HTMX is loaded -->
+    <script src="https://unpkg.com/htmx.org@1.9.10" integrity="sha384-D1Kt99CQMDuVetoL1lrYwg5t+9QdHe7NLX/SoJYkXDFfX37iInKRy5xLSi8nO7UC" crossorigin="anonymous"></script>
 </head>
-<body class="mood-form-page"> <!-- Reuse form page styling -->
+<body class="mood-form-page">
 
-    <div class="form-container"> <!-- Reuse form container styling -->
-            <!-- === ADD THE CLOSE BUTTON HERE === -->
+    {{/* This block contains the form and will be targeted by HTMX for swapping */}}
+    {{define "signup-form-block"}}
+    <div class="form-container" id="signup-form-container"> <!-- Add an ID for targeting -->
         <a href="/" class="form-close-button" aria-label="Close and go to homepage">
-            × <!-- This is the HTML entity for the 'X' multiplication sign -->
-            <!-- Or, if using Bootstrap Icons: <i class="bi bi-x-lg"></i> -->
+            ×
         </a>
-        <!-- ================================ -->
         <h1>Create Account</h1>
 
         <!-- Display flash messages if any -->
         {{with .Flash}}
-            <div class='flash-message success'>{{.}}</div> <!-- Adjust class if needed -->
+            <div class='flash-message success'>{{.}}</div>
         {{end}}
 
-        <form action="/user/signup" method="POST" novalidate>
+        <form action="/user/signup" method="POST" novalidate
+              hx-post="/user/signup"
+              hx-target="#signup-form-container"
+              hx-swap="outerHTML">
             <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
 
             <div class="form-group">
                 <label for="name">Name:</label>
-                <!-- Use FormData to repopulate on error -->
                 <input type="text" id="name" name="name" value='{{index .FormData "name"}}' required class="{{if index .FormErrors "name"}}invalid{{end}}">
-                <!-- Display field-specific error -->
                 {{with index .FormErrors "name"}}
                     <span class="error-message">{{.}}</span>
                 {{end}}
@@ -48,27 +48,27 @@
 
             <div class="form-group">
                 <label for="password">Password:</label>
-                <!-- NEVER repopulate password field -->
                 <input type="password" id="password" name="password" required class="{{if index .FormErrors "password"}}invalid{{end}}">
                 {{with index .FormErrors "password"}}
                     <span class="error-message">{{.}}</span>
                 {{end}}
-                 <!-- Add password policy hints if desired -->
                  <small style="color: #ccc; font-size: 0.8em; display: block; margin-top: 5px;">(Minimum 8 characters)</small>
             </div>
 
-             <!-- Generic Form Error (Optional) -->
              {{with index .FormErrors "generic"}}
                  <div class="error-message" style="text-align: center; margin-bottom: 15px;">{{.}}</div>
              {{end}}
 
             <div class="button-group">
                 <button type="submit" class="btn dashboard-add-btn">Sign Up</button>
-                <!-- Optional: Link to login page -->
                 <a href="/user/login" class="btn cancel-btn">Already have an account? Log In</a>
             </div>
         </form>
     </div>
+    {{end}}
+
+    {{/* For initial full page load, execute the block */}}
+    {{template "signup-form-block" .}}
 
 </body>
 </html>

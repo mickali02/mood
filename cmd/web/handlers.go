@@ -813,40 +813,33 @@ func (app *application) deleteMood(w http.ResponseWriter, r *http.Request) {
 // signupUserForm displays the user registration form.
 // Serves the HTML form for new users to create an account.
 func (app *application) signupUserForm(w http.ResponseWriter, r *http.Request) {
-	// 1. Prepare Base Template Data: Initializes common data (CSRF, auth status, etc.).
 	templateData := app.newTemplateData(r)
-	// 2. Set Page Title: For the HTML `<title>` tag.
 	templateData.Title = "Sign Up - Feel Flow"
-	// 3. Render Template: Displays "signup.tmpl".
 	err := app.render(w, http.StatusOK, "signup.tmpl", templateData)
 	if err != nil {
-		app.serverError(w, r, err) // Handle rendering errors.
+		app.serverError(w, r, err)
 	}
 }
 
 // signupUser handles the submission of the user registration form.
 // Processes new user details, validates them, hashes the password, and saves the user to the database.
 func (app *application) signupUser(w http.ResponseWriter, r *http.Request) {
-	// 1. Method Check: Ensure request is POST.
 	if r.Method != http.MethodPost {
 		w.Header().Set("Allow", http.MethodPost)
 		app.clientError(w, http.StatusMethodNotAllowed)
 		return
 	}
 
-	// 2. Parse Form Data: Extract submitted values.
 	err := r.ParseForm()
 	if err != nil {
 		app.clientError(w, http.StatusBadRequest)
 		return
 	}
 
-	// 3. Extract User Inputs: Get name, email, and password from the form.
 	name := r.PostForm.Get("name")
 	email := r.PostForm.Get("email")
 	passwordInput := r.PostForm.Get("password")
 
-	// 4. Validate Inputs: Use the validator to check field requirements (not blank, length, format).
 	v := validator.NewValidator()
 	v.Check(validator.NotBlank(name), "name", "Name must be provided")
 	v.Check(validator.MaxLength(name, 100), "name", "Must not be more than 100 characters")
@@ -857,53 +850,64 @@ func (app *application) signupUser(w http.ResponseWriter, r *http.Request) {
 	v.Check(validator.MinLength(passwordInput, 8), "password", "Must be at least 8 characters long")
 	v.Check(validator.MaxLength(passwordInput, 72), "password", "Must not be more than 72 characters")
 
-	// 5. Handle Validation Errors: If any checks fail...
-	if !v.ValidData() {
+	// Helper function to render signup form with errors
+	renderSignupError := func(formErrors map[string]string) {
 		templateData := app.newTemplateData(r)
 		templateData.Title = "Sign Up (Error) - Feel Flow"
 		templateData.FormData = map[string]string{"name": name, "email": email} // Don't repopulate password
-		templateData.FormErrors = v.Errors
-		// Re-render signup form with errors and a 422 status.
-		errRender := app.render(w, http.StatusUnprocessableEntity, "signup.tmpl", templateData)
-		if errRender != nil {
-			app.serverError(w, r, errRender)
-		}
-		return
-	}
+		templateData.FormErrors = formErrors
 
-	// 6. Create User Object & Hash Password:
-	//    - Initialize a `data.User` struct. Users are activated immediately for simplicity.
-	//    - Securely hash the password using `user.Password.Set()`, which uses bcrypt.
-	user := &data.User{Name: name, Email: email, Activated: true} // Activate immediately for simplicity
-	err = user.Password.Set(passwordInput)                        // Hashes and stores the password.
-	if err != nil {
-		app.serverError(w, r, err) // Error during password hashing.
-		return
-	}
-
-	// 7. Insert User into Database:
-	err = app.users.Insert(user) // `app.users` is our UserModel instance.
-	if err != nil {
-		// Handle specific database errors, like a duplicate email.
-		if errors.Is(err, data.ErrDuplicateEmail) {
-			v.AddError("email", "Email address is already in use")
-			templateData := app.newTemplateData(r)
-			templateData.Title = "Sign Up (Error) - Feel Flow"
-			templateData.FormData = map[string]string{"name": name, "email": email}
-			templateData.FormErrors = v.Errors
+		if r.Header.Get("HX-Request") == "true" {
+			app.logger.Info("HTMX: Re-rendering signup form fragment due to validation errors")
+			ts, ok := app.templateCache["signup.tmpl"]
+			if !ok {
+				errMsg := fmt.Sprintf("template %q does not exist", "signup.tmpl")
+				app.logger.Error("Template lookup failed for signup fragment", "template", "signup.tmpl", "error", errMsg)
+				http.Error(w, "Error processing signup.", http.StatusInternalServerError)
+				return
+			}
+			w.Header().Set("Content-Type", "text/html; charset=utf-8")
+			w.WriteHeader(http.StatusOK) // Return 200 OK for HTMX fragment with errors
+			errRender := ts.ExecuteTemplate(w, "signup-form-block", templateData)
+			if errRender != nil {
+				app.logger.Error("Failed to execute signup template block for HTMX", "block", "signup-form-block", "error", errRender)
+			}
+		} else {
 			errRender := app.render(w, http.StatusUnprocessableEntity, "signup.tmpl", templateData)
 			if errRender != nil {
 				app.serverError(w, r, errRender)
 			}
+		}
+	}
+
+	if !v.ValidData() {
+		renderSignupError(v.Errors)
+		return
+	}
+
+	user := &data.User{Name: name, Email: email, Activated: true}
+	err = user.Password.Set(passwordInput)
+	if err != nil {
+		app.serverError(w, r, err)
+		return
+	}
+
+	err = app.users.Insert(user)
+	if err != nil {
+		if errors.Is(err, data.ErrDuplicateEmail) {
+			// Add the duplicate email error to the validator's map
+			// and re-render the form using our helper.
+			v.AddError("email", "Email address is already in use")
+			renderSignupError(v.Errors)
 		} else {
 			app.serverError(w, r, err)
 		}
 		return
 	}
 
-	// 8. Success: User created.
-	//    Set a flash message and redirect to the login page.
 	app.session.Put(r, "flash", "Your signup was successful! Please log in.")
+	// For successful signup, always redirect fully.
+	// If HTMX was used, it will follow this redirect.
 	http.Redirect(w, r, "/user/login", http.StatusSeeOther)
 }
 
@@ -945,43 +949,62 @@ func (app *application) loginUser(w http.ResponseWriter, r *http.Request) {
 	v.Check(validator.NotBlank(email), "generic", "Email must be provided")            // Using generic key
 	v.Check(validator.NotBlank(passwordInput), "generic", "Password must be provided") // Using generic key
 
-	// Helper function to render login form with a generic error.
+	isHTMXRequest := r.Header.Get("HX-Request") == "true"
+
 	genericError := func() {
 		templateData := app.newTemplateData(r)
 		templateData.Title = "Login (Error) - Feel Flow"
-		templateData.FormData = map[string]string{"email": email} // Repopulate email
+		templateData.FormData = map[string]string{"email": email}
 		templateData.FormErrors = map[string]string{"generic": "Invalid email or password."}
-		errRender := app.render(w, http.StatusUnprocessableEntity, "login.tmpl", templateData)
-		if errRender != nil {
-			app.serverError(w, r, errRender)
+
+		if isHTMXRequest {
+			app.logger.Info("HTMX: Re-rendering login form fragment due to validation errors")
+			ts, ok := app.templateCache["login.tmpl"]
+			if !ok {
+				errMsg := fmt.Sprintf("template %q does not exist", "login.tmpl")
+				app.logger.Error("Template lookup failed for login fragment", "template", "login.tmpl", "error", errMsg)
+				http.Error(w, "Error processing login.", http.StatusInternalServerError)
+				return
+			}
+			// *** CRITICAL: Set Content-Type for HTMX fragment response ***
+			w.Header().Set("Content-Type", "text/html; charset=utf-8")
+			w.WriteHeader(http.StatusOK)
+			errRender := ts.ExecuteTemplate(w, "login-form-block", templateData)
+			if errRender != nil {
+				app.logger.Error("Failed to execute login template block for HTMX", "block", "login-form-block", "error", errRender)
+			}
+		} else {
+			errRender := app.render(w, http.StatusUnprocessableEntity, "login.tmpl", templateData)
+			if errRender != nil {
+				app.serverError(w, r, errRender)
+			}
 		}
 	}
 
-	// 5. Handle Basic Validation Failure.
 	if !v.ValidData() {
-		genericError() // Show generic error on the form.
+		genericError()
 		return
 	}
 
-	// 6. Authenticate User: Call UserModel's Authenticate method.
-	//    This checks email, password hash, and if the user is activated.
 	id, err := app.users.Authenticate(email, passwordInput)
 	if err != nil {
 		if errors.Is(err, data.ErrInvalidCredentials) {
 			genericError()
-		} else { // Handle other potential errors (e.g., database connection)
+		} else {
 			app.serverError(w, r, err)
 		}
 		return
 	}
 
-	// 7. Authentication Successful:
-	//    - Store the user's ID in the session to mark them as logged in.
-	//    - Set a success flash message.
-	//    - Redirect to the dashboard.
-	app.session.Put(r, "authenticatedUserID", id) // Store user ID in session
+	app.session.Put(r, "authenticatedUserID", id)
 	app.session.Put(r, "flash", "You have been logged in successfully!")
-	http.Redirect(w, r, "/dashboard", http.StatusSeeOther) // Redirect to dashboard
+
+	if isHTMXRequest {
+		w.Header().Set("HX-Redirect", "/dashboard")
+		w.WriteHeader(http.StatusOK)
+	} else {
+		http.Redirect(w, r, "/dashboard", http.StatusSeeOther)
+	}
 }
 
 // logoutUser handles the user logout process.

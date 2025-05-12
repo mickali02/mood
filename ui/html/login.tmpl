@@ -6,53 +6,54 @@
     <title>{{.Title}}</title>
     <link rel="stylesheet" href="/static/styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <!-- Ensure HTMX is loaded -->
+    <script src="https://unpkg.com/htmx.org@1.9.10" integrity="sha384-D1Kt99CQMDuVetoL1lrYwg5t+9QdHe7NLX/SoJYkXDFfX37iInKRy5xLSi8nO7UC" crossorigin="anonymous"></script>
 </head>
 <body class="mood-form-page"> <!-- Reuse form page styling -->
 
-    <div class="form-container">
-                <!-- === ADD THE CLOSE BUTTON HERE === -->
+    {{/* This block contains the form and will be targeted by HTMX for swapping */}}
+    {{define "login-form-block"}}
+    <div class="form-container" id="login-form-container"> <!-- Add an ID for targeting -->
         <a href="/" class="form-close-button" aria-label="Close and go to homepage">
-            × <!-- This is the HTML entity for the 'X' multiplication sign -->
-            <!-- Or, if using Bootstrap Icons: <i class="bi bi-x-lg"></i> -->
+            ×
         </a>
-        <!-- ================================ -->
         <h1>Login</h1>
 
         <!-- Display flash messages (e.g., signup success, login failure) -->
         {{with .Flash}}
-            <!-- Add logic here later to maybe add 'error' class based on content -->
             <div class='flash-message success'>{{.}}</div>
         {{end}}
 
-        <form action="/user/login" method="POST" novalidate>
+        <form action="/user/login" method="POST" novalidate
+              hx-post="/user/login"                 
+              hx-target="#login-form-container"     
+              hx-swap="outerHTML">                  
             <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
-
 
             <div class="form-group">
                 <label for="email">Email:</label>
-                <!-- Repopulate email on error -->
                 <input type="email" id="email" name="email" value='{{index .FormData "email"}}' required class="{{if index .FormErrors "generic"}}invalid{{end}}">
-                 <!-- Login often uses a single generic error, but you could add field-specific if desired -->
             </div>
 
             <div class="form-group">
                 <label for="password">Password:</label>
                 <input type="password" id="password" name="password" required class="{{if index .FormErrors "generic"}}invalid{{end}}">
-                <!-- Don't show specific password errors on login, use a generic message -->
             </div>
 
-             <!-- Generic Form Error (for invalid credentials) -->
              {{with index .FormErrors "generic"}}
                  <div class="error-message" style="text-align: center; margin-bottom: 15px;">{{.}}</div>
              {{end}}
 
             <div class="button-group">
                 <button type="submit" class="btn dashboard-add-btn">Login</button>
-                <!-- Optional: Link to signup page -->
                 <a href="/user/signup" class="btn cancel-btn">Need an account? Sign Up</a>
             </div>
         </form>
     </div>
+    {{end}}
+
+    {{/* For initial full page load, execute the block */}}
+    {{template "login-form-block" .}}
 
 </body>
 </html>
