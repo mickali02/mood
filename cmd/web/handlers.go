@@ -15,6 +15,7 @@ import (
 	"github.com/mickali02/mood/internal/data"
 	"github.com/mickali02/mood/internal/validator"
 	"github.com/microcosm-cc/bluemonday"
+	"golang.org/x/crypto/bcrypt"
 )
 
 // getUserIDFromSession checks if a user is logged in by looking for their ID in the session
@@ -1309,6 +1310,10 @@ func (app *application) updateUserProfile(w http.ResponseWriter, r *http.Request
 
 // changeUserPassword handles submission for changing the user's password.
 // Securely updates a user's password after verifying their current password.
+// mood/cmd/web/handlers.go
+
+// changeUserPassword handles submission for changing the user's password.
+// Securely updates a user's password after verifying their current password.
 func (app *application) changeUserPassword(w http.ResponseWriter, r *http.Request) {
 	// 1. Authentication.
 	userID := app.getUserIDFromSession(r)
@@ -1320,7 +1325,12 @@ func (app *application) changeUserPassword(w http.ResponseWriter, r *http.Reques
 	// 2. Fetch User (needed for current password check and context).
 	user, err := app.users.Get(userID)
 	if err != nil {
-		app.serverError(w, r, err)
+		if errors.Is(err, data.ErrRecordNotFound) {
+			app.logger.Warn("Attempt to change password for non-existent user", "userID", userID)
+			app.clientError(w, http.StatusUnauthorized)
+		} else {
+			app.serverError(w, r, err)
+		}
 		return
 	}
 
@@ -1350,27 +1360,33 @@ func (app *application) changeUserPassword(w http.ResponseWriter, r *http.Reques
 	renderPasswordError := func(formErrors map[string]string) {
 		templateData := app.newTemplateData(r)
 		templateData.Title = "User Profile (Password Error)"
-		templateData.User = user
+		templateData.User = &data.User{ID: user.ID, Name: user.Name, Email: user.Email, CreatedAt: user.CreatedAt}
 		templateData.FormErrors = formErrors
 		if templateData.FormData == nil {
 			templateData.FormData = make(map[string]string)
 		}
-		templateData.FormData["name"] = user.Name   // Keep user info for context
-		templateData.FormData["email"] = user.Email // Keep user info for context
-		templateData.ProfileCurrentPage = 1         // Password form is on page 1.
+		if _, ok := templateData.FormData["name"]; !ok {
+			templateData.FormData["name"] = user.Name
+		}
+		if _, ok := templateData.FormData["email"]; !ok {
+			templateData.FormData["email"] = user.Email
+		}
+		templateData.ProfileCurrentPage = 1
 
-		// --- MODIFIED: Render fragment for HTMX on validation error ---
 		if r.Header.Get("HX-Request") == "true" {
 			app.logger.Info("HTMX: Re-rendering profile content due to password change validation errors")
 			ts, ok := app.templateCache["profile.tmpl"]
 			if !ok {
-				app.serverError(w, r, fmt.Errorf("template profile.tmpl not found"))
+				errMsg := fmt.Errorf("template profile.tmpl not found")
+				app.logger.Error(errMsg.Error())
+				http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 				return
 			}
-			w.WriteHeader(http.StatusUnprocessableEntity)
+			w.Header().Set("Content-Type", "text/html; charset=utf-8")
+			w.WriteHeader(http.StatusOK) // Send 200 OK for HTMX swap
 			errRender := ts.ExecuteTemplate(w, "profile-content", templateData)
 			if errRender != nil {
-				app.serverError(w, r, errRender)
+				app.logger.Error("Failed to execute profile template block for password error", "error", errRender)
 			}
 		} else {
 			errRender := app.render(w, http.StatusUnprocessableEntity, "profile.tmpl", templateData)
@@ -1387,34 +1403,40 @@ func (app *application) changeUserPassword(w http.ResponseWriter, r *http.Reques
 	}
 
 	// 7. Verify Current Password.
-	match, err := user.Password.Matches(currentPassword) // Uses bcrypt.CompareHashAndPassword.
+	// We use the Matches method on the user's existing Password field (which is of type data.password)
+	match, err := user.Password.Matches(currentPassword)
 	if err != nil {
-		app.serverError(w, r, err)
+		app.serverError(w, r, fmt.Errorf("error matching password: %w", err))
 		return
 	}
 	if !match {
 		v.AddError("current_password", "Current password incorrect")
-		renderPasswordError(v.Errors)
+		renderPasswordError(v.Errors) // Re-render form with error
 		return
 	}
 
-	// 8. Set New Password Hash on User Struct.
-	err = user.Password.Set(newPassword) // Hashes the new password.
+	// 8. Hash the *new* password directly using bcrypt
+	// Cost factor 12 is a good default
+	hashedNewPassword, err := bcrypt.GenerateFromPassword([]byte(newPassword), 12)
 	if err != nil {
-		app.serverError(w, r, err)
+		app.serverError(w, r, fmt.Errorf("error hashing new password: %w", err))
 		return
 	}
 
-	// 9. Update Password in Database.
-	err = app.users.UpdatePassword(user.ID, user.Password.Hash())
+	// 9. Update Password in Database using the generated hash
+	// Pass the userID and the []byte hash directly
+	err = app.users.UpdatePassword(user.ID, hashedNewPassword)
 	if err != nil {
-		app.serverError(w, r, err)
+		if errors.Is(err, data.ErrRecordNotFound) {
+			app.notFound(w) // Should not happen if user was fetched, but defensive
+		} else {
+			app.serverError(w, r, fmt.Errorf("error updating password in db: %w", err))
+		}
 		return
 	}
 
 	// 10. Success.
 	app.session.Put(r, "flash", "Password updated successfully.")
-	// --- MODIFIED: Send HX-Redirect for HTMX success ---
 	if r.Header.Get("HX-Request") == "true" {
 		app.logger.Info("HTMX: Sending HX-Redirect to /user/profile after password update")
 		w.Header().Set("HX-Redirect", "/user/profile")
