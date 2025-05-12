@@ -1184,7 +1184,11 @@ func (app *application) updateUserProfile(w http.ResponseWriter, r *http.Request
 	// 2. Fetch Current User Data (needed if validation fails, to show original state or for context).
 	user, err := app.users.Get(userID)
 	if err != nil {
-		app.serverError(w, r, err)
+		if errors.Is(err, data.ErrRecordNotFound) {
+			app.notFound(w) // User doesn't exist
+		} else {
+			app.serverError(w, r, err) // Other DB error
+		}
 		return
 	}
 
@@ -1202,98 +1206,123 @@ func (app *application) updateUserProfile(w http.ResponseWriter, r *http.Request
 	}
 
 	// 4. Store Original Email (in case of update conflict or error).
-	originalEmail := user.Email
+	originalEmail := user.Email // Keep original for potential revert on duplicate email error
 
 	// 5. Update User Struct Fields from Form Data.
-	user.Name = r.PostForm.Get("name")
-	user.Email = r.PostForm.Get("email")
+	// We create a temporary user struct for validation to avoid modifying the
+	// original `user` object until the update is successful.
+	updatedUser := &data.User{
+		ID:        userID, // Use the correct ID
+		Name:      r.PostForm.Get("name"),
+		Email:     r.PostForm.Get("email"),
+		CreatedAt: user.CreatedAt, // Keep original creation time
+		Activated: user.Activated, // Keep activation status
+		// Password hash is not needed for this update but would be retained from `user` if updating the whole object
+	}
 
 	// 6. Validate Updated Fields.
 	v := validator.NewValidator()
-	// Re-validate the updated fields
-	v.Check(validator.NotBlank(user.Name), "name", "Name must be provided")
-	v.Check(validator.MaxLength(user.Name, 100), "name", "Name must not be more than 100 characters")
-	v.Check(validator.NotBlank(user.Email), "email", "Email must be provided")
-	v.Check(validator.MaxLength(user.Email, 254), "email", "Must not be more than 254 characters")
-	v.Check(validator.Matches(user.Email, validator.EmailRX), "email", "Must be a valid email address")
+	// Pass the temporary updatedUser struct to the validator
+	v.Check(validator.NotBlank(updatedUser.Name), "name", "Name must be provided")
+	v.Check(validator.MaxLength(updatedUser.Name, 100), "name", "Name must not be more than 100 characters")
+	v.Check(validator.NotBlank(updatedUser.Email), "email", "Email must be provided")
+	v.Check(validator.MaxLength(updatedUser.Email, 254), "email", "Must not be more than 254 characters")
+	v.Check(validator.Matches(updatedUser.Email, validator.EmailRX), "email", "Must be a valid email address")
 
 	// 7. Handle Validation Errors.
 	if !v.ValidData() {
 		templateData := app.newTemplateData(r)
 		templateData.Title = "User Profile (Error)"
-		// For template consistency, pass user object (even if it has pending invalid changes).
-		// The FormData map will hold the actual submitted values.
+		// Pass the original user for display context, but use submitted data in FormData
 		templateData.User = &data.User{ID: user.ID, Name: user.Name, Email: user.Email, CreatedAt: user.CreatedAt}
 		templateData.FormErrors = v.Errors
 		templateData.FormData = map[string]string{
-			"name":  user.Name,  // This is the attempted new name
-			"email": user.Email, // This is the attempted new email
+			"name":  updatedUser.Name,  // Show the invalid submitted name
+			"email": updatedUser.Email, // Show the invalid submitted email
 		}
 		templateData.ProfileCurrentPage = 1 // Name/Email form is on page 1.
 
-		// --- MODIFIED: Render fragment for HTMX on validation error ---
+		// --- UPDATED: Render fragment for HTMX on validation error ---
 		if r.Header.Get("HX-Request") == "true" {
 			app.logger.Info("HTMX: Re-rendering profile content due to name/email update validation errors")
 			ts, ok := app.templateCache["profile.tmpl"]
 			if !ok {
-				app.serverError(w, r, fmt.Errorf("template profile.tmpl not found"))
+				errMsg := fmt.Errorf("template profile.tmpl not found")
+				app.logger.Error(errMsg.Error())
+				http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 				return
 			}
-			w.WriteHeader(http.StatusUnprocessableEntity)
+
+			// *** FIX: Set Content-Type and send 200 OK for HTMX fragment swap with errors ***
+			w.Header().Set("Content-Type", "text/html; charset=utf-8")
+			w.WriteHeader(http.StatusOK) // <--- CHANGE IS HERE
+
 			errRender := ts.ExecuteTemplate(w, "profile-content", templateData)
 			if errRender != nil {
-				app.serverError(w, r, errRender)
+				app.logger.Error("Failed to execute profile template block for name/email validation error", "error", errRender)
 			}
 		} else {
+			// Keep 422 for non-HTMX full page reload
 			errRender := app.render(w, http.StatusUnprocessableEntity, "profile.tmpl", templateData)
 			if errRender != nil {
 				app.serverError(w, r, errRender)
 			}
 		}
-		return
+		return // Stop processing after handling the error
 	}
 
 	// 8. Database Update (User Profile).
-	err = app.users.Update(user)
+	// Now that validation passed, call the Update method with the validated data.
+	// Note: The Update method in UserModel updates only name and email based on ID.
+	err = app.users.Update(updatedUser) // Pass the struct with validated data
 	if err != nil {
 		if errors.Is(err, data.ErrDuplicateEmail) {
-			v.AddError("email", "Email address is already in use")
+			v.AddError("email", "Email address is already in use") // Add specific error
 			templateData := app.newTemplateData(r)
 			templateData.Title = "User Profile (Error)"
-			// User object here should ideally reflect state before problematic update for display consistency,
-			// but FormData will hold the submitted (problematic) values.
-			tempUserForDisplay := &data.User{ID: user.ID, Name: r.PostForm.Get("name"), Email: originalEmail, CreatedAt: user.CreatedAt}
-			templateData.User = tempUserForDisplay
+			// Pass original user data for display context
+			templateData.User = &data.User{ID: user.ID, Name: user.Name, Email: originalEmail, CreatedAt: user.CreatedAt}
 			templateData.FormErrors = v.Errors
 			templateData.FormData = map[string]string{
-				"name":  r.PostForm.Get("name"),
-				"email": r.PostForm.Get("email"),
+				"name":  updatedUser.Name,  // Show submitted name
+				"email": updatedUser.Email, // Show submitted (duplicate) email
 			}
 			templateData.ProfileCurrentPage = 1
 
-			// --- MODIFIED: Render fragment for HTMX on duplicate email error ---
+			// --- UPDATED: Render fragment for HTMX on duplicate email error ---
 			if r.Header.Get("HX-Request") == "true" {
 				app.logger.Info("HTMX: Re-rendering profile content due to duplicate email on update")
 				ts, ok := app.templateCache["profile.tmpl"]
 				if !ok {
-					app.serverError(w, r, fmt.Errorf("template profile.tmpl not found"))
+					errMsg := fmt.Errorf("template profile.tmpl not found")
+					app.logger.Error(errMsg.Error())
+					http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 					return
 				}
-				w.WriteHeader(http.StatusUnprocessableEntity)
+
+				// *** FIX: Set Content-Type and send 200 OK for HTMX fragment swap with errors ***
+				w.Header().Set("Content-Type", "text/html; charset=utf-8")
+				w.WriteHeader(http.StatusOK) // <--- CHANGE IS HERE
+
 				errRender := ts.ExecuteTemplate(w, "profile-content", templateData)
 				if errRender != nil {
-					app.serverError(w, r, errRender)
+					app.logger.Error("Failed to execute profile template block for duplicate email error", "error", errRender)
 				}
 			} else {
+				// Keep 422 for non-HTMX full page reload
 				errRender := app.render(w, http.StatusUnprocessableEntity, "profile.tmpl", templateData)
 				if errRender != nil {
 					app.serverError(w, r, errRender)
 				}
 			}
+		} else if errors.Is(err, data.ErrRecordNotFound) {
+			// Should not happen if user was fetched initially, but handle defensively
+			app.notFound(w)
 		} else {
-			app.serverError(w, r, err)
+			// Handle other potential database errors during update
+			app.serverError(w, r, fmt.Errorf("error updating user profile: %w", err))
 		}
-		return
+		return // Stop processing after handling the error
 	}
 
 	// 9. Success.
@@ -1302,9 +1331,9 @@ func (app *application) updateUserProfile(w http.ResponseWriter, r *http.Request
 	if r.Header.Get("HX-Request") == "true" {
 		app.logger.Info("HTMX: Sending HX-Redirect to /user/profile after profile update")
 		w.Header().Set("HX-Redirect", "/user/profile") // Redirect to the profile page (page 1 by default)
-		w.WriteHeader(http.StatusOK)
+		w.WriteHeader(http.StatusOK)                   // Need 200 OK for HX-Redirect
 	} else {
-		http.Redirect(w, r, "/user/profile", http.StatusSeeOther)
+		http.Redirect(w, r, "/user/profile", http.StatusSeeOther) // Standard redirect
 	}
 }
 
